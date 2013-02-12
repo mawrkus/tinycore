@@ -65,7 +65,7 @@ TinyCore.register( 'users_monitoring', function ( oSandBox )
 
 Note that, although it's a best practice to add both *onStart* and *onStop* methods when registering a module, the only mandatory method you have to implement is *onStart*.
 
-Furthermore, a module can use the default *mediator* [^note-mediator] provided by the sandbox to communicate with other parts of the application :
+Furthermore, a module can use the default *mediator* [1] provided by the sandbox to communicate with other parts of the application :
 
 ```js
 TinyCore.register( 'users_monitoring', function ( oSandBox )
@@ -243,7 +243,7 @@ The *getModules* method returns all the modules that have been registered.
 
 ## Extensions
 
-- TinyCore's Extended API (*isStarted*, *startAll*, *stopAll*, *destroy*, *destroyAll*, *registerAndStart*)
+- TinyCore's Extended API : *isStarted* , *startAll* , *stopAll* , *destroy* , *destroyAll* , *registerAndStart*
 - AMD modules definition and loading via [require.js](http://requirejs.org)
 
 ## Creators
@@ -257,4 +257,4 @@ The *getModules* method returns all the modules that have been registered.
 - More demos
 - More extensions
 
-[^note-mediator]: See Addy Osmani's ["Learning JavaScript Design Patterns"](http://addyosmani.com/resources/essentialjsdesignpatterns/book/#mediatorpatternjavascript) book for a good description of this pattern.
+[1]: See Addy Osmani's ["Learning JavaScript Design Patterns"](http://addyosmani.com/resources/essentialjsdesignpatterns/book/#mediatorpatternjavascript) book for a good description of this pattern.
