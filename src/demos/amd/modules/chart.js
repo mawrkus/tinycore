@@ -3,19 +3,19 @@ define( ['lib/plot.js'], function ( oPlot )
 	return function ( oSandBox )
 	{
 		return  {
-			onStart : function ( oData )
+			onStart : function ( oStartData )
 			{
-				console.info( 'Starting chart module...', oData );
+				console.info( 'Starting chart module...', oStartData );
 
-				oSandBox.subscribe( ['app:filter:change', 'app:filter:reset'], function ( oEvent )
+				oSandBox.subscribe( ['app:filter:change', 'app:filter:reset'], function ( oTopic )
 				{
-					console.log( 'Chart module received a notification : ', oEvent.type, oEvent.data );
+					console.log( 'Chart module received a notification : ', oTopic.name, oTopic.data );
 				} );
 
 				console.log( 'Chart can use plot lib', oPlot );
 
 				oPlot.init();
-				oPlot.draw( oData.type );
+				oPlot.draw( oStartData.graphType );
 			},
 			onStop : function ()
 			{

@@ -3,13 +3,13 @@ define( function ()
 	return function ( oSandBox )
 	{
 		return  {
-			onStart : function ( oData )
+			onStart : function ( oStartData )
 			{
-				console.info( 'Starting filter module...', oData );
+				console.info( 'Starting filter module...', oStartData );
 
-				oSandBox.subscribe( 'app:chart:stop', function ( oEvent )
+				oSandBox.subscribe( 'app:chart:stop', function ( oTopic )
 				{
-					console.log( 'Filter module received a notification :', oEvent.type, oEvent.data );
+					console.log( 'Filter module received a notification :', oTopic.name, oTopic.data );
 				} );
 
 				oSandBox.publish( 'app:filter:reset' );

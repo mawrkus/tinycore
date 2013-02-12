@@ -19,38 +19,38 @@ TinyCore.register( 'users_monitoring', function ( oSandBox )
 		{
 			this.oContainer = _oDomUtils.getById( oStartData.containerID );
 
-			_oDomUtils.append( this.oContainer, '<p class="sys_msg">Starting users_monitoring...</p>' );
+			_oDomUtils.append( this.oContainer, '<p class="sys_msg">Starting users monitoring...</p>' );
 
-			oSandBox.subscribe( ['user:connected', 'user:disconnected'], oSandBox.utils.proxy( this.processEvents, this ) );
+			oSandBox.subscribe( ['user:connected', 'user:disconnected'], oSandBox.utils.proxy( this.processTopics, this ) );
 		},
 		/**
 		 * This method will be called when the module is stopped.
 		 */
 		onStop : function ()
 		{
-			_oDomUtils.append( this.oContainer, '<p class="sys_msg">Stopping users_monitoring...</p>' );
+			_oDomUtils.append( this.oContainer, '<p class="sys_msg">Stopping users monitoring...</p>' );
 
 			oSandBox.unSubscribeAll();
-			
+
 			this.oContainer = null;
 		},
 		/**
-		 * Handles the events received via the sandbox attached to this module.
-		 * @param {Object} oEvent The event object
+		 * Handles the topics received via the sandbox attached to this module.
+		 * @param {Object} oTopic The topic object
 		 */
-		processEvents : function ( oEvent )
+		processTopics : function ( oTopic )
 		{
-			var sType = oEvent.type,
-				oData = oEvent.data;
+			var sTopicName = oTopic.name,
+				oData = oTopic.data;
 
-			switch ( sType )
+			switch ( sTopicName )
 			{
 				case 'user:connected':
-					_oDomUtils.append( this.oContainer, '<p>'+ new Date + '> Connexion : '+oData.username+'</p>' );
+					_oDomUtils.append( this.oContainer, '<p>'+ new Date + '> connexion : '+oData.username+'</p>' );
 					break;
 
 				case 'user:disconnected':
-					_oDomUtils.append( this.oContainer, '<p>'+ new Date + '> Disconnexion : '+oData.username+'</p>' );
+					_oDomUtils.append( this.oContainer, '<p>'+ new Date + '> disconnexion : '+oData.username+'</p>' );
 					break;
 
 				default:

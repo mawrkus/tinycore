@@ -1,3 +1,5 @@
+TinyCore.debugMode = true;
+
 var oDummyModule = {
 		onStart : function() {},
 		onStop : function () {}
@@ -23,7 +25,7 @@ describe( 'TinyCore', function ()
 		expect( TinyCore.getModules ).toBeFunction();
 		expect( TinyCore.SandBox ).toBeObject();
 		expect( TinyCore.ErrorHandler ).toBeObject();
-		expect( TinyCore.debugMode ).toBeFalsy();
+		expect( TinyCore.debugMode ).toBeTruthy();
 	} );
 } );
 
@@ -326,7 +328,7 @@ describe( 'TinyCore.SandBox.create', function ()
 			jasmine.Clock.useMock();
 		} );
 
-		it( 'the new sandbox should be able to subscribe to and to publish events', function ()
+		it( 'the new sandbox should be able to subscribe to and to publish topics', function ()
 		{
 			var oData = {
 				bAllSystemsActive : true,
@@ -338,10 +340,10 @@ describe( 'TinyCore.SandBox.create', function ()
 
 			jasmine.Clock.tick( 10 ); // Should be enough.
 
-			expect( fpHandler ).toHaveBeenCalledWith( { type : 'channel:object:action', data : oData } );
+			expect( fpHandler ).toHaveBeenCalledWith( { name : 'channel:object:action', data : oData } );
 		} );
 
-		it( 'the new sandbox should be able to subscribe to and to publish multiple events', function ()
+		it( 'the new sandbox should be able to subscribe to and to publish multiple topìcs', function ()
 		{
 			var oData1 = {
 					bAllSystemsActive : false,
@@ -360,11 +362,11 @@ describe( 'TinyCore.SandBox.create', function ()
 			jasmine.Clock.tick( 10 ); // Should be enough.
 
 			expect( fpHandler.calls.length ).toEqual( 2 );
-			expect( fpHandler.calls[0].args[0] ).toEqual( { type : 'start-com', data : oData1 } );
-			expect( fpHandler.calls[1].args[0] ).toEqual( { type : 'start-heat', data : oData2 } );
+			expect( fpHandler.calls[0].args[0] ).toEqual( { name : 'start-com', data : oData1 } );
+			expect( fpHandler.calls[1].args[0] ).toEqual( { name : 'start-heat', data : oData2 } );
 		} );
 
-		it( 'the new sandbox should not be able to subscribe twice to an event', function ()
+		it( 'the new sandbox should not be able to subscribe twice to a topic', function ()
 		{
 			oSandBox.subscribe( 'reset-lab', fpHandler );
 			oSandBox.subscribe( 'reset-lab', fpHandler );
@@ -375,7 +377,7 @@ describe( 'TinyCore.SandBox.create', function ()
 			expect( fpHandler.calls.length ).toEqual( 1 );
 		} );
 
-		it( 'the new sandbox should be able to publish an event that will be received by another sandbox', function ()
+		it( 'the new sandbox should be able to publish a topic that will be received by another sandbox', function ()
 		{
 			var oData = {
 					bAllSystemsActive : false,
@@ -391,15 +393,31 @@ describe( 'TinyCore.SandBox.create', function ()
 			jasmine.Clock.tick( 10 ); // Should be enough.
 
 			expect( fpHandler.calls.length ).toEqual( 2 );
-			expect( fpHandler.calls[0].args[0] ).toEqual( { type : 'stop-engine', data : oData } );
-			expect( fpHandler.calls[1].args[0] ).toEqual( { type : 'stop-heat', data : undefined } );
+			expect( fpHandler.calls[0].args[0] ).toEqual( { name : 'stop-engine', data : oData } );
+			expect( fpHandler.calls[1].args[0] ).toEqual( { name : 'stop-heat', data : undefined } );
+		} );
+
+		it( 'the new sandbox should be able to subscribe to a topic and to choose the handler context', function ()
+		{
+			var oFuelSystem = { nFuelLeft : 88 },
+				fpDecFuel = function ( oTopic )
+				{
+					this.nFuelLeft -= oTopic.data.nDecFuel;
+				};
+
+			oSandBox.subscribe( 'fuel-down', fpDecFuel, oFuelSystem );
+			oSandBox.publish( 'fuel-down', { nDecFuel : 3 } );
+
+			jasmine.Clock.tick( 10 ); // Should be enough.
+
+			expect( oFuelSystem.nFuelLeft ).toEqual( 85 );
 		} );
 	} );
 } );
 
 describe( 'TinyCore.SandBox.unSubscribe', function ()
 {
-	it( 'should unSubscribe properly from subscribed events', function ()
+	it( 'should unSubscribe properly from subscribed topics', function ()
 	{
 		var oSandBox = TinyCore.SandBox.create(),
 			fpHandler = jasmine.createSpy();
@@ -423,7 +441,7 @@ describe( 'TinyCore.SandBox.unSubscribe', function ()
 
 describe( 'TinyCore.SandBox.unSubscribeAll', function ()
 {
-	it( 'should unSubscribe properly from all subscribed events', function ()
+	it( 'should unSubscribe properly from all subscribed topics', function ()
 	{
 		var oSandBox = TinyCore.SandBox.create(),
 			fpHandler = jasmine.createSpy();
@@ -580,10 +598,10 @@ describe( 'TinyCore.isStarted', function ()
 	it( 'should return true for a registered module that is started', function ()
 	{
 		TinyCore.register( 'zero-g', fpDummyCreator );
-		
+
 		TinyCore.start( 'zero-g' );
 
-		expect( TinyCore.isStarted( 'zero-g' ) ) .toBeTruthy();	
+		expect( TinyCore.isStarted( 'zero-g' ) ) .toBeTruthy();
 	} );
 } );
 
@@ -670,7 +688,7 @@ describe( 'TinyCore.startAll', function ()
 			return oWheel3;
 		} );
 
-		TinyCore.startAll( { 
+		TinyCore.startAll( {
 			'wheel1'  : { nCoeff : 5 },
 			'wheel3'  : { nCoeff : 15 }
 		} );
@@ -761,7 +779,7 @@ describe( 'TinyCore.startAll', function ()
 			return oCharger3;
 		} );
 
-		TinyCore.startAll( ['charger2', 'charger3'], { 
+		TinyCore.startAll( ['charger2', 'charger3'], {
 			'charger3'  : { nInc : 25 }
 		} );
 

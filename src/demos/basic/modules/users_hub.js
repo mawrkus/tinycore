@@ -41,7 +41,7 @@ TinyCore.register( 'users_hub', function ( oSandBox )
 
 			setTimeout( function ()
 			{
-				oSandBox.publish( 'user:message', { text : 'Well, silently...' } ); // Won't be displayed.
+				oSandBox.publish( 'user:message', { username : 'mawkus', text : 'time to leave...' } ); // Won't be displayed.
 				oSandBox.publish( 'user:disconnected', { username : 'mawkus' } );
 			}, 4500 );
 		}
