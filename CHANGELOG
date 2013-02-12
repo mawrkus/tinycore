@@ -1,4 +1,4 @@
-February 13, 2013 - v0.1.1
+February 12, 2013 - v0.1.1
 
 * Sandbox : solve small naming inconsistencies in the sandbox pub-sub system, we're now using "topics" instead of "events" (thanks to joseprio).
 * Sandbox : added an optional context argument to the subscribe method.

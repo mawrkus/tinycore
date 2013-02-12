@@ -65,7 +65,7 @@ TinyCore.register( 'users_monitoring', function ( oSandBox )
 
 Note that, although it's a best practice to add both *onStart* and *onStop* methods when registering a module, the only mandatory method you have to implement is *onStart*.
 
-Furthermore, a module can use the default *bus events system* provided by the sandbox to communicate with other parts of the application :
+Furthermore, a module can use the default *mediator* [^note-mediator] provided by the sandbox to communicate with other parts of the application :
 
 ```js
 TinyCore.register( 'users_monitoring', function ( oSandBox )
@@ -78,7 +78,7 @@ TinyCore.register( 'users_monitoring', function ( oSandBox )
 		onStart : function ( oStartData )
 		{
 			this.oContainer = document.getElementById( oStartData.containerID );
-			oSandBox.subscribe( 'user:connected', this.processUserEvents );
+			oSandBox.subscribe( 'user:connected', this.processUserActivity );
 		},
 		/**
 		 * This method will be called when the module is stopped.
@@ -90,15 +90,17 @@ TinyCore.register( 'users_monitoring', function ( oSandBox )
 			oSandBox.publish( 'monitoring:stop' );
 		},
 		/**
-		 * Handles the events received via the sandbox attached to this module.
-		 * @param {Object} oEvent The event object
+		 * Handles the topics received.
+		 * @param {Object} oTopic The topic object
+		 * @param {String} oTopic.name The topic name
+		 * @param {String} oTopic.data The data associated to the topic
 		 */
-		processUserEvents : function ( oEvent )
+		processUserActivity : function ( oTopic )
 		{
-			var sType = oEvent.type,
-				oData = oEvent.data;
+			var sName = oTopic.name,
+				oData = oTopic.data;
 
-			switch ( sType )
+			switch ( sName )
 			{
 				case 'user:connected':
 					// Do something with oData
@@ -148,13 +150,13 @@ TinyCore.SandBox = {
 };
 ```
 
-The default sandbox that will be created and passed to each module implements a very simple bus events system :
+The default sandbox that will be created and passed to each module implements a simple publish/subscribe system :
 
 ```js
 var oSandboxPrototype = {
-	subscribe : function ( aEventsTypes, fpHandler ) {},
-	publish : function ( sEventType, oData ) {},
-	unSubscribe : function ( aEventsTypes ) {},
+	subscribe : function ( aTopics, fpHandler, oContext ) {},
+	publish : function ( sTopic, oData ) {},
+	unSubscribe : function ( aTopics ) {},
 	unSubscribeAll : function () {}
 };
 ```
@@ -190,9 +192,9 @@ This will create a new module sandbox  with this augmented API :
 ```js
 var oCustomSandbox = {
 	// Default sandbox functions.
-	subscribe : function ( aEventsTypes, fpHandler ) {},
-	publish : function ( sEventType, oData ) {},
-	unSubscribe : function ( aEventsTypes ) {},
+	subscribe : function ( aTopics, fpHandler, oContext ) {},
+	publish : function ( sTopic, oData ) {},
+	unSubscribe : function ( aTopics ) {},
 	unSubscribeAll : function () {},
 	// Custom functions.
 	utils : {
@@ -206,7 +208,7 @@ var oCustomSandbox = {
 
 The benefit of this approach is to be able to decide which set of functionalities each module can have access to.
 
-For instance, some modules could have access to AJAX/DOM functions while others could not, some modules should be able to publish events while others not. Some modules could use optimized versions of certain functions, etc.
+For instance, some modules could have access to AJAX/DOM functions while others could not, some modules should be able to publish topics while others not. Some modules could use optimized or experimental versions of certain functions, etc.
 
 ### C. Core
 
@@ -241,7 +243,7 @@ The *getModules* method returns all the modules that have been registered.
 
 ## Extensions
 
-- TinyCore's Extended API (*isStarted, startAll, stopAll, destroy, destroyAll, registerAndStart*)
+- TinyCore's Extended API (*isStarted*, *startAll*, *stopAll*, *destroy*, *destroyAll*, *registerAndStart*)
 - AMD modules definition and loading via [require.js](http://requirejs.org)
 
 ## Creators
@@ -254,3 +256,5 @@ The *getModules* method returns all the modules that have been registered.
 - Full API documentation
 - More demos
 - More extensions
+
+[^note-mediator]: See Addy Osmani's ["Learning JavaScript Design Patterns"](http://addyosmani.com/resources/essentialjsdesignpatterns/book/#mediatorpatternjavascript) book for a good description of this pattern.

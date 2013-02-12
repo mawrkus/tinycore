@@ -185,7 +185,7 @@
 			return {
 				/**
 				 * Subscribes to one or more topics
-				 * @param {String|Array} aTopics A string or an array of topics to subscribe to
+				 * @param {String|Array} aTopics A topic or an array of topics to subscribe to
 				 * @param {Function} fpHandler The event handler
 				 * @param {Object} oContext Optional, the context in which the handler should be executed
 				 */
@@ -250,8 +250,8 @@
 				},
 
 				/**
-				 * Unsubscribes from one or more events
-				 * @param {String|Array} aTopics A string or an array of topics to unsubscribe from
+				 * Unsubscribes from one or more topics
+				 * @param {String|Array} aTopics A topic or an array of topics to unsubscribe from
 				 */
 				unSubscribe : function ( aTopics )
 				{
@@ -270,7 +270,7 @@
 				},
 
 				/**
-				 * Unsubscribes from all subscribed events
+				 * Unsubscribes from all subscribed topics
 				 */
 				unSubscribeAll : function ()
 				{
