@@ -8,11 +8,11 @@
 {
 	'use strict';
 
-	var oTC = oEnv.TinyCore, 
+	var TinyCore = oEnv.TinyCore, 
 		require = oEnv.require,
 		define = oEnv.define;
 
-	if ( !oTC )
+	if ( !TinyCore )
 	{
 		throw new Error( 'Cannot add AMD extension to TinyCore: TinyCore seems to be missing!' );
 	}
@@ -47,7 +47,7 @@
 		 */
 		onError : function ( eError )
 		{
-			oTC.ErrorHandler.log( 'Error loading module(s) "'+eError.requireModules+'": '+eError.message );	
+			TinyCore.ErrorHandler.log( 'Error loading module(s) "'+eError.requireModules+'": '+eError.message );	
 		},
 		/**
 		 * Loads and registers asynchronously modules using require.js and Asynchronous Module Definition
@@ -58,6 +58,7 @@
 		{
 			require( aModulesNames, function ()
 			{
+				// We receive all the creator functions as arguments
 				var aModulesCreators = Array.prototype.slice.call( arguments, 0 ),
 					nModulesCount = aModulesCreators.length,
 					nModuleIndex = 0,
@@ -66,10 +67,10 @@
 				for ( ; nModuleIndex < nModulesCount; nModuleIndex++ )
 				{
 					sModuleName = aModulesNames[nModuleIndex];
-					oTC.register( sModuleName, aModulesCreators[nModuleIndex] );
+					TinyCore.register( sModuleName, aModulesCreators[nModuleIndex] );
 				};
 
-				fpCallback.call( oTC );
+				fpCallback.call( TinyCore );
 			} );
 		},
 
@@ -92,10 +93,10 @@
 				for ( ; nModuleIndex < nModulesCount; nModuleIndex++ )
 				{
 					sModuleName = aModulesNames[nModuleIndex];
-					oTC.start( sModuleName, oModulesStartData[sModuleName] );
+					TinyCore.start( sModuleName, oModulesStartData[sModuleName] );
 				};
 
-				fpCallback.call( oTC );
+				fpCallback.call( TinyCore );
 			} );
 		}
 	};
@@ -104,5 +105,5 @@
 	require.onError = _oAMD.onError;
 
 	// Add the extension to TinyCore.
-	oTC.extend( { AMD : _oAMD } );
+	TinyCore.extend( { AMD : _oAMD } );
 } ( this ) );

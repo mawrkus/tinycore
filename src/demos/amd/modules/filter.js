@@ -7,13 +7,13 @@ define( function ()
 			{
 				console.info( 'Starting filter module...', oStartData );
 
-				oSandBox.subscribe( 'app:chart:stop', function ( oTopic )
+				oSandBox.subscribe( 'chart:stop', function ( oTopic )
 				{
-					console.log( 'Filter module received a notification :', oTopic.name, oTopic.data );
+					console.log( 'Filter module received a chart notification :', oTopic.name, oTopic.data );
 				} );
 
-				oSandBox.publish( 'app:filter:reset' );
-				oSandBox.publish( 'app:filter:change', { endDate : new Date() } );
+				oSandBox.publish( 'filter:reset' );
+				oSandBox.publish( 'filter:change', { endDate : new Date() } );
 			}
 		};
 	};

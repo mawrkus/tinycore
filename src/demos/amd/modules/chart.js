@@ -7,9 +7,9 @@ define( ['lib/plot.js'], function ( oPlot )
 			{
 				console.info( 'Starting chart module...', oStartData );
 
-				oSandBox.subscribe( ['app:filter:change', 'app:filter:reset'], function ( oTopic )
+				oSandBox.subscribe( ['filter:change', 'filter:reset'], function ( oTopic )
 				{
-					console.log( 'Chart module received a notification : ', oTopic.name, oTopic.data );
+					console.log( 'Chart module received a filter notification : ', oTopic.name, oTopic.data );
 				} );
 
 				console.log( 'Chart can use plot lib', oPlot );
@@ -20,7 +20,7 @@ define( ['lib/plot.js'], function ( oPlot )
 			onStop : function ()
 			{
 				console.info( 'Stopping chart module...' );
-				oSandBox.publish( 'app:chart:stop');
+				oSandBox.publish( 'chart:stop' );
 			}
 		};
 	};

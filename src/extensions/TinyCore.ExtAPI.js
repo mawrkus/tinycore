@@ -7,7 +7,9 @@
 {
 	'use strict';
 
-	if ( !oEnv.TinyCore )
+	var TinyCore = oEnv.TinyCore;
+
+	if ( !TinyCore )
 	{
 		throw new Error( 'Cannot extend TinyCore\'s API: TinyCore seems to be missing!' );
 	}
@@ -16,18 +18,6 @@
 
 	// Improve minification
 	var _true_ = true, _false_ = false, _null_ = null;
-
-	/**
-	 * ...
-	 * @type {Function}
-	 * @param {Object} oObject
-	 * @param {String} sPropName
-	 * @return {String}
-	*/
-	var _fpHasOwnProperty = function ( oObject, sPropName )
-	{
-		return oObject.hasOwnProperty( sPropName );
-	};
 
 	/**
 	 * ...
@@ -41,6 +31,59 @@
 	};
 
 	/**
+	 * Runs through all the properties of an object, applying a callback function on each of them.
+	 * @type {Function}
+	 * @param {Object} oObject
+	 * @param {Function} fpCallback
+	 */
+	var _fpForEach = function ( oObject, fpCallback )
+	{
+		var sProperty = '';
+
+		for ( sProperty in oObject )
+		{
+			if ( oObject.hasOwnProperty( sProperty ) )
+			{
+				fpCallback( oObject[sProperty], sProperty );
+			}
+		}
+	};
+
+	/**
+	 * Applies a TinyCore method to some modules or to all modules by default.
+	 * @param  {String} sMethodName
+	 * @param  {Array|Object} aModulesNamesOrExtraParam An array of module names or an object containing some extra parameter.
+	 * @param  {Object} oExtraParam Optional, some extra parameter, used only if aModulesNamesOrExtraParam is an array. 
+	 */
+	var _fpApplyToAll = function ( sMethodName, aModulesNamesOrExtraParam, oExtraParam )
+	{
+		var nIndex = 0,
+			nModulesCount = 0,
+			fpMethod = TinyCore[sMethodName],
+			sModuleName = '';
+
+		if ( _fpIsClass( aModulesNamesOrExtraParam, 'Array' ) )
+		{
+			oExtraParam = oExtraParam || {};
+
+			for ( nModulesCount = aModulesNamesOrExtraParam.length ; nIndex < nModulesCount; nIndex++ )
+			{
+				sModuleName = aModulesNamesOrExtraParam[nIndex];
+				fpMethod.call( TinyCore, sModuleName, oExtraParam[sModuleName] );
+			}
+		}
+		else
+		{
+			oExtraParam = aModulesNamesOrExtraParam || {};
+
+			_fpForEach( TinyCore.getModules(), function ( oModule, sModuleName )
+			{
+				fpMethod.call( TinyCore, sModuleName, oExtraParam[sModuleName] );
+			} );
+		}
+	};
+
+	/**
 	 * The core extended API
 	 * @type {Object}
 	 */
@@ -49,7 +92,7 @@
 		 * Current version
 		 * @type {String}
 		 */
-		extVersion : '0.1.0',
+		extVersion : '0.1.1',
 
 		/**
 		 * Returns true if a module is started, false if not
@@ -65,39 +108,12 @@
 		/**
 		 * Starts a selected set of modules or all modules
 		 * If the first parameter is not an array, then all modules will be started 
-		 * @param {Array|Object} oMixed Optional, an array containing the modules names to start or an object that will be passed as a parameter to each start method
-		 * @param {Object} oStartData Optional, the data to be passed to each module's start method
+		 * @param {Array|Object} aModulesNames Optional, an array containing the modules names to start or an object containing the start data for each module
+		 * @param {Object} oStartData Optional, the object containing the start data for each module
 		 */
-		startAll : function ( oMixed, oStartData )
+		startAll : function ( aModulesNamesOrStartData, oOptionalStartData )
 		{
-			var nIndex = 0,
-				nModulesCount = 0,
-				sCurrentModuleName = '',
-				oModules = _null_;
-
-			if ( _fpIsClass( oMixed, 'Array' ) )
-			{
-				oStartData = oStartData || {};
-
-				for ( nModulesCount = oMixed.length ; nIndex < nModulesCount; nIndex++ )
-				{
-					sCurrentModuleName = oMixed[nIndex];
-					this.start( sCurrentModuleName, oStartData[sCurrentModuleName] );
-				}
-			}
-			else
-			{
-				oStartData = oMixed || {};
-				oModules = this.getModules();
-
-				for ( sCurrentModuleName in oModules )
-				{
-					if ( _fpHasOwnProperty( oModules, sCurrentModuleName ) )
-					{
-						this.start( sCurrentModuleName, oStartData[sCurrentModuleName] );
-					}
-				}
-			}	
+			_fpApplyToAll( 'start', aModulesNamesOrStartData, oOptionalStartData );
 		},
 
 		/**
@@ -107,30 +123,7 @@
 		 */
 		stopAll : function ( aModulesNames )
 		{
-			var nIndex = 0,
-				nModulesCount = 0,
-				sCurrentModuleName = '',
-				oModules = _null_;
-
-			if ( _fpIsClass( aModulesNames, 'Array' ) )
-			{
-				for ( nModulesCount = aModulesNames.length ; nIndex < nModulesCount; nIndex++ )
-				{
-					this.stop( aModulesNames[nIndex] );
-				}
-			}
-			else
-			{
-				oModules = this.getModules();
-
-				for ( sCurrentModuleName in oModules )
-				{
-					if ( _fpHasOwnProperty( oModules, sCurrentModuleName ) )
-					{
-						this.stop( sCurrentModuleName );
-					}
-				}
-			}
+			_fpApplyToAll( 'stop', aModulesNames );
 		},
 
 		/**
@@ -159,30 +152,7 @@
 		 */
 		destroyAll : function ( aModulesNames )
 		{
-			var nIndex = 0,
-				nModulesCount = 0,
-				sCurrentModuleName = '',
-				oModules = _null_;
-
-			if ( _fpIsClass( aModulesNames, 'Array' ) )
-			{
-				for ( nModulesCount = aModulesNames.length ; nIndex < nModulesCount; nIndex++ )
-				{
-					this.destroy( aModulesNames[nIndex] );
-				}
-			}
-			else
-			{
-				oModules = this.getModules();
-
-				for ( sCurrentModuleName in oModules )
-				{
-					if ( _fpHasOwnProperty( oModules, sCurrentModuleName ) )
-					{
-						this.destroy( sCurrentModuleName );
-					}
-				}
-			}
+			_fpApplyToAll( 'destroy', aModulesNames );
 		},
 
 		/**
@@ -249,5 +219,5 @@
 	};
 
 	// Add the new methods to TinyCore.
-	oEnv.TinyCore.extend( _oTinyCoreExt );
+	TinyCore.extend( _oTinyCoreExt );
 } ( this ) );

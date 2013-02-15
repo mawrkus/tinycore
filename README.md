@@ -1,5 +1,7 @@
 
-# TinyCore.js
+# TinyCore.js 
+
+`Version 0.2.0`
 
 ## Overview
 
@@ -11,10 +13,11 @@ Inspiration : "Scalable JavaScript Application Architecture", by Nicholas C. Zak
 
 ## Features
 
-- Around 2Kb minified
+- Around 2.5Kb minified
 - Extensible
 - Supports unit testing of the modules
 - Supports async modules loading using AMD and [require.js](http://requirejs.org) (less than 1Kb extension)
+- Tested under IE7+, Safari 5.1, Opera 12, Chrome 24 and Firefox 18
 
 ## Description
 
@@ -65,7 +68,7 @@ TinyCore.register( 'users_monitoring', function ( oSandBox )
 
 Note that, although it's a best practice to add both *onStart* and *onStop* methods when registering a module, the only mandatory method you have to implement is *onStart*.
 
-Furthermore, a module can use the default *mediator* [1] provided by the sandbox to communicate with other parts of the application :
+Furthermore, a module can use the default *mediator* [1] provided by the sandbox to communicate (publish/subscribe topics) with other parts of the application :
 
 ```js
 TinyCore.register( 'users_monitoring', function ( oSandBox )
@@ -78,16 +81,17 @@ TinyCore.register( 'users_monitoring', function ( oSandBox )
 		onStart : function ( oStartData )
 		{
 			this.oContainer = document.getElementById( oStartData.containerID );
-			oSandBox.subscribe( 'user:connected', this.processUserActivity );
+			oSandBox.subscribe( ['user:connected', 'user:disconnected'], this.processUserActivity, this );
+			oSandBox.publish( 'monitoring:start', { timestamp : +new Date } );
 		},
 		/**
 		 * This method will be called when the module is stopped.
 		 */
 		onStop : function ()
 		{
-			oSandBox.unSubscribe( 'user:connected' );
+			oSandBox.publish( 'monitoring:stop', { timestamp : +new Date } );
+			oSandBox.unSubscribe( 'user:connected', 'user:disconnected'] );
 			this.oContainer = null;
-			oSandBox.publish( 'monitoring:stop' );
 		},
 		/**
 		 * Handles the topics received.
@@ -103,7 +107,11 @@ TinyCore.register( 'users_monitoring', function ( oSandBox )
 			switch ( sName )
 			{
 				case 'user:connected':
-					// Do something with oData
+					// Do something with the data associated to the topic
+					break;
+
+				case 'user:disconnected':
+					// Do something with the data associated to the topic
 					break;
 
 				default:
@@ -118,6 +126,54 @@ TinyCore.register( 'users_monitoring', function ( oSandBox )
 	};
 } );
 ```
+
+An alternative would be to use automatic topics subscription, by adding a *topics* property to the module :
+
+```js
+TinyCore.register( 'users_monitoring', function ( oSandBox )
+{
+	return {
+		/**
+		 * This method will be called when the module is started.
+		 * @param {Object} oStartData Data passed to this module when started
+		 */
+		onStart : function ( oStartData )
+		{
+			this.oContainer = document.getElementById( oStartData.containerID );
+			oSandBox.publish( 'monitoring:start', { timestamp : +new Date } );
+		},
+		/**
+		 * This method will be called when the module is stopped.
+		 */
+		onStop : function ()
+		{
+			oSandBox.publish( 'monitoring:stop', { timestamp : +new Date } );
+			this.oContainer = null;
+		},
+		/**
+		 * The topics and their related handlers.
+		 * @type {Object}
+		 */
+		topics : {
+			'user:connected' : function ( oTopic )
+			{
+				// Do something with the data associated to the topic
+			},
+			'user:disconnected' : function ( oTopic )
+			{
+				// Do something with the data associated to the topic
+			}
+		},
+		/**
+		 * The container element used to display user activity.
+		 * @type {DOM Element}
+		 */
+		oContainer : null
+	};
+} );
+```
+
+In this case, all subscriptions will be made when the module is started and removed when the module is stopped.
 
 #### Starting a module
 
@@ -146,11 +202,11 @@ The sandbox factory API has only two methods :
 ```js
 TinyCore.SandBox = {
 	register : function ( sSandBoxType, oNewSandBox ) {},
-	create : function ( sSandBoxType ) {}
+	build : function ( sSandBoxType ) {}
 };
 ```
 
-The default sandbox that will be created and passed to each module implements a simple publish/subscribe system :
+By default, each module will received a sandbox that only implements a simple publish/subscribe system :
 
 ```js
 var oSandboxPrototype = {
@@ -176,7 +232,7 @@ TinyCore.SandBox.register( 'dom_and_utils', {
 } );
 ```
 
-When registering a module, you can specify this new type using the last parameter :
+Then, when registering a module, you can specify the sandbox type using the last parameter :
 
 ```js
 TinyCore.register( 'users_monitoring', function ( oSandBox ) {
@@ -187,7 +243,7 @@ TinyCore.register( 'users_monitoring', function ( oSandBox ) {
 }, 'dom_and_utils' );
 ```
 
-This will create a new module sandbox  with this augmented API :
+This will build a new module sandbox with this augmented API :
 
 ```js
 var oCustomSandbox = {
@@ -214,21 +270,21 @@ For instance, some modules could have access to AJAX/DOM functions while others 
 
 - Manages modules *lifecycles* : start/stop modules.
 - Enables *inter-modules communication* via notifications to the sandbox.
-- Handles errors : detect, trap and report.
+- Handles errors : detect, trap and report errors.
 
 The core API :
 
 ```js
 var TinyCore = {
 	extend : function ( oTinyExtension ) {},
-	register : function ( sModuleID, fpCreator ) {},
-	start : function ( sModuleID, oStartData, sSandBoxType ) {},
-	stop : function ( sModuleID ) {},
+	register : function ( sModuleName, fpCreator ) {},
+	start : function ( sModuleName, oStartData, sSandBoxType ) {},
+	stop : function ( sModuleName ) {},
 	instanciate : function ( sModuleName ) {},
 	getModules : function () {},
 	SandBox : {
 		register : function ( sSandBoxType, oNewSandBox ) {},
-		create : function ( sSandBoxType ) {}
+		build : function ( sSandBoxType ) {}
 	},
 	ErrorHandler : {
 		log : function ( sMsg ) {}
@@ -238,13 +294,92 @@ var TinyCore = {
 
 The *extend* method is used to add extensions to TinyCore.  
 The *instanciate* method returns a module's instance that can be used for unit tests.  
-The *getModules* method returns all the modules that have been registered.  
+The *getModules* method returns all the modules that have been registered, useful when developing an extension.  
 *ErrorHandler.log* is just a wrapper over the console.error function.
 
 ## Extensions
 
-- TinyCore's Extended API : *isStarted* , *startAll* , *stopAll* , *destroy* , *destroyAll* , *registerAndStart*
-- AMD modules definition and loading via [require.js](http://requirejs.org)
+### 1. TinyCore's Extended API : 1.5Kb
+
+`Version 0.1.1`
+
+```js
+var TinyCoreExtAPI = {
+	isStarted : function ( sModuleName ) {},
+	startAll : function ( aModulesNamesOrStartData, oOptionalStartData ) {},
+	stopAll : function ( aModulesNames ) {},
+	destroy : function ( sModuleName ) {},
+	destroyAll : function ( aModulesNames ) {},
+	registerAndStart : function ( sModuleName, fpCreator, sSandBoxType ) {},
+	ErrorHandler : {
+		log : function ( sMsg ) {}
+	}
+};
+```
+
+The *destroy* method will stop and remove completely a module from TinyCore.  
+*ErrorHandler.log* implements a fallback when the console does not exist : the messages are logged in a DOM container.
+
+### 2. Asynchronous Module Definition : less than 1Kb
+
+`Version 0.1.0`
+
+Modules definition and asynchronous loading via [require.js](http://requirejs.org) [2].  
+It is basically a wrapper over *define* and *require* :
+
+```js
+var TinyCore.AMD = {
+	config : function ( oSettings ) {},
+	onError : function ( eError ) {},
+	register : function ( aModulesNames, fpCallback ) {},
+	registerAndStart : function ( aModulesNames, oModulesStartData, fpCallback ) {}
+};
+```
+
+The callback parameter of the *register* methods allows you to execute some code when all modules are registered (and started in the case of *registerAndStart*) :
+
+```js
+TinyCore.AMD.config( {
+	baseUrl : 'modules'
+} );
+
+TinyCore.AMD.registerAndStart( ['chart', 'filter'], { 
+	'chart' : { type : 'pie', colors : true },
+	'filter' : { startDate : new Date() }
+}, function ()
+{
+	console.info( 'Modules loaded and started!', this );
+} );
+```
+
+An AMD module can be defined like this :
+
+```js
+define( ['lib/plot.js'], function ( oPlot )
+{
+	// We must return the function that will create the module
+	return function ( oSandBox )
+	{
+		return  {
+			onStart : function ( oStartData )
+			{
+				oSandBox.subscribe( ['filter:change', 'filter:reset'], function ( oTopic )
+				{
+					// Do something with this topic
+				} );
+
+				// Let's use the plot library!
+				oPlot.init();
+				oPlot.draw( oStartData.graphType );
+			},
+			onStop : function ()
+			{
+				oSandBox.publish( 'chart:stop');
+			}
+		};
+	};
+} );
+```
 
 ## Creators
 
@@ -253,8 +388,10 @@ The *getModules* method returns all the modules that have been registered.
 
 ## RoadMap
 
+- Add a source map
 - Full API documentation
 - More demos
 - More extensions
 
-[1]: See Addy Osmani's ["Learning JavaScript Design Patterns"](http://addyosmani.com/resources/essentialjsdesignpatterns/book/#mediatorpatternjavascript) book for a good description of this pattern.
+[1]: See Addy Osmani's ["Learning JavaScript Design Patterns"](http://addyosmani.com/resources/essentialjsdesignpatterns/book/#mediatorpatternjavascript) book for a good description of this pattern.  
+[2]: require.js and AMD : [http://requirejs.org](http://requirejs.org)

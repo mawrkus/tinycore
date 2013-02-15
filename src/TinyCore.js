@@ -13,18 +13,6 @@
 	var _true_ = true, _false_ = false, _null_ = null;
 
 	/**
-	 * A wrapper over hasOwnProperty
-	 * @type {Function}
-	 * @param {Object} oObject
-	 * @param {String} sPropName
-	 * @return {String}
-	*/
-	var _fpHasOwnProperty = function ( oObject, sPropName )
-	{
-		return oObject.hasOwnProperty( sPropName );
-	};
-
-	/**
 	 * A good way to determine the class of an object
 	 * @type {Function}
 	 * @param {Mixed} oMixed
@@ -36,6 +24,36 @@
 	};
 
 	/**
+	 * Determine if the paramater is a function
+	 * @type {Function}
+	 * @param {Mixed} oMixed
+	 * @return {Boolean}
+	*/
+	var _fpIsFunction = function ( oMixed )
+	{
+		return _fpIsClass( oMixed, 'Function' );
+	};
+
+	/**
+	 * Runs through all the properties of an object, applying a callback function on each of them.
+	 * @type {Function}
+	 * @param {Object} oObject
+	 * @param {Function} fpCallback
+	 */
+	var _fpForEach = function ( oObject, fpCallback )
+	{
+		var sProperty = '';
+
+		for ( sProperty in oObject )
+		{
+			if ( oObject.hasOwnProperty( sProperty ) )
+			{
+				fpCallback( oObject[sProperty], sProperty );
+			}
+		}
+	};
+
+	/**
 	 * Merges recursively two objects by adding the source object properties to the destination object
 	 * @type {Function}
 	 * @param {Object} oDest The destination object
@@ -44,25 +62,17 @@
 	*/
 	var _fpMerge = function ( oDest, oSrc )
 	{
-		var oProp = _null_,
-			sPropName = '';
-
 		oDest = oDest || {};
 
-		for ( sPropName in oSrc )
+		_fpForEach( oSrc, function ( oSrcProp, sSrcPropName )
 		{
-			if ( _fpHasOwnProperty( oSrc, sPropName ) )
+			if ( _fpIsClass( oSrcProp, 'Object' ) )
 			{
-				oProp = oSrc[sPropName];
-
-				if ( _fpIsClass( oProp, 'Object' ) )
-				{
-					oProp = _fpMerge( oDest[sPropName], oProp );
-				}
-
-				oDest[sPropName] = oProp;
+				oSrcProp = _fpMerge( oDest[sSrcPropName], oSrcProp );
 			}
-		}
+
+			oDest[sSrcPropName] = oSrcProp;
+		} );
 
 		return oDest;
 	};
@@ -88,7 +98,7 @@
 	*/
 	var _fpTryCatchDecorator = function ( fpFunc, oContext, sErrMsg )
 	{
-		var fpDecoratedFunc = null;
+		var fpDecoratedFunc = _null_;
 
 		if ( fpFunc.__decorated__ )
 		{
@@ -107,7 +117,7 @@
 			}
 		};
 
-		fpDecoratedFunc.__decorated__ = true;
+		fpDecoratedFunc.__decorated__ = _true_;
 
 		return fpDecoratedFunc;
 	};
@@ -195,7 +205,7 @@
 						nIndex = 0,
 						sTopic = '';
 
-					if ( _fpIsClass( fpHandler, 'Function' ) )
+					if ( _fpIsFunction( fpHandler ) )
 					{
 						aTopics = _fpIsClass( aTopics, 'Array' ) ? aTopics : [aTopics];
 
@@ -206,13 +216,13 @@
 
 							if ( !_oTopic2Subs[sTopic][_sSubID] )
 							{
-								// Decorate the handler by wrapping it into a try-catch statement
+								// Decorate the handler
 								_oTopic2Subs[sTopic][_sSubID] = _oTinyCore.debugMode ?
-																	function ()
-																	{
-																		fpHandler.apply( oContext, _fpToArray( arguments ) );
-																	}
-																	: _fpTryCatchDecorator( fpHandler, oContext, 'Error publishing topic "' + sTopic + '": ' );
+									function ()
+									{
+										fpHandler.apply( oContext, _fpToArray( arguments ) );
+									}
+									: _fpTryCatchDecorator( fpHandler, oContext, 'Error publishing topic "' + sTopic + '": ' );
 
 								_oSub2Topics[_sSubID] = _oSub2Topics[_sSubID] || [];
 								_oSub2Topics[_sSubID].push( sTopic );
@@ -228,23 +238,17 @@
 				 */
 				publish : function ( sTopic, oData )
 				{
-					var oSubs = _oTopic2Subs[sTopic],
-						oSubData = null;
+					var oSubs = _oTopic2Subs[sTopic];
 
 					if ( oSubs )
 					{
 						// Don't block the main thread
 						oEnv.setTimeout( function ()
 						{
-							var sID = '';
-
-							for ( sID in oSubs )
+							_fpForEach( oSubs, function ( fpHandler )
 							{
-								if ( _fpHasOwnProperty( oSubs, sID ) )
-								{
-									oSubs[sID]( { name : sTopic, data : oData } );
-								}
-							}
+								fpHandler( { name : sTopic, data : oData } );
+							} );
 						}, 0 );
 					}
 				},
@@ -284,11 +288,11 @@
 
 		return {
 			/**
-			 * Creates a new sandbox
+			 * Builds a new sandbox
 			 * @param {String} sType Optional, the sandbox type
 			 * @return {Object} The new sandbox
 			 */
-			create : function ( sType )
+			build : function ( sType )
 			{
 				return _fpMerge( _fpCreatePrototype( ++_nSandBoxesCount ), _oSandBoxes[sType] || {} );
 			},
@@ -345,20 +349,26 @@
 	 */
 	var _fpCreateModuleInstance = function ( sModuleName )
 	{
-		var oSandBox = _oSandBoxFactory.create( _oModules[sModuleName].sSandBoxType ),
-			oInstance = _oModules[sModuleName].fpCreator( oSandBox ),
-			sPropName = '';
+		var oSandBox = _oSandBoxFactory.build( _oModules[sModuleName].sSandBoxType ),
+			oInstance = _oModules[sModuleName].fpCreator( oSandBox );
 
 		if ( !_oTinyCore.debugMode )
 		{
 			// Decorate the instance's methods by wrapping them into a try-catch statement
-			for ( sPropName in oInstance )
+			_fpForEach( oInstance, function ( oInstanceProp, sInstancePropName )
 			{
-				if ( _fpHasOwnProperty( oInstance, sPropName ) && _fpIsClass( oInstance[sPropName], 'Function' ) )
+				if ( _fpIsFunction( oInstanceProp ) )
 				{
-					oInstance[sPropName] = _fpTryCatchDecorator( oInstance[sPropName], oInstance, 'Error in module "'+sModuleName+'" executing method "'+sPropName+'": ' );
+					oInstance[sInstancePropName] = _fpTryCatchDecorator( oInstanceProp, oInstance, 'Error in module "'+sModuleName+'" executing method "'+sInstancePropName+'": ' );
 				}
-			}
+				else if ( sInstancePropName === 'topics' )
+				{
+					_fpForEach( oInstanceProp, function ( fpHandler, sTopic )
+					{
+						oSandBox.subscribe( sTopic, fpHandler, oInstance );
+					} );
+				}
+			} );
 		}
 
 		oInstance.__sandbox__ = oSandBox;
@@ -375,7 +385,7 @@
 		 * Current version
 		 * @type {String}
 		 */
-		version : '0.1.1',
+		version : '0.2.0',
 
 		/**
 		 * Debug mode : if true, error in modules methods and topics subscribers will not be caught
@@ -399,11 +409,17 @@
 		 * @param {Function} fpCreator The function that creates and returns a module instance
 		 * @param {String} sSandBoxType Optional, the type of sandbox to provide to the module's instance
 		 * @return {Boolean} Whether the module has been successfully registered or not
+		 * @throws {Error} If the creator is not a function
 		 */
 		register : function ( sModuleName, fpCreator, sSandBoxType )
 		{
 			if ( !_oModules[sModuleName] )
 			{
+				if ( !_fpIsFunction( fpCreator ) )
+				{
+					throw new Error( 'The creator of module "'+sModuleName+'" is not a function!' );	
+				}
+
 				_oModules[sModuleName] = {
 					fpCreator	: fpCreator,
 					sSandBoxType : sSandBoxType || '',
@@ -445,7 +461,7 @@
 
 			if ( _oModules[sModuleName].bIsStarted && _oModules[sModuleName].oInstance )
 			{
-				if ( _fpIsClass( _oModules[sModuleName].oInstance.onStop, 'Function' ) )
+				if ( _fpIsFunction( _oModules[sModuleName].oInstance.onStop ) )
 				{
 					_oModules[sModuleName].oInstance.onStop();
 				}

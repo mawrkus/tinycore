@@ -1,7 +1,7 @@
 /**
  * A users monitoring module.
  * This module is responsible for listening to users activity and to display some related infos on the screen.
- * Note that this module will have access to dom and utils functions through its sandbox.
+ * Note that this module will have access to dom and utils functions through its sandbox (see register's last argument).
  */
 TinyCore.register( 'users_monitoring', function ( oSandBox )
 {

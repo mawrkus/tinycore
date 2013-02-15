@@ -15,7 +15,7 @@ var oDummyModule = {
 
 describe( 'TinyCore', function ()
 {
-	it( 'the interface should contain some properties : extend, register, start, stop, instanciate, getModules, SandBox, ErrorHandler and debugMode', function ()
+	it( 'should have an interface with the following methods/properties : extend, register, start, stop, instanciate, getModules, SandBox, ErrorHandler and debugMode', function ()
 	{
 		expect( TinyCore.extend ).toBeFunction();
 		expect( TinyCore.register ).toBeFunction();
@@ -31,6 +31,14 @@ describe( 'TinyCore', function ()
 
 describe( 'TinyCore.register', function ()
 {
+	it( 'should throw an error when trying to register a module without passing a creator function', function ()
+	{
+		expect( function ()
+		{
+			TinyCore.register( 'afterburner0' );
+		} ).toThrow();
+	} );
+
 	it( 'should register properly a module', function ()
 	{
 		var bResult = TinyCore.register( 'afterburner1', fpDummyCreator );
@@ -295,30 +303,30 @@ describe( 'TinyCore.start and TinyCore.stop', function ()
 
 describe( 'TinyCore.SandBox', function ()
 {
-	it( 'the interface should contain some properties : create and register', function ()
+	it( 'should have an interface with the following methods/properties : register and build', function ()
 	{
-		expect( TinyCore.SandBox.create ).toBeFunction();
 		expect( TinyCore.SandBox.register ).toBeFunction();
+		expect( TinyCore.SandBox.build ).toBeFunction();
 	} );
 } );
 
-describe( 'TinyCore.SandBox.create', function ()
+describe( 'TinyCore.SandBox.build', function ()
 {
-	var oSandBox = TinyCore.SandBox.create();
+	var oSandBox = TinyCore.SandBox.build();
 
-	it( 'should create properly a new sandbox having the publish and subscribe methods', function ()
+	it( 'should build properly a new sandbox having the publish and subscribe methods', function ()
 	{
 		expect( oSandBox ).toBeObject();
 		expect( oSandBox.publish ).toBeFunction();
 		expect( oSandBox.subscribe ).toBeFunction();
 	} );
 
-	it( 'should create unique sandbox objects', function ()
+	it( 'should build unique sandbox objects', function ()
 	{
-		expect( oSandBox ).not.toEqual( TinyCore.SandBox.create() );
+		expect( oSandBox ).not.toEqual( TinyCore.SandBox.build() );
 	} );
 
-	describe( 'subscribe and publish', function ()
+	describe( 'A new sandbox, using subscribe and publish', function ()
 	{
 		var fpHandler = null;
 
@@ -328,7 +336,7 @@ describe( 'TinyCore.SandBox.create', function ()
 			jasmine.Clock.useMock();
 		} );
 
-		it( 'the new sandbox should be able to subscribe to and to publish topics', function ()
+		it( 'should be able to subscribe to and to publish topics', function ()
 		{
 			var oData = {
 				bAllSystemsActive : true,
@@ -343,7 +351,7 @@ describe( 'TinyCore.SandBox.create', function ()
 			expect( fpHandler ).toHaveBeenCalledWith( { name : 'channel:object:action', data : oData } );
 		} );
 
-		it( 'the new sandbox should be able to subscribe to and to publish multiple topìcs', function ()
+		it( 'should be able to subscribe to and to publish multiple topìcs', function ()
 		{
 			var oData1 = {
 					bAllSystemsActive : false,
@@ -366,7 +374,7 @@ describe( 'TinyCore.SandBox.create', function ()
 			expect( fpHandler.calls[1].args[0] ).toEqual( { name : 'start-heat', data : oData2 } );
 		} );
 
-		it( 'the new sandbox should not be able to subscribe twice to a topic', function ()
+		it( 'should not be able to subscribe twice to a topic', function ()
 		{
 			oSandBox.subscribe( 'reset-lab', fpHandler );
 			oSandBox.subscribe( 'reset-lab', fpHandler );
@@ -377,13 +385,13 @@ describe( 'TinyCore.SandBox.create', function ()
 			expect( fpHandler.calls.length ).toEqual( 1 );
 		} );
 
-		it( 'the new sandbox should be able to publish a topic that will be received by another sandbox', function ()
+		it( 'should be able to publish a topic that will be received by another sandbox', function ()
 		{
 			var oData = {
 					bAllSystemsActive : false,
 					nFuelLeft : 13
 				},
-				oOtherSandBox = TinyCore.SandBox.create();
+				oOtherSandBox = TinyCore.SandBox.build();
 
 			oOtherSandBox.subscribe( ['stop-com', 'stop-engine', 'stop-heat'], fpHandler );
 
@@ -397,7 +405,7 @@ describe( 'TinyCore.SandBox.create', function ()
 			expect( fpHandler.calls[1].args[0] ).toEqual( { name : 'stop-heat', data : undefined } );
 		} );
 
-		it( 'the new sandbox should be able to subscribe to a topic and to choose the handler context', function ()
+		it( 'should be able to subscribe to a topic and to choose the handler context', function ()
 		{
 			var oFuelSystem = { nFuelLeft : 88 },
 				fpDecFuel = function ( oTopic )
@@ -419,7 +427,7 @@ describe( 'TinyCore.SandBox.unSubscribe', function ()
 {
 	it( 'should unSubscribe properly from subscribed topics', function ()
 	{
-		var oSandBox = TinyCore.SandBox.create(),
+		var oSandBox = TinyCore.SandBox.build(),
 			fpHandler = jasmine.createSpy();
 
 		jasmine.Clock.useMock();
@@ -443,7 +451,7 @@ describe( 'TinyCore.SandBox.unSubscribeAll', function ()
 {
 	it( 'should unSubscribe properly from all subscribed topics', function ()
 	{
-		var oSandBox = TinyCore.SandBox.create(),
+		var oSandBox = TinyCore.SandBox.build(),
 			fpHandler = jasmine.createSpy();
 
 		jasmine.Clock.useMock();
@@ -478,7 +486,7 @@ describe( 'TinyCore.SandBox.register', function ()
 
 		expect( bRegistered ).toBeTruthy();
 
-		oNewSandbox = TinyCore.SandBox.create( 'devel_env' );
+		oNewSandbox = TinyCore.SandBox.build( 'devel_env' );
 
 		expect( oNewSandbox ).toBeObject();
 		expect( oNewSandbox.publish ).toBeFunction();
@@ -501,7 +509,7 @@ describe( 'TinyCore.SandBox.register', function ()
 		expect( bRegistered ).toBeFalsy();
 	} );
 
-	it( 'should properly register and create a custom sandbox and provide it to a new module when started', function ()
+	it( 'should properly register and build a custom sandbox and provide it to a new module when started', function ()
 	{
 		var oRyeSandBox = null,
 			oDojoSandBox = null,
@@ -522,8 +530,8 @@ describe( 'TinyCore.SandBox.register', function ()
 			}
 		} ) ).toBeTruthy();
 
-		oDojoSandBox = TinyCore.SandBox.create( 'dojo_toolkit' );
-		oRyeSandBox = TinyCore.SandBox.create( 'rye_toolkit' );
+		oDojoSandBox = TinyCore.SandBox.build( 'dojo_toolkit' );
+		oRyeSandBox = TinyCore.SandBox.build( 'rye_toolkit' );
 
 		expect( oDojoSandBox ).toBeObject();
 		expect( oRyeSandBox ).toBeObject();
@@ -532,12 +540,14 @@ describe( 'TinyCore.SandBox.register', function ()
 		{
 			return oDojoMoves;
 		}, 'dojo_toolkit' );
+
 		TinyCore.start( 'dojo_moves' );
 
 		TinyCore.register( 'catcher_in_the_rye', function ( oSandBox )
 		{
 			return oCatcherInTheRye;
 		}, 'rye_toolkit' );
+
 		TinyCore.start( 'catcher_in_the_rye' );
 
 		expect( oDojoMoves.__sandbox__.name ).toEqual( 'Dojo' );
@@ -554,7 +564,7 @@ describe( 'TinyCore.SandBox.register', function ()
 
 describe( 'TinyCore.ErrorHandler', function ()
 {
-	it( 'the interface should contain a property : log', function ()
+	it( 'should have an interface with the following methods/properties : log', function ()
 	{
 		expect( TinyCore.ErrorHandler.log ).toBeFunction();
 	} );
@@ -566,7 +576,7 @@ describe( 'TinyCore.ErrorHandler', function ()
 
 describe( 'TinyCore : extended API', function ()
 {
-	it( 'the TinyCore interface should contain these extended properties : startAll, stopAll, destroy, destroyAll, isStarted and registerAndStart', function ()
+	it( 'should should contain these extended methods/properties : startAll, stopAll, destroy, destroyAll, isStarted and registerAndStart', function ()
 	{
 		expect( TinyCore.startAll ).toBeFunction();
 		expect( TinyCore.stopAll ).toBeFunction();
@@ -580,19 +590,19 @@ describe( 'TinyCore.isStarted', function ()
 {
 	it( 'should return false for an unknown module', function ()
 	{
-		expect( TinyCore.isStarted( '?' ) ) .toBeFalsy();
+		expect( TinyCore.isStarted( '?' ) ).toBeFalsy();
 	} );
 
 	it( 'should return false for an undefined module name', function ()
 	{
-		expect( TinyCore.isStarted() ) .toBeFalsy();
+		expect( TinyCore.isStarted() ).toBeFalsy();
 	} );
 
 	it( 'should return false for a registered module that is not started', function ()
 	{
 		TinyCore.register( 'gyroscope', fpDummyCreator );
 
-		expect( TinyCore.isStarted( 'gyroscope' ) ) .toBeFalsy();
+		expect( TinyCore.isStarted( 'gyroscope' ) ).toBeFalsy();
 	} );
 
 	it( 'should return true for a registered module that is started', function ()
@@ -601,7 +611,7 @@ describe( 'TinyCore.isStarted', function ()
 
 		TinyCore.start( 'zero-g' );
 
-		expect( TinyCore.isStarted( 'zero-g' ) ) .toBeTruthy();
+		expect( TinyCore.isStarted( 'zero-g' ) ).toBeTruthy();
 	} );
 } );
 
@@ -824,7 +834,7 @@ describe( 'TinyCore.stopAll', function ()
 		expect( TinyCore.isStarted( 'gps3' ) ).toBeFalsy();
 	} );
 
-	it( 'stopAll then startAll should restart all stopped modules', function ()
+	it( 'should not prevent startAll to restart all stopped modules', function ()
 	{
 		var oModules = TinyCore.getModules();
 
@@ -971,7 +981,7 @@ describe( 'TinyCore.registerAndStart', function ()
 
 describe( 'TinyCore.AMD', function ()
 {
-	it( 'the AMD interface should contain some properties : config, register and registerAndStart', function ()
+	it( 'should have an interface with the following methods/properties : config, register and registerAndStart', function ()
 	{
 		expect( TinyCore.AMD ).toBeObject();
 		expect( TinyCore.AMD.config ).toBeFunction();

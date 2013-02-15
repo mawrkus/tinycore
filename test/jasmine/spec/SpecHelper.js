@@ -8,6 +8,6 @@ beforeEach( function ()
 		toBeObject : function ()
 		{
 			return Object.prototype.toString.call( this.actual ) === '[object Object]';
-		},
-	});
+		}
+	} );
 });
