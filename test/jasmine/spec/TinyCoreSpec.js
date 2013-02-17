@@ -975,6 +975,39 @@ describe( 'TinyCore.registerAndStart', function ()
 	} );
 } );
 
+describe( 'TinyCore.instanciate', function ()
+{
+	it( 'should enable automatic topics subscriptions', function ()
+	{
+		var fpTooLowSpy = jasmine.createSpy(),
+			fpTooHighSpy = jasmine.createSpy(),
+			oSandBox = TinyCore.SandBox.build();
+
+		jasmine.Clock.useMock();
+
+		TinyCore.register( 'fridge', function ( oSandBox )
+		{
+			return {
+				onStart : function () {},
+				onStop : function () {},
+				topics : {
+					'temperature:too-low' : fpTooLowSpy,
+					'temperature:too-high' : fpTooHighSpy
+				}
+			};
+		} );
+
+		TinyCore.instanciate( 'fridge' );
+		oSandBox.publish( 'temperature:too-low' );
+		oSandBox.publish( 'temperature:too-high' );
+
+		jasmine.Clock.tick( 10 ); // Should be enough.
+
+		expect( fpTooLowSpy ).toHaveBeenCalled();
+		expect( fpTooHighSpy ).toHaveBeenCalled();
+	} );
+} );
+
 /**
  * ------- AMD MODULES + REQUIRE TESTS -------
  */

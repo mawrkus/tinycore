@@ -342,41 +342,6 @@
 	};
 
 	/**
-	 * Creates a new module instance
-	 * @type {Function}
-	 * @param  {String} sModuleName The module name
-	 * @return {Object} The new module instance
-	 */
-	var _fpCreateModuleInstance = function ( sModuleName )
-	{
-		var oSandBox = _oSandBoxFactory.build( _oModules[sModuleName].sSandBoxType ),
-			oInstance = _oModules[sModuleName].fpCreator( oSandBox );
-
-		if ( !_oTinyCore.debugMode )
-		{
-			// Decorate the instance's methods by wrapping them into a try-catch statement
-			_fpForEach( oInstance, function ( oInstanceProp, sInstancePropName )
-			{
-				if ( _fpIsFunction( oInstanceProp ) )
-				{
-					oInstance[sInstancePropName] = _fpTryCatchDecorator( oInstanceProp, oInstance, 'Error in module "'+sModuleName+'" executing method "'+sInstancePropName+'": ' );
-				}
-				else if ( sInstancePropName === 'topics' )
-				{
-					_fpForEach( oInstanceProp, function ( fpHandler, sTopic )
-					{
-						oSandBox.subscribe( sTopic, fpHandler, oInstance );
-					} );
-				}
-			} );
-		}
-
-		oInstance.__sandbox__ = oSandBox;
-
-		return oInstance;
-	};
-
-	/**
 	 * The core
 	 * @type {Object}
 	 */
@@ -385,7 +350,7 @@
 		 * Current version
 		 * @type {String}
 		 */
-		version : '0.2.0',
+		version : '0.3.0',
 
 		/**
 		 * Debug mode : if true, error in modules methods and topics subscribers will not be caught
@@ -477,9 +442,29 @@
 		 */
 		instanciate : function ( sModuleName )
 		{
+			var oSandBox = _null_,
+				oInstance = _null_;
+
 			_fpCheckModuleRegistration( sModuleName );
 
-			return _fpCreateModuleInstance( sModuleName );
+			oSandBox = _oSandBoxFactory.build( _oModules[sModuleName].sSandBoxType );
+			oInstance = _oModules[sModuleName].fpCreator( oSandBox );
+
+			if ( !_oTinyCore.debugMode )
+			{
+				// Decorate the instance's methods by wrapping them into a try-catch statement
+				_fpForEach( oInstance, function ( oInstanceProp, sInstancePropName )
+				{
+					if ( _fpIsFunction( oInstanceProp ) )
+					{
+						oInstance[sInstancePropName] = _fpTryCatchDecorator( oInstanceProp, oInstance, 'Error in module "'+sModuleName+'" executing method "'+sInstancePropName+'": ' );
+					}
+				} );
+			}
+
+			oInstance.__sandbox__ = oSandBox;
+
+			return oInstance;
 		},
 
 		/**

@@ -1,3 +1,10 @@
+February 17, 2013 - v0.3.0
+
+* Core / ExtAPI v0.2.0 : moved automatic topics subscription to the ExtAPI extension.
+* UT : added missing tests for the automatic topics subscription.
+* Demos : update accordingly.
+* Doc : update accordingly.
+
 February 14, 2013 - v0.2.0
 
 * Core / ExtAPI v0.1.1 : added various DRY improvements that helped reducing the amount of code.

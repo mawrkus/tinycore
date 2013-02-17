@@ -92,7 +92,30 @@
 		 * Current version
 		 * @type {String}
 		 */
-		extVersion : '0.1.1',
+		extVersion : '0.2.0',
+
+		/**
+		 * Instanciates a module and add automatic topics subscriptions if the "topics" property is present
+		 * @param {String} sModuleName The module name
+		 * @return {Object} The module instance
+		 */
+		instanciate : ( function ( fpOrigInstanciate )
+		{
+			return function ( sModuleName )
+			{
+				var oInstance = fpOrigInstanciate( sModuleName );
+				
+				if ( oInstance.topics )
+				{
+					_fpForEach( oInstance.topics, function ( fpHandler, sTopic )
+					{
+						oInstance.__sandbox__.subscribe( sTopic, fpHandler, oInstance );
+					} );
+				}
+
+				return oInstance;
+			};
+		} ( TinyCore.instanciate ) ),
 
 		/**
 		 * Returns true if a module is started, false if not

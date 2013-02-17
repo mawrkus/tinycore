@@ -1,7 +1,7 @@
 
 # TinyCore.js 
 
-`Version 0.2.0`
+`Version 0.3.0`
 
 ## Overview
 
@@ -127,53 +127,7 @@ TinyCore.register( 'users_monitoring', function ( oSandBox )
 } );
 ```
 
-An alternative would be to use automatic topics subscription, by adding a *topics* property to the module :
-
-```js
-TinyCore.register( 'users_monitoring', function ( oSandBox )
-{
-	return {
-		/**
-		 * This method will be called when the module is started.
-		 * @param {Object} oStartData Data passed to this module when started
-		 */
-		onStart : function ( oStartData )
-		{
-			this.oContainer = document.getElementById( oStartData.containerID );
-			oSandBox.publish( 'monitoring:start', { timestamp : +new Date } );
-		},
-		/**
-		 * This method will be called when the module is stopped.
-		 */
-		onStop : function ()
-		{
-			oSandBox.publish( 'monitoring:stop', { timestamp : +new Date } );
-			this.oContainer = null;
-		},
-		/**
-		 * The topics and their related handlers.
-		 * @type {Object}
-		 */
-		topics : {
-			'user:connected' : function ( oTopic )
-			{
-				// Do something with the data associated to the topic
-			},
-			'user:disconnected' : function ( oTopic )
-			{
-				// Do something with the data associated to the topic
-			}
-		},
-		/**
-		 * The container element used to display user activity.
-		 * @type {DOM Element}
-		 */
-		oContainer : null
-	};
-} );
-```
-
-In this case, all subscriptions will be made when the module is started and removed when the module is stopped.
+An alternative would be to use automatic topics subscription (see TinyCore's extended API extension).
 
 #### Starting a module
 
@@ -299,12 +253,13 @@ The *getModules* method returns all the modules that have been registered, usefu
 
 ## Extensions
 
-### 1. TinyCore's Extended API : 1.5Kb
+### 1. TinyCore's Extended API : around 1.5Kb
 
-`Version 0.1.1`
+`Version 0.2.0`
 
 ```js
 var TinyCoreExtAPI = {
+	instanciate : function ( sModuleName ) {},
 	isStarted : function ( sModuleName ) {},
 	startAll : function ( aModulesNamesOrStartData, oOptionalStartData ) {},
 	stopAll : function ( aModulesNames ) {},
@@ -319,6 +274,54 @@ var TinyCoreExtAPI = {
 
 The *destroy* method will stop and remove completely a module from TinyCore.  
 *ErrorHandler.log* implements a fallback when the console does not exist : the messages are logged in a DOM container.
+
+This extension also redefines the *instanciate* method to allow automatic topics subscriptions, just by adding the *topics* property :
+
+```js
+TinyCore.register( 'users_monitoring', function ( oSandBox )
+{
+	return {
+		/**
+		 * This method will be called when the module is started.
+		 * @param {Object} oStartData Data passed to this module when started
+		 */
+		onStart : function ( oStartData )
+		{
+			this.oContainer = document.getElementById( oStartData.containerID );
+			oSandBox.publish( 'monitoring:start', { timestamp : +new Date } );
+		},
+		/**
+		 * This method will be called when the module is stopped.
+		 */
+		onStop : function ()
+		{
+			oSandBox.publish( 'monitoring:stop', { timestamp : +new Date } );
+			this.oContainer = null;
+		},
+		/**
+		 * The topics and their related handlers.
+		 * @type {Object}
+		 */
+		topics : {
+			'user:connected' : function ( oTopic )
+			{
+				// Do something with the data associated to the topic
+			},
+			'user:disconnected' : function ( oTopic )
+			{
+				// Do something with the data associated to the topic
+			}
+		},
+		/**
+		 * The container element used to display user activity.
+		 * @type {DOM Element}
+		 */
+		oContainer : null
+	};
+} );
+```
+
+In this case, all subscriptions will be made when the module is started and removed when the module is stopped.
 
 ### 2. Asynchronous Module Definition : less than 1Kb
 
