@@ -17,7 +17,7 @@ TinyCore.register( 'users_monitoring', function ( oSandBox )
 		 */
 		onStart : function ( oStartData )
 		{
-			this.oContainer = _oDomUtils.getById( oStartData.containerID );
+			this.oContainer = this.oContainer || _oDomUtils.getById( oStartData.containerID );
 
 			_oDomUtils.append( this.oContainer, '<p class="sys_msg">Starting users monitoring...</p>' );
 		},
@@ -28,7 +28,14 @@ TinyCore.register( 'users_monitoring', function ( oSandBox )
 		onStop : function ()
 		{
 			_oDomUtils.append( this.oContainer, '<p class="sys_msg">Stopping users monitoring...</p>' );
+		},
 
+		/**
+		 * This method will be called when the module is destroyed.
+		 */
+		onDestroy : function ()
+		{
+			_oDomUtils.append( this.oContainer, '<p class="sys_msg">Destroying users monitoring...</p>' );
 			this.oContainer = null;
 		},
 

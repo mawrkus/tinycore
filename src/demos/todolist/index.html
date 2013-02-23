@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="utf-8">
+		<title>TinyCore /// todo list</title>
+
+		<link rel="stylesheet" href="css/todo.css">
+
+		<script type="text/javascript" src="../../TinyCore.js"></script>
+
+		<script type="text/javascript" src="sandboxes/domlib.js"></script>
+		<script type="text/javascript" src="sandboxes/storage.js"></script>
+
+		<script type="text/javascript" src="modules/todo_form.js"></script>
+		<script type="text/javascript" src="modules/todo_list.js"></script>
+		<script type="text/javascript" src="modules/todo_summary.js"></script>
+		<script type="text/javascript" src="modules/todo_store.js"></script>
+	</head>
+	<body>
+		<div id="container">
+			<h1>A simple todo list app (with localStorage support)</h1>
+			<form id="todo-form">
+				<input id="todo-input" placeholder="Enter your comma-separated todos..." />
+				<input id="todo-submit" type="submit" value="Add" />
+			</form>
+			<div id="summary">
+				<p>
+					<span id="count-done"></span>/<span id="count-total"></span> todo(s) completed - <a href="#" id="clear-completed" class="clear">clear completed</a> - <a href="#" id="clear-list" class="clear">clear all</a>
+				</p>
+			</div>
+			<table class="todo-table">
+				<thead>
+					<tr>
+						<th class="cell-check"></th>
+						<th>Name</th>
+					</tr>
+				</thead>
+				<tbody id="todo-list">
+				</tbody>
+			</table>
+		</div>
+
+		<script type="text/javascript">
+			document.body.onload = function ()
+			{
+				TinyCore.start( 'todo_form' );
+				TinyCore.start( 'todo_list' );
+				TinyCore.start( 'todo_summary' );
+				TinyCore.start( 'todo_store' ); // optional
+			};
+		</script>
+	</body>
+</html>

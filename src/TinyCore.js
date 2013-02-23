@@ -109,7 +109,7 @@
 		{
 			try
 			{
-				fpFunc.apply( oContext, _fpToArray( arguments ) );
+				return fpFunc.apply( oContext, _fpToArray( arguments ) );
 			}
 			catch ( eError )
 			{
@@ -350,7 +350,7 @@
 		 * Current version
 		 * @type {String}
 		 */
-		version : '0.3.0',
+		version : '0.3.1',
 
 		/**
 		 * Debug mode : if true, error in modules methods and topics subscribers will not be caught

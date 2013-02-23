@@ -1,0 +1,76 @@
+body {
+	font-family: Georgia, serif;
+	font-size: 12px;
+	color:#333;
+}
+
+#container {
+	width: 760px;
+	margin: 0 auto;
+	position: relative;
+}
+
+/* Form */
+#todo-input {
+	border:1px solid #aaa;
+	padding:6px 12px;
+	width:260px;
+}
+#todo-input:hover, #todo-input:focus {
+	border:1px solid #666;
+}
+#todo-submit {
+	border:1px solid #aaa;
+	padding:5px 12px;
+	color:#666;
+}
+#todo-submit:hover {
+	border:1px solid #666;
+	cursor: pointer;
+	color:#333;
+}
+
+/* Summary */
+#summary {
+	text-align:right;
+	position: relative;
+	top:28px;
+	right:8px;
+}
+#summary .clear {
+	text-decoration: none;
+	color:#FF3300;
+}
+#summary #clear-list:hover {
+	text-decoration: underline;
+}
+
+/* Table */
+.todo-table {
+	border-collapse: collapse;
+	width: 100%;
+}
+.todo-table th {
+	text-align: left;
+	border-bottom:1px solid #333;
+	padding:2px;
+	font-size: 13px;
+}
+.todo-table td {
+	text-align: left;
+	padding:2px;
+}
+.todo-table tbody tr:hover {
+	background-color: #eee;
+	cursor: default;
+}
+.cell-check {
+	width:16px;
+}
+.todo-remove:hover {
+	font-weight: bold;
+}
+.done .todo-name {
+	text-decoration: line-through;
+	color:#999;
+}

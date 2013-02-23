@@ -1,3 +1,9 @@
+February 23, 2013 - v0.3.1
+
+* Core : fixed a bug in _fpTryCatchDecorator where the result of the original function call was not returned.
+* Demos : added the classic "todo list" demo.
+* Demos : added more API usage in the "extapi" demo.
+
 February 17, 2013 - v0.3.0
 
 * Core / ExtAPI v0.2.0 : moved automatic topics subscription to the ExtAPI extension.
@@ -20,8 +26,8 @@ February 12, 2013 - v0.1.1
 * Sandbox : solve small naming inconsistencies in the sandbox pub-sub system, we are now using "topics" instead of "events" (thanks to joseprio).
 * Sandbox : added an optional context argument to the subscribe method.
 * Core : remove deep methods decoration because when subscribing, if the handler is a method of an object defined as a property of the module itself, the context of execution cannot be set correctly.
-* Sandbox : subscribers handlers are now also wrapped into a try-catch statement
+* Sandbox : subscribers handlers are now also wrapped into a try-catch statement.
 
 February 10, 2013 - v0.1.0
 
-* Initial release
+* Initial release.
