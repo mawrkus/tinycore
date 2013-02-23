@@ -23,7 +23,7 @@ February 14, 2013 - v0.2.0
 
 February 12, 2013 - v0.1.1
 
-* Sandbox : solve small naming inconsistencies in the sandbox pub/sub system. We are now using "topics" instead of "events" (thanks to joseprio).
+* Sandbox : solve small naming inconsistencies in the sandbox pub/sub system (we are now using "topics" instead of "events", thanks to joseprio).
 * Sandbox : added an optional context argument to the subscribe method.
 * Core : remove deep methods decoration because when subscribing, if the handler is a method of an object defined as a property of the module itself, the context of execution cannot be set correctly.
 * Sandbox : subscribers handlers are now also wrapped into a try-catch statement.
