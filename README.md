@@ -19,6 +19,16 @@ Inspiration : "Scalable JavaScript Application Architecture", by Nicholas C. Zak
 - Supports async modules loading using AMD and [require.js](http://requirejs.org) (less than 1Kb extension)
 - Tested under IE7+, Safari 5.1, Opera 12, Chrome 24 and Firefox 18
 
+## Usage
+
+Include TinyCore.js :
+
+```html
+	<script type="text/javascript" src="TinyCore.js"></script> 
+```
+
+This will give you access to the global variable `TinyCore`.
+
 ## Description
 
 The framework is composed of :
