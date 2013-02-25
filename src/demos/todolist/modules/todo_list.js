@@ -93,9 +93,9 @@ TinyCore.register( 'todo_list', function ( oSandBox )
 		{
 			var sClass = bDone ? 'done' : '',
 				sCheckedAttr = bDone ? ' checked="checked"' : '',
-				sRow = '<tr id="todo-row-'+sTodoID+'" class="todo-row '+sClass+'"><td class="cell-check"><input type="checkbox" class="todo-check" value="'+sTodoID+'"'+sCheckedAttr+' /></td><td class="todo-name" id="todo-name-'+sTodoID+'">'+sTodoName+'</td></tr>';
+				sRow = '<li id="todo-item-'+sTodoID+'" class="todo-item '+sClass+'"><span class="cell-check"><input type="checkbox" class="todo-check" value="'+sTodoID+'"'+sCheckedAttr+' /></span><span class="todo-name" id="todo-name-'+sTodoID+'">'+sTodoName+'</span></li>';
 
-			_dom.prepend( _oList, sRow );
+			_dom.append( _oList, sRow );
 		},
 
 		/**
@@ -123,7 +123,7 @@ TinyCore.register( 'todo_list', function ( oSandBox )
 		{
 			var oCurrentTodo = null;
 
-			_dom.html( _oList, '' );
+			_dom.html( _oList, '<li id="list-header"><span class="cell-check"><input type="checkbox" /></span><span class="">Name</span></li>' );
 
 			for ( sTodoID in oList )
 			{
@@ -138,7 +138,7 @@ TinyCore.register( 'todo_list', function ( oSandBox )
 		 */
 		cropList : function ( fpFilter )
 		{
-			var aCheckboxes = _dom.getByClass( 'todo-row' ),
+			var aCheckboxes = _dom.getByClass( 'todo-item' ),
 				nCount = aCheckboxes.length,
 				oCurrentRow = null,
 				sTodoID = '',
@@ -150,7 +150,7 @@ TinyCore.register( 'todo_list', function ( oSandBox )
 
 				if ( fpFilter( oCurrentRow ) )
 				{
-					sTodoID = oCurrentRow.id.split( 'todo-row-' )[1];
+					sTodoID = oCurrentRow.id.split( 'todo-item-' )[1];
 					sTodoName = _dom.html( _dom.getById( 'todo-name-'+sTodoID ) );
 					
 					_dom.remove( oCurrentRow );

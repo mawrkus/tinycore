@@ -45,30 +45,32 @@ body {
 	text-decoration: underline;
 }
 
-/* Table */
-.todo-table {
-	border-collapse: collapse;
+/* List */
+#todo-list {
 	width: 100%;
+	margin:0;
+	padding:0;
 }
-.todo-table th {
-	text-align: left;
+#todo-list li  {
+	display: block;
+	padding:2px;
+}
+#list-header {
 	border-bottom:1px solid #333;
-	padding:2px;
+	margin-bottom:4px;
 	font-size: 13px;
+	font-weight: bold;
 }
-.todo-table td {
-	text-align: left;
-	padding:2px;
+#list-header input {
+	visibility: hidden;
 }
-.todo-table tbody tr:hover {
+#todo-list .todo-item:hover {
 	background-color: #eee;
 	cursor: default;
 }
 .cell-check {
 	width:16px;
-}
-.todo-remove:hover {
-	font-weight: bold;
+	padding-right:4px;
 }
 .done .todo-name {
 	text-decoration: line-through;

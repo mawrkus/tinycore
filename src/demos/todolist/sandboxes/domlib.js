@@ -24,9 +24,9 @@ TinyCore.SandBox.register( 'domlib_sandbox', {
 				}
 			}
 		} () ),
-		prepend : function ( oElem, sHTML)
+		append : function ( oElem, sHTML)
 		{
-			oElem.innerHTML = sHTML + oElem.innerHTML;
+			oElem.innerHTML += sHTML;
 		},
 		addClass : function ( oElement, sClass )
 		{

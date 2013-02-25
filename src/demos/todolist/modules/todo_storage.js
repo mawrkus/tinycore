@@ -1,11 +1,11 @@
 /**
- * The (optional) store module, responsible for storing/restoring the todos.
+ * The (optional) storage module, responsible for storing/restoring the todos.
  * The method chosen is defined by the storage_sandbox.
  * Note that since it does not need to manipulate the DOM, the sandbox type is different from the other modules.
  * Topics subscribed : "todo:add", "todo:update", "todo:remove"
  * Topics published : "storage:sync"
  */
-TinyCore.register( 'todo_store', function ( oSandBox )
+TinyCore.register( 'todo_storage', function ( oSandBox )
 {
 	// Shortcut and private variable.
 	var _storage = oSandBox.storage,

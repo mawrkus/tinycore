@@ -14,7 +14,7 @@
 		<script type="text/javascript" src="modules/todo_form.js"></script>
 		<script type="text/javascript" src="modules/todo_list.js"></script>
 		<script type="text/javascript" src="modules/todo_summary.js"></script>
-		<script type="text/javascript" src="modules/todo_store.js"></script>
+		<script type="text/javascript" src="modules/todo_storage.js"></script>
 	</head>
 	<body>
 		<div id="container">
@@ -28,16 +28,7 @@
 					<span id="count-done"></span>/<span id="count-total"></span> todo(s) completed - <a href="#" id="clear-completed" class="clear">clear completed</a> - <a href="#" id="clear-list" class="clear">clear all</a>
 				</p>
 			</div>
-			<table class="todo-table">
-				<thead>
-					<tr>
-						<th class="cell-check"></th>
-						<th>Name</th>
-					</tr>
-				</thead>
-				<tbody id="todo-list">
-				</tbody>
-			</table>
+			<ul id="todo-list"></ul>
 		</div>
 
 		<script type="text/javascript">
@@ -46,7 +37,7 @@
 				TinyCore.start( 'todo_form' );
 				TinyCore.start( 'todo_list' );
 				TinyCore.start( 'todo_summary' );
-				TinyCore.start( 'todo_store' ); // optional
+				TinyCore.start( 'todo_storage' ); // optional
 			};
 		</script>
 	</body>
