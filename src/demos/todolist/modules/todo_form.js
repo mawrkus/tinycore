@@ -30,6 +30,8 @@ TinyCore.register( 'todo_form', function ( oSandBox )
 			_oForm = _dom.getById( 'todo-form' );
 			_oInput = _dom.getById( 'todo-input' );
 
+			_events.focus( _oInput );
+
 			_events.bind( _oForm, 'submit', this.onFormSubmit );
 		},
 

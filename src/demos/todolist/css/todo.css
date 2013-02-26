@@ -67,6 +67,7 @@ h1 {
 #todo-list li  {
 	display: block;
 	padding:4px;
+	height: 16px;
 }
 #list-header {
 	border-bottom:1px solid #333;
@@ -89,14 +90,14 @@ h1 {
 }
 .todo-remove {
 	width:12px;
-	height:12px;
-	background: url(../img/remove.png) no-repeat;
+	height:100%;
+	background: url(../img/remove.png) no-repeat center center;
 	display: none;
 	float:right;
 	padding-right: 4px;
 }
 .todo-remove:hover {
-	background: url(../img/remove-red.png) no-repeat;
+	background-image: url(../img/remove-red.png);
 }
 #todo-list .todo-item:hover .todo-remove {
 	display: block;

@@ -7,27 +7,44 @@ TinyCore.SandBox.register( 'domlib_sandbox', {
 		{
 			return document.getElementById( sID )
 		},
+		nodesToArray : function ( aNodes )
+		{
+			var aResults = null;
+
+			try
+			{
+				aResults = Array.prototype.slice.call( aNodes ); // Non-IE and IE9+
+			}
+			catch ( erError )
+			{
+				var nIndex = 0,
+					nLength = aNodes.length;
+
+				for ( ; nIndex < nLength; nIndex++ )
+				{
+					aResults.push( aNodes[nIndex] );
+				}
+			}
+
+			return aResults;
+		},
 		getByClass : ( function ()
 		{
 			if ( !document.getElementsByClassName )
 			{
 				return function ( sClass )
 				{
-					return Array.prototype.slice.call( document.querySelectorAll( '.' + sClass ) );
+					return this.nodesToArray( document.querySelectorAll( '.' + sClass ) );
 				}
 			}
 			else
 			{
 				return function ( sClass )
 				{
-					return Array.prototype.slice.call( document.getElementsByClassName( sClass ) );
+					return this.nodesToArray( document.getElementsByClassName( sClass ) );
 				}
 			}
 		} () ),
-		append : function ( oElem, sHTML)
-		{
-			oElem.innerHTML += sHTML;
-		},
 		addClass : function ( oElement, sClass )
 		{
 			oElement.className += ' '+sClass;
@@ -51,6 +68,10 @@ TinyCore.SandBox.register( 'domlib_sandbox', {
 		{
 			return oElement.className && oElement.className.indexOf( sClass ) !== -1;
 		},
+		create : function ( sTagName )
+		{
+			return document.createElement( sTagName );
+		},
 		html : function ( oElement, sHTML )
 		{
 			if ( typeof sHTML !== 'undefined' )
@@ -62,9 +83,21 @@ TinyCore.SandBox.register( 'domlib_sandbox', {
 				return oElement.innerHTML;
 			}
 		},
+		append : function ( oContainer, oChild )
+		{
+			oContainer.appendChild( oChild );
+		},
 		remove : function ( oElement )
 		{
 			oElement.parentNode.removeChild( oElement );
+		},
+		setData : function ( oElement, sDataName, sDataValue )
+		{
+			oElement.setAttribute( 'data-'+sDataName, sDataValue );
+		},
+		getData : function ( oElement, sDataName )
+		{
+			return oElement.getAttribute( 'data-'+sDataName );
 		}
 	},
 	utils : {
@@ -179,7 +212,11 @@ TinyCore.SandBox.register( 'domlib_sandbox', {
 
 		return {
 			bind : fpAddEventHandler,
-			unbind : fpRemoveHandler
+			unbind : fpRemoveHandler,
+			focus : function ( oElement )
+			{
+				oElement.focus();
+			}
 		};
 
 	} ( document, window ) )

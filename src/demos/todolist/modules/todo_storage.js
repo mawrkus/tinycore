@@ -11,6 +11,8 @@ TinyCore.register( 'todo_storage', function ( oSandBox )
 	var _storage = oSandBox.storage,
 		_oTodos = null;
 
+	var _STORAGE_NAME = 'todos';
+
 	// The module.
 	return {
 		/**
@@ -19,7 +21,7 @@ TinyCore.register( 'todo_storage', function ( oSandBox )
 		 */
 		onStart : function ( oStartData )
 		{
-			_oTodos = _storage.get( 'todos' );
+			_oTodos = _storage.get( _STORAGE_NAME );
 
 			if ( _oTodos )
 			{
@@ -74,7 +76,7 @@ TinyCore.register( 'todo_storage', function ( oSandBox )
 			_oTodos.list[oData.id] = { name : oData.name, done : false };
 			_oTodos.total++;
 
-			_storage.set( 'todos', _oTodos );
+			_storage.set( _STORAGE_NAME, _oTodos );
 		},
 
 		/**
@@ -93,7 +95,7 @@ TinyCore.register( 'todo_storage', function ( oSandBox )
 			_oTodos.list[oData.id] = { name : oData.name, done : oData.done };
 			_oTodos.done += oData.done ? +1 : -1;
 
-			_storage.set( 'todos', _oTodos );
+			_storage.set( _STORAGE_NAME, _oTodos );
 		},
 
 		/**
@@ -117,7 +119,7 @@ TinyCore.register( 'todo_storage', function ( oSandBox )
 				_oTodos.done--;
 			}
 
-			_storage.set( 'todos', _oTodos );
+			_storage.set( _STORAGE_NAME, _oTodos );
 		},
 
 		/**

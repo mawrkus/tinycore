@@ -93,11 +93,16 @@ TinyCore.register( 'todo_list', function ( oSandBox )
 		 */
 		addTodo : function ( sTodoID, sTodoName, bDone )
 		{
-			var sClass = bDone ? 'done' : '',
+			var oLI = _dom.create( 'li' ),
+				sClass = bDone ? ' done' : '',
 				sCheckedAttr = bDone ? ' checked="checked"' : '',
-				sListItem = '<li id="todo-item-'+sTodoID+'" class="todo-item '+sClass+'"><input type="checkbox" id="todo-check-'+sTodoID+'" class="todo-check" value="'+sTodoID+'"'+sCheckedAttr+' /><span class="todo-name" id="todo-name-'+sTodoID+'">'+sTodoName+'</span><a class="todo-remove" id="todo-remove-'+sTodoID+'" title="remove '+sTodoName+'"" href="#" /></li>';
+				sLIHTML = '<input type="checkbox" id="todo-check-'+sTodoID+'" class="todo-check" value="'+sTodoID+'"'+sCheckedAttr+' /><span class="todo-name" id="todo-name-'+sTodoID+'">'+sTodoName+'</span><a class="todo-remove" id="todo-remove-'+sTodoID+'" title="remove '+sTodoName+'"" href="#" />';
 
-			_dom.append( _oList, sListItem );
+			_dom.html( oLI, sLIHTML );
+			_dom.setData( oLI, 'todo-id', sTodoID );
+			_dom.addClass( oLI, 'todo-item' + sClass );
+
+			_dom.append( _oList, oLI );
 		},
 
 		/**
@@ -160,7 +165,7 @@ TinyCore.register( 'todo_list', function ( oSandBox )
 		 */
 		toggleTodo : function ( oListItem, bDone )
 		{
-			var sTodoID = oListItem.id.split( 'todo-item-' )[1],
+			var sTodoID = _dom.getData( oListItem, 'todo-id' ),
 				oTodoName = _dom.getById( 'todo-name-'+sTodoID ),
 				sTodoName = _dom.html( oTodoName ),
 				bDone = typeof bDone === 'undefined' ? !_dom.hasClass( oListItem, 'done' ) : bDone,
@@ -200,7 +205,7 @@ TinyCore.register( 'todo_list', function ( oSandBox )
 		 */
 		removeTodo : function ( oListItem )
 		{
-			var sTodoID = oListItem.id.split( 'todo-item-' )[1],
+			var sTodoID = _dom.getData( oListItem, 'todo-id' ),
 				sTodoName = _dom.html( _dom.getById( 'todo-name-'+sTodoID ) );
 			
 			_dom.remove( oListItem );
