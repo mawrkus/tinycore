@@ -66,6 +66,11 @@ TinyCore.register( 'todo_storage', function ( oSandBox )
 		{
 			var oData = oTopic.data;
 
+			if ( _oTodos.list[oData.id] )
+			{
+				throw new Error( 'Add error : todo with ID="'+oData.id+'" already exist in storage ("'+oData.name+'")!', oData );
+			}
+
 			_oTodos.list[oData.id] = { name : oData.name, done : false };
 			_oTodos.total++;
 
@@ -80,6 +85,11 @@ TinyCore.register( 'todo_storage', function ( oSandBox )
 		{
 			var oData = oTopic.data;
 
+			if ( !_oTodos.list[oData.id] )
+			{
+				throw new Error( 'Update error : todo with ID="'+oData.id+'" does not exist in storage ("'+oData.name+'")!', oData );
+			}
+
 			_oTodos.list[oData.id] = { name : oData.name, done : oData.done };
 			_oTodos.done += oData.done ? +1 : -1;
 
@@ -93,6 +103,11 @@ TinyCore.register( 'todo_storage', function ( oSandBox )
 		removeTodo : function ( oTopic )
 		{
 			var oData = oTopic.data;
+
+			if ( !_oTodos.list[oData.id] )
+			{
+				throw new Error( 'Remove error : todo with ID="'+oData.id+'" does not exist in storage!', oData );
+			}
 
 			delete _oTodos.list[oData.id];
 			_oTodos.total--;

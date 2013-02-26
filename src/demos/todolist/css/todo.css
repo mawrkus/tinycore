@@ -1,20 +1,33 @@
 body {
 	font-family: Georgia, serif;
-	font-size: 12px;
+	font-size: 13px;
 	color:#333;
 }
 
+h1 {
+	margin: 10px 0 40px 0;
+}
+
 #container {
-	width: 760px;
-	margin: 0 auto;
+	width: 480px;
+	margin: 10px auto;
 	position: relative;
+	padding:20px 40px;
+	border: 1px solid #888;
+	-moz-box-shadow: 0 0 2px #888;
+	-ms-box-shadow: 0 0 2px #888;
+	-webkit-box-shadow: 0 0 2px #888;
+	box-shadow: 0 0 2px #888;
 }
 
 /* Form */
+#todo-form {
+	margin-bottom: 28px;
+}
 #todo-input {
 	border:1px solid #aaa;
 	padding:6px 12px;
-	width:260px;
+	width:262px;
 }
 #todo-input:hover, #todo-input:focus {
 	border:1px solid #666;
@@ -32,16 +45,16 @@ body {
 
 /* Summary */
 #summary {
-	text-align:right;
+	float: right;
 	position: relative;
-	top:28px;
-	right:8px;
+	top:5px;
+	right: 6px;
 }
 #summary .clear {
 	text-decoration: none;
 	color:#FF3300;
 }
-#summary #clear-list:hover {
+#summary .clear:hover {
 	text-decoration: underline;
 }
 
@@ -53,26 +66,38 @@ body {
 }
 #todo-list li  {
 	display: block;
-	padding:2px;
+	padding:4px;
 }
 #list-header {
 	border-bottom:1px solid #333;
 	margin-bottom:4px;
-	font-size: 13px;
-	font-weight: bold;
 }
-#list-header input {
-	visibility: hidden;
+#list-header .label {
+	font-size: 14px;
+	font-weight: bold;
 }
 #todo-list .todo-item:hover {
 	background-color: #eee;
-	cursor: default;
 }
-.cell-check {
-	width:16px;
-	padding-right:4px;
+.todo-check, .todo-check-all {
+	margin:0 8px 0 2px;
+	cursor: pointer;
 }
 .done .todo-name {
 	text-decoration: line-through;
 	color:#999;
+}
+.todo-remove {
+	width:12px;
+	height:12px;
+	background: url(../img/remove.png) no-repeat;
+	display: none;
+	float:right;
+	padding-right: 4px;
+}
+.todo-remove:hover {
+	background: url(../img/remove-red.png) no-repeat;
+}
+#todo-list .todo-item:hover .todo-remove {
+	display: block;
 }

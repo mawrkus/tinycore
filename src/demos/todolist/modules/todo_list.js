@@ -37,9 +37,9 @@ TinyCore.register( 'todo_list', function ( oSandBox )
 
 			oSandBox.subscribe( 'list:clean', function ( oTopic )
 			{
-				self.cropList( function ( oCurrentRow )
+				self.cropList( function ( oCurrentListItem )
 				{
-					return _dom.hasClass( oCurrentRow, 'done' );
+					return _dom.hasClass( oCurrentListItem, 'done' );
 				} );
 			} );
 
@@ -60,26 +60,28 @@ TinyCore.register( 'todo_list', function ( oSandBox )
 		{
 			_events.unbind( _oList, 'click', this.onListClick );
 			
-			_oList = null;
+			oList = null;
 		},
 
 		/**
-		 * This method will be called when any element of the list is clicked.
-		 * @param  {Event} eEvent The click event object
+		 * Restores a todo list.
+		 * @param  {Object} oList The object which keys are the todos IDs and values are the todos data
 		 */
-		onListClick : function ( eEvent )
+		restoreList : function ( oList )
 		{
-			var oTarget = eEvent.target;
+			var aListItems = _dom.getByClass( 'todo-item' ),
+				nCount = aListItems.length,
+				oCurrentTodo = null;
 
-			// Event delegation : let's do something only when clicking on a checkbox.
-			while ( oTarget !== _oList && !_dom.hasClass( oTarget, 'todo-check' ) )
+			while ( nCount-- )
 			{
-				oTarget = oTarget.parentNode;
+				_oDOM.remove( aListItems[nCount] );
 			}
 
-			if ( oTarget !== _oList )
+			for ( sTodoID in oList )
 			{
-				this.toggleTodo( oTarget.value );
+				oCurrentTodo = oList[sTodoID];
+				this.addTodo( sTodoID, oCurrentTodo.name, oCurrentTodo.done );
 			}
 		},
 
@@ -93,72 +95,118 @@ TinyCore.register( 'todo_list', function ( oSandBox )
 		{
 			var sClass = bDone ? 'done' : '',
 				sCheckedAttr = bDone ? ' checked="checked"' : '',
-				sRow = '<li id="todo-item-'+sTodoID+'" class="todo-item '+sClass+'"><span class="cell-check"><input type="checkbox" class="todo-check" value="'+sTodoID+'"'+sCheckedAttr+' /></span><span class="todo-name" id="todo-name-'+sTodoID+'">'+sTodoName+'</span></li>';
+				sListItem = '<li id="todo-item-'+sTodoID+'" class="todo-item '+sClass+'"><input type="checkbox" id="todo-check-'+sTodoID+'" class="todo-check" value="'+sTodoID+'"'+sCheckedAttr+' /><span class="todo-name" id="todo-name-'+sTodoID+'">'+sTodoName+'</span><a class="todo-remove" id="todo-remove-'+sTodoID+'" title="remove '+sTodoName+'"" href="#" /></li>';
 
-			_dom.append( _oList, sRow );
+			_dom.append( _oList, sListItem );
+		},
+
+		/**
+		 * This method will be called when any element of the list is clicked.
+		 * @param  {Event} eEvent The click event object
+		 */
+		onListClick : function ( eEvent )
+		{
+			var oTarget = eEvent.target;
+
+			// Event delegation.
+			while ( oTarget !== _oList )
+			{
+				if ( _dom.hasClass( oTarget, 'todo-check-all' ) )
+				{
+					this.toggleAllTodos( oTarget.checked );
+					break;
+				}
+				else if ( _dom.hasClass( oTarget, 'todo-check' ) )
+				{
+					this.toggleTodo( oTarget.parentNode );	
+					break;
+				}
+				else if ( _dom.hasClass( oTarget, 'todo-remove' ) )
+				{
+					this.removeTodo( oTarget.parentNode );
+					eEvent.preventDefault();
+					break;
+				}
+
+				oTarget = oTarget.parentNode;
+			}
+		},
+
+		/**
+		 * Toggles all todos.
+		 * @param {Boolean} bDone Whether to mark them as done or not
+		 */
+		toggleAllTodos : function ( bDone )
+		{
+			var aListItems = _dom.getByClass( 'todo-item' ),
+				nCount = aListItems.length,
+				oCurrentListItem = null;
+
+			while ( nCount-- )
+			{
+				oCurrentListItem = aListItems[nCount];
+
+				if ( bDone !== _dom.hasClass( oCurrentListItem, 'done' ) )
+				{
+					this.toggleTodo( oCurrentListItem, bDone );
+				}
+			}
 		},
 
 		/**
 		 * Toggles a todo (mark it as done or not and vice-versa, yes).
-		 * @param {String} sTodoID The todo's ID
+		 * @param {DOM Element} oListItem
+		 * @param {Boolean} bDone Optional, whether to mark them as done or not
 		 */
-		toggleTodo : function ( sTodoID )
+		toggleTodo : function ( oListItem, bDone )
 		{
-			var oTodoName = _dom.getById( 'todo-name-'+sTodoID ),
+			var sTodoID = oListItem.id.split( 'todo-item-' )[1],
+				oTodoName = _dom.getById( 'todo-name-'+sTodoID ),
 				sTodoName = _dom.html( oTodoName ),
-				oRow = oTodoName.parentNode,
-				bDone = _dom.hasClass( oRow, 'done' );
+				bDone = typeof bDone === 'undefined' ? !_dom.hasClass( oListItem, 'done' ) : bDone,
+				oCheckBox = _dom.getById( 'todo-check-'+sTodoID );
 
-			_dom.toggleClass( oRow, 'done', !bDone );
+			oCheckBox.checked = bDone;
+			_dom.toggleClass( oListItem, 'done', bDone );
 			
 			// Let's broadcast the news...
-			oSandBox.publish( 'todo:update', { name : sTodoName, id : sTodoID, done : !bDone } );
-		},
-
-		/**
-		 * Restores a todo list.
-		 * @param  {Object} oList The object which keys are the todos IDs and values are the todos data
-		 */
-		restoreList : function ( oList )
-		{
-			var oCurrentTodo = null;
-
-			_dom.html( _oList, '<li id="list-header"><span class="cell-check"><input type="checkbox" /></span><span class="">Name</span></li>' );
-
-			for ( sTodoID in oList )
-			{
-				oCurrentTodo = oList[sTodoID];
-				this.addTodo( sTodoID, oCurrentTodo.name, oCurrentTodo.done );
-			}
+			oSandBox.publish( 'todo:update', { name : sTodoName, id : sTodoID, done : bDone } );
 		},
 
 		/**
 		 * Removes the todos by using a filtering function.
-		 * @param  {Function} fpFilter A function receiving the current todo row element and returning a boolean value that indicates if the row should be removed or not
+		 * @param {Function} fpFilter A function receiving the current todo list item element and returning a boolean value that indicates if it should be removed or not
 		 */
 		cropList : function ( fpFilter )
 		{
-			var aCheckboxes = _dom.getByClass( 'todo-item' ),
-				nCount = aCheckboxes.length,
-				oCurrentRow = null,
-				sTodoID = '',
-				sTodoName = '';
+			var aListItems = _dom.getByClass( 'todo-item' ),
+				nCount = aListItems.length,
+				oCurrentListItem = null;
 
 			while ( nCount-- )
 			{
-				oCurrentRow = aCheckboxes[nCount];
+				oCurrentListItem = aListItems[nCount];
 
-				if ( fpFilter( oCurrentRow ) )
+				if ( fpFilter( oCurrentListItem ) )
 				{
-					sTodoID = oCurrentRow.id.split( 'todo-item-' )[1];
-					sTodoName = _dom.html( _dom.getById( 'todo-name-'+sTodoID ) );
-					
-					_dom.remove( oCurrentRow );
-
-					// Let's broadcast the news...
-					oSandBox.publish( 'todo:remove', { name : sTodoName, id : sTodoID, done : _dom.hasClass( oCurrentRow, 'done' ) } );
+					this.removeTodo( oCurrentListItem );
 				}
 			}
+		},
+
+		/**
+		 * Removes a todo.
+		 * @param {DOM Element} oListItem
+		 */
+		removeTodo : function ( oListItem )
+		{
+			var sTodoID = oListItem.id.split( 'todo-item-' )[1],
+				sTodoName = _dom.html( _dom.getById( 'todo-name-'+sTodoID ) );
+			
+			_dom.remove( oListItem );
+
+			// Let's broadcast the news...
+			oSandBox.publish( 'todo:remove', { name : sTodoName, id : sTodoID, done : _dom.hasClass( oListItem, 'done' ) } );
 		}
 	};	
 }, 'domlib_sandbox' );
