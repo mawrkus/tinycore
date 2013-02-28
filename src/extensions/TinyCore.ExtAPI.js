@@ -64,6 +64,7 @@
 
 		if ( _fpIsClass( aModulesNamesOrExtraParam, 'Array' ) )
 		{
+			// ( sMethodName, aModulesNamesOrExtraParam, oExtraParam )
 			oExtraParam = oExtraParam || {};
 
 			for ( nModulesCount = aModulesNamesOrExtraParam.length ; nIndex < nModulesCount; nIndex++ )
@@ -74,6 +75,7 @@
 		}
 		else
 		{
+			// ( sMethodName, oExtraParam )
 			oExtraParam = aModulesNamesOrExtraParam || {};
 
 			_fpForEach( TinyCore.getModules(), function ( oModule, sModuleName )

@@ -30,7 +30,14 @@ TinyCore.SandBox.register( 'domlib_sandbox', {
 		},
 		getByClass : ( function ()
 		{
-			if ( !document.getElementsByClassName )
+			if ( document.getElementsByClassName )
+			{
+				return function ( sClass )
+				{
+					return this.nodesToArray( document.getElementsByClassName( sClass ) );
+				}
+			}
+			else if ( document.querySelectorAll )
 			{
 				return function ( sClass )
 				{
@@ -41,7 +48,21 @@ TinyCore.SandBox.register( 'domlib_sandbox', {
 			{
 				return function ( sClass )
 				{
-					return this.nodesToArray( document.getElementsByClassName( sClass ) );
+					var aElems = document.getElementsByTagName( '*' ),
+						nIndex = aElems.length,
+						oCurrentElem = null,
+						aResults = [];
+
+					while ( nIndex-- )
+					{
+						oCurrentElem = aElems[nIndex];
+						if ( this.hasClass( oCurrentElem, sClass ) )
+						{
+							aResults.unshift( oCurrentElem );
+						}
+					}
+
+					return aResults;
 				}
 			}
 		} () ),

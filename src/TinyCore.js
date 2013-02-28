@@ -78,14 +78,14 @@
 	};
 
 	/**
-	 * To array conversion.
+	 * Converts an array-like object to an actual array.
 	 * @type {Function}
-	 * @param {Object} oMixed
+	 * @param {Object} oArrayLike
 	 * @return {Array}
 	*/
-	var _fpToArray = function ( oMixed )
+	var _fpToArray = function ( oArrayLike )
 	{
-		return Array.prototype.slice.call( oMixed );
+		return Array.prototype.slice.call( oArrayLike );
 	};
 
 	/**
