@@ -8,7 +8,8 @@
 {
 	'use strict';
 
-	var TinyCore = oEnv.TinyCore, 
+	var TinyCore = oEnv.TinyCore,
+		Module = TinyCore.Module,
 		require = oEnv.require,
 		define = oEnv.define;
 
@@ -62,12 +63,12 @@
 				var aModulesCreators = Array.prototype.slice.call( arguments, 0 ),
 					nModulesCount = aModulesCreators.length,
 					nModuleIndex = 0,
-					sModuleName = '';
+					sModuleName;
 
 				for ( ; nModuleIndex < nModulesCount; nModuleIndex++ )
 				{
 					sModuleName = aModulesNames[nModuleIndex];
-					TinyCore.register( sModuleName, aModulesCreators[nModuleIndex] );
+					Module.register( sModuleName, aModulesCreators[nModuleIndex] );
 				};
 
 				fpCallback.call( TinyCore );
@@ -77,13 +78,17 @@
 		/**
 		 * Loads, registers and starts modules using require.js
 		 * @param {Array} aModulesNames
-		 * @param {Object} oModulesStartData A data object where each key is a module name and each value value the related start data
-		 * { 'module1' : { containerID : 'sidebar' }, 'module2' : { start : new Date(), nCount : 2 }, 'module3' } 
+		 * @param {Object} oModulesStartData A data object where each key is a module name and each value value the related start data, e. g. :
+		 * { 
+		 * 		'module1' : { containerID : 'sidebar' },
+		 * 		'module2' : { start : new Date(), count : 2 },
+		 * 		'module3'
+		 * 	} 
 		 * @param {Function} fpCallback The function to call when all modules are started
 		 */
 		registerAndStart : function ( aModulesNames, oModulesStartData, fpCallback )
 		{
-			var sModuleName = '';
+			var sModuleName;
 
 			this.register( aModulesNames, function ()
 			{
@@ -93,7 +98,7 @@
 				for ( ; nModuleIndex < nModulesCount; nModuleIndex++ )
 				{
 					sModuleName = aModulesNames[nModuleIndex];
-					TinyCore.start( sModuleName, oModulesStartData[sModuleName] );
+					Module.start( sModuleName, oModulesStartData[sModuleName] );
 				};
 
 				fpCallback.call( TinyCore );
@@ -101,9 +106,9 @@
 		}
 	};
 
-	// Install the global error handler.
+	// Install the global error handler
 	require.onError = _oAMD.onError;
 
-	// Add the extension to TinyCore.
+	// Add the extension to TinyCore
 	TinyCore.extend( { AMD : _oAMD } );
 } ( this ) );

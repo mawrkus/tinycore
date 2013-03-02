@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 	<head>
 		<meta charset="utf-8">
 		<title>TinyCore /// todo list</title>
@@ -35,12 +35,12 @@
 		</div>
 
 		<script type="text/javascript">
-			document.body.onload = function ()
+			window.onload = function ()
 			{
-				TinyCore.start( 'todo_form' );
-				TinyCore.start( 'todo_list' );
-				TinyCore.start( 'todo_summary' );
-				TinyCore.start( 'todo_storage' ); // optional
+				TinyCore.Module.start( 'todo_form' );
+				TinyCore.Module.start( 'todo_list' );
+				TinyCore.Module.start( 'todo_summary' );
+				TinyCore.Module.start( 'todo_storage' ); // optional
 			};
 		</script>
 	</body>

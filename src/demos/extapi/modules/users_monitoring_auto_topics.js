@@ -3,7 +3,7 @@
  * This module is responsible for listening to users activity and to display some related infos on the screen.
  * Note that this module will have access to dom and utils functions through its sandbox.
  */
-TinyCore.register( 'users_monitoring', function ( oSandBox )
+TinyCore.Module.register( 'users_monitoring', function ( oSandBox )
 {
 	var _oDomUtils = oSandBox.dom;
 

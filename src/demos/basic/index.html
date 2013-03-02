@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>TinyCore /// basic example</title>
+		<title>TinyCore /// basic usage</title>
 
 		<script type="text/javascript" src="../../lib/require-2.1.4.min.js"></script>
 		<script type="text/javascript" src="../../TinyCore.js"></script>
@@ -26,19 +26,22 @@
 		}
 	</style>
 	<body>
-		<h1>Basic example</h1>
+		<h1>Basic usage : a users hub</h1>
 		<div id="users_info_box" class="box">
 		</div>
 
 		<script type="text/javascript">
-			TinyCore.start( 'users_monitoring', { containerID : 'users_info_box' } );
-
-			TinyCore.start( 'users_hub' );
-
-			setTimeout( function ()
+			window.onload = function ()
 			{
-				TinyCore.stop( 'users_monitoring' );
-			}, 5000 )
+				TinyCore.Module.start( 'users_monitoring', { containerID : 'users_info_box' } );
+
+				TinyCore.Module.start( 'users_hub' );
+
+				setTimeout( function ()
+				{
+					TinyCore.Module.stop( 'users_monitoring' );
+				}, 5000 );
+			}
 		</script>
 	</body>
 </html>

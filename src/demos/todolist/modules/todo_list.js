@@ -3,7 +3,7 @@
  * Topics subscribed : "todo:add", "list:clear", "list:clean", "storage:sync"
  * Topics published : "todo:upddate", "todo:remove"
  */
-TinyCore.register( 'todo_list', function ( oSandBox )
+TinyCore.Module.register( 'todo_list', function ( oSandBox )
 {
 	// Shortcuts and private variable.
 	var _dom = oSandBox.dom,

@@ -15,62 +15,74 @@ var oDummyModule = {
 
 describe( 'TinyCore', function ()
 {
-	it( 'should have an interface with the following methods/properties : extend, register, start, stop, instanciate, getModules, SandBox, ErrorHandler and debugMode', function ()
+	it( 'should have an interface with the following methods/properties : debugMode, extend, Module, SandBox, ErrorHandler', function ()
 	{
+		expect( TinyCore.debugMode ).toBeTruthy();
 		expect( TinyCore.extend ).toBeFunction();
-		expect( TinyCore.register ).toBeFunction();
-		expect( TinyCore.start ).toBeFunction();
-		expect( TinyCore.stop ).toBeFunction();
-		expect( TinyCore.instanciate ).toBeFunction();
-		expect( TinyCore.getModules ).toBeFunction();
+		expect( TinyCore.Module ).toBeObject();
 		expect( TinyCore.SandBox ).toBeObject();
 		expect( TinyCore.ErrorHandler ).toBeObject();
-		expect( TinyCore.debugMode ).toBeTruthy();
 	} );
 } );
 
-describe( 'TinyCore.register', function ()
+/**
+ * ------- MODULE TESTS -------
+ */
+
+describe( 'TinyCore.Module', function ()
+{
+	it( 'should have an interface with the following methods/properties : register, start, stop, instanciate and getModules', function ()
+	{
+		expect( TinyCore.Module.register ).toBeFunction();
+		expect( TinyCore.Module.start ).toBeFunction();
+		expect( TinyCore.Module.stop ).toBeFunction();
+		expect( TinyCore.Module.instanciate ).toBeFunction();
+		expect( TinyCore.Module.getModules ).toBeFunction();
+	} );
+} );
+
+describe( 'TinyCore.Module.register', function ()
 {
 	it( 'should throw an error when trying to register a module without passing a creator function', function ()
 	{
 		expect( function ()
 		{
-			TinyCore.register( 'afterburner0' );
+			TinyCore.Module.register( 'afterburner0' );
 		} ).toThrow();
 	} );
 
 	it( 'should register properly a module', function ()
 	{
-		var bResult = TinyCore.register( 'afterburner1', fpDummyCreator );
+		var bResult = TinyCore.Module.register( 'afterburner1', fpDummyCreator );
 
 		expect( bResult ).toBeTruthy();
 	} );
 
 	it( 'should not overwrite a module previously registered', function ()
 	{
-		var bResult = TinyCore.register( 'afterburner2', fpDummyCreator );
+		var bResult = TinyCore.Module.register( 'afterburner2', fpDummyCreator );
 
-		bResult = TinyCore.register( 'afterburner2', fpDummyCreator );;
+		bResult = TinyCore.Module.register( 'afterburner2', fpDummyCreator );;
 
 		expect( bResult ).toBeFalsy();
 	} );
 } );
 
-describe( 'TinyCore.getModules', function ()
+describe( 'TinyCore.Module.getModules', function ()
 {
 	it( 'should return an object', function ()
 	{
-		expect( TinyCore.getModules() ).toBeObject();
+		expect( TinyCore.Module.getModules() ).toBeObject();
 	} );
 } );
 
-describe( 'TinyCore.instanciate', function ()
+describe( 'TinyCore.Module.instanciate', function ()
 {
 	it( 'should throw an error when trying to instanciate a module that is not registered', function ()
 	{
 		expect( function ()
 		{
-			TinyCore.instanciate( '!' );
+			TinyCore.Module.instanciate( '!' );
 		} ).toThrow();
 	} );
 
@@ -83,12 +95,12 @@ describe( 'TinyCore.instanciate', function ()
 		},
 		oTestedModule = null;
 
-		TinyCore.register( 'com-3MHz', function ()
+		TinyCore.Module.register( 'com-3MHz', function ()
 		{
 			return oModule;
 		} );
 
-		oTestedModule = TinyCore.instanciate( 'com-3MHz' );
+		oTestedModule = TinyCore.Module.instanciate( 'com-3MHz' );
 
 		expect( oModule ).toEqual( oTestedModule );
 	} );
@@ -97,9 +109,9 @@ describe( 'TinyCore.instanciate', function ()
 	{
 		var oModule = null;
 
-		TinyCore.register( 'cockpit', fpDummyCreator );
+		TinyCore.Module.register( 'cockpit', fpDummyCreator );
 
-		oModule = TinyCore.instanciate( 'cockpit' );
+		oModule = TinyCore.Module.instanciate( 'cockpit' );
 
 		expect( oModule.__sandbox__ ).toBeObject();
 		expect( oModule.__sandbox__.subscribe ).toBeFunction();
@@ -112,7 +124,7 @@ describe( 'TinyCore.instanciate', function ()
 	{
 		var oModule = null;
 
-		TinyCore.register( 'solar-panels', function ( oSandBox )
+		TinyCore.Module.register( 'solar-panels', function ( oSandBox )
 		{
 			return {
 				onStart : function ( oStartData )
@@ -127,7 +139,7 @@ describe( 'TinyCore.instanciate', function ()
 			}
 		} );
 
-		oModule = TinyCore.instanciate( 'solar-panels' );
+		oModule = TinyCore.Module.instanciate( 'solar-panels' );
 
 		spyOn( oModule.__sandbox__, 'subscribe' );
 		spyOn( oModule.__sandbox__, 'publish' );
@@ -144,25 +156,25 @@ describe( 'TinyCore.instanciate', function ()
 	} );
 } );
 
-describe( 'TinyCore.start', function ()
+describe( 'TinyCore.Module.start', function ()
 {
 	it( 'should throw an error when trying to start a module that is not registered', function ()
 	{
 		expect( function ()
 		{
-			TinyCore.start( '!' );
+			TinyCore.Module.start( '!' );
 		} ).toThrow();
 	} );
 
 	it( 'should instanciate a module', function ()
 	{
-		TinyCore.register( 'e-tank', fpDummyCreator );
+		TinyCore.Module.register( 'e-tank', fpDummyCreator );
 
-		spyOn( TinyCore, 'instanciate' ).andReturn( oDummyModule );
+		spyOn( TinyCore.Module, 'instanciate' ).andReturn( oDummyModule );
 
-		TinyCore.start( 'e-tank' );
+		TinyCore.Module.start( 'e-tank' );
 
-		expect( TinyCore.instanciate ).toHaveBeenCalledWith( 'e-tank' );
+		expect( TinyCore.Module.instanciate ).toHaveBeenCalledWith( 'e-tank' );
 	} );
 
 	it( 'should start a module properly', function ()
@@ -178,12 +190,12 @@ describe( 'TinyCore.start', function ()
 			}
 		};
 
-		TinyCore.register( 'engines', function ( oSandBox )
+		TinyCore.Module.register( 'engines', function ( oSandBox )
 		{
 			return oModule;
 		} );
 
-		TinyCore.start( 'engines', oStartData );
+		TinyCore.Module.start( 'engines', oStartData );
 
 		expect( oModule.nCount ).toEqual( 8 );
 	} );
@@ -198,25 +210,25 @@ describe( 'TinyCore.start', function ()
 			}
 		};
 
-		TinyCore.register( 'antenna', function ( oSandBox )
+		TinyCore.Module.register( 'antenna', function ( oSandBox )
 		{
 			return oModule;
 		} );
 
-		TinyCore.start( 'antenna' );
-		TinyCore.start( 'antenna' );
+		TinyCore.Module.start( 'antenna' );
+		TinyCore.Module.start( 'antenna' );
 
 		expect( oModule.nCount ).toEqual( 6 );
 	} );
 } );
 
-describe( 'TinyCore.stop', function ()
+describe( 'TinyCore.Module.stop', function ()
 {
 	it( 'should throw an error when trying to stop a module that is not registered', function ()
 	{
 		expect( function ()
 		{
-			TinyCore.stop( 'restroom' );
+			TinyCore.Module.stop( 'restroom' );
 		} ).toThrow();
 	} );
 
@@ -230,16 +242,16 @@ describe( 'TinyCore.stop', function ()
 			}
 		};
 
-		TinyCore.register( 'atmosphere', function ( oSandBox )
+		TinyCore.Module.register( 'atmosphere', function ( oSandBox )
 		{
 			return oModule;
 		} );
 
-		TinyCore.start( 'atmosphere' );
+		TinyCore.Module.start( 'atmosphere' );
 
 		spyOn( oModule.__sandbox__, 'unSubscribeAll' );
 
-		TinyCore.stop( 'atmosphere' );
+		TinyCore.Module.stop( 'atmosphere' );
 
 		expect( oModule.bContainsO2 ).toBeFalsy();
 		expect( oModule.__sandbox__.unSubscribeAll ).toHaveBeenCalled();
@@ -255,20 +267,20 @@ describe( 'TinyCore.stop', function ()
 			}
 		};
 
-		TinyCore.register( 'heat', function ( oSandBox )
+		TinyCore.Module.register( 'heat', function ( oSandBox )
 		{
 			return oModule;
 		} );
 
-		TinyCore.start( 'heat' );
-		TinyCore.stop( 'heat' );
-		TinyCore.stop( 'heat' );
+		TinyCore.Module.start( 'heat' );
+		TinyCore.Module.stop( 'heat' );
+		TinyCore.Module.stop( 'heat' );
 
 		expect( oModule.nTemp ).toEqual( 16 );
 	} );
 } );
 
-describe( 'TinyCore.start and TinyCore.stop', function ()
+describe( 'TinyCore.Module.start and TinyCore.Module.stop', function ()
 {
 	it( 'should be able to restart a module that has been stopped', function ()
 	{
@@ -284,14 +296,14 @@ describe( 'TinyCore.start and TinyCore.stop', function ()
 			}
 		};
 
-		TinyCore.register( 'shield', function ()
+		TinyCore.Module.register( 'shield', function ()
 		{
 			return oModule;
 		} );
 
-		TinyCore.start( 'shield' );
-		TinyCore.stop( 'shield' );
-		TinyCore.start( 'shield' );
+		TinyCore.Module.start( 'shield' );
+		TinyCore.Module.stop( 'shield' );
+		TinyCore.Module.start( 'shield' );
 
 		expect( oModule.nStatus ).toEqual( 3 );
 	} );
@@ -536,19 +548,19 @@ describe( 'TinyCore.SandBox.register', function ()
 		expect( oDojoSandBox ).toBeObject();
 		expect( oRyeSandBox ).toBeObject();
 
-		TinyCore.register( 'dojo_moves', function ( oSandBox )
+		TinyCore.Module.register( 'dojo_moves', function ( oSandBox )
 		{
 			return oDojoMoves;
 		}, 'dojo_toolkit' );
 
-		TinyCore.start( 'dojo_moves' );
+		TinyCore.Module.start( 'dojo_moves' );
 
-		TinyCore.register( 'catcher_in_the_rye', function ( oSandBox )
+		TinyCore.Module.register( 'catcher_in_the_rye', function ( oSandBox )
 		{
 			return oCatcherInTheRye;
 		}, 'rye_toolkit' );
 
-		TinyCore.start( 'catcher_in_the_rye' );
+		TinyCore.Module.start( 'catcher_in_the_rye' );
 
 		expect( oDojoMoves.__sandbox__.name ).toEqual( 'Dojo' );
 		expect( oDojoMoves.__sandbox__.DOMTools.dojo ).toBeFunction();
@@ -571,51 +583,52 @@ describe( 'TinyCore.ErrorHandler', function ()
 } );
 
 /**
- * -------EXTENDED API TEST -------
+ * ------- EXTENDED MODULE API TESTS -------
  */
 
-describe( 'TinyCore : extended API', function ()
+describe( 'TinyCore.Module : extended API', function ()
 {
-	it( 'should should contain these extended methods/properties : startAll, stopAll, destroy, destroyAll, isStarted and registerAndStart', function ()
+	it( 'should contain these extended methods/properties : instanciate, startAll, stopAll, destroy, destroyAll, isStarted and registerAndStart', function ()
 	{
-		expect( TinyCore.startAll ).toBeFunction();
-		expect( TinyCore.stopAll ).toBeFunction();
-		expect( TinyCore.destroy ).toBeFunction();
-		expect( TinyCore.isStarted ).toBeFunction();
-		expect( TinyCore.registerAndStart ).toBeFunction();
+		expect( TinyCore.Module.instanciate ).toBeFunction();
+		expect( TinyCore.Module.startAll ).toBeFunction();
+		expect( TinyCore.Module.stopAll ).toBeFunction();
+		expect( TinyCore.Module.destroy ).toBeFunction();
+		expect( TinyCore.Module.isStarted ).toBeFunction();
+		expect( TinyCore.Module.registerAndStart ).toBeFunction();
 	} );
 } );
 
-describe( 'TinyCore.isStarted', function ()
+describe( 'TinyCore.Module.isStarted', function ()
 {
 	it( 'should return false for an unknown module', function ()
 	{
-		expect( TinyCore.isStarted( '?' ) ).toBeFalsy();
+		expect( TinyCore.Module.isStarted( '?' ) ).toBeFalsy();
 	} );
 
 	it( 'should return false for an undefined module name', function ()
 	{
-		expect( TinyCore.isStarted() ).toBeFalsy();
+		expect( TinyCore.Module.isStarted() ).toBeFalsy();
 	} );
 
 	it( 'should return false for a registered module that is not started', function ()
 	{
-		TinyCore.register( 'gyroscope', fpDummyCreator );
+		TinyCore.Module.register( 'gyroscope', fpDummyCreator );
 
-		expect( TinyCore.isStarted( 'gyroscope' ) ).toBeFalsy();
+		expect( TinyCore.Module.isStarted( 'gyroscope' ) ).toBeFalsy();
 	} );
 
 	it( 'should return true for a registered module that is started', function ()
 	{
-		TinyCore.register( 'zero-g', fpDummyCreator );
+		TinyCore.Module.register( 'zero-g', fpDummyCreator );
 
-		TinyCore.start( 'zero-g' );
+		TinyCore.Module.start( 'zero-g' );
 
-		expect( TinyCore.isStarted( 'zero-g' ) ).toBeTruthy();
+		expect( TinyCore.Module.isStarted( 'zero-g' ) ).toBeTruthy();
 	} );
 } );
 
-describe( 'TinyCore.startAll', function ()
+describe( 'TinyCore.Module.startAll', function ()
 {
 	it( 'should start all registered modules properly', function ()
 	{
@@ -641,20 +654,20 @@ describe( 'TinyCore.startAll', function ()
 			}
 		};
 
-		TinyCore.register( 'airfilter1', function ( oSandBox )
+		TinyCore.Module.register( 'airfilter1', function ( oSandBox )
 		{
 			return oAirFilter1;
 		} );
-		TinyCore.register( 'airfilter2', function ( oSandBox )
+		TinyCore.Module.register( 'airfilter2', function ( oSandBox )
 		{
 			return oAirFilter2;
 		} );
-		TinyCore.register( 'airfilter3', function ( oSandBox )
+		TinyCore.Module.register( 'airfilter3', function ( oSandBox )
 		{
 			return oAirFilter3;
 		} );
 
-		TinyCore.startAll();
+		TinyCore.Module.startAll();
 
 		expect( oAirFilter1.nO2Level ).toEqual( 0.2 );
 		expect( oAirFilter2.nO2Level ).toEqual( 0.75 );
@@ -685,20 +698,20 @@ describe( 'TinyCore.startAll', function ()
 			}
 		};
 
-		TinyCore.register( 'wheel1', function ( oSandBox )
+		TinyCore.Module.register( 'wheel1', function ( oSandBox )
 		{
 			return oWheel1;
 		} );
-		TinyCore.register( 'wheel2', function ( oSandBox )
+		TinyCore.Module.register( 'wheel2', function ( oSandBox )
 		{
 			return oWheel2;
 		} );
-		TinyCore.register( 'wheel3', function ( oSandBox )
+		TinyCore.Module.register( 'wheel3', function ( oSandBox )
 		{
 			return oWheel3;
 		} );
 
-		TinyCore.startAll( {
+		TinyCore.Module.startAll( {
 			'wheel1'  : { nCoeff : 5 },
 			'wheel3'  : { nCoeff : 15 }
 		} );
@@ -732,20 +745,20 @@ describe( 'TinyCore.startAll', function ()
 			}
 		};
 
-		TinyCore.register( 'waterfilter1', function ( oSandBox )
+		TinyCore.Module.register( 'waterfilter1', function ( oSandBox )
 		{
 			return oWaterFilter1;
 		} );
-		TinyCore.register( 'waterfilter2', function ( oSandBox )
+		TinyCore.Module.register( 'waterfilter2', function ( oSandBox )
 		{
 			return oWaterFilter2;
 		} );
-		TinyCore.register( 'waterfilter3', function ( oSandBox )
+		TinyCore.Module.register( 'waterfilter3', function ( oSandBox )
 		{
 			return oWaterFilter3;
 		} );
 
-		TinyCore.startAll( ['waterfilter1', 'waterfilter2'] );
+		TinyCore.Module.startAll( ['waterfilter1', 'waterfilter2'] );
 
 		expect( oWaterFilter1.nPH ).toEqual( 6.1 );
 		expect( oWaterFilter2.nPH ).toEqual( 5.9 );
@@ -776,20 +789,20 @@ describe( 'TinyCore.startAll', function ()
 			}
 		};
 
-		TinyCore.register( 'charger1', function ( oSandBox )
+		TinyCore.Module.register( 'charger1', function ( oSandBox )
 		{
 			return oCharger1;
 		} );
-		TinyCore.register( 'charger2', function ( oSandBox )
+		TinyCore.Module.register( 'charger2', function ( oSandBox )
 		{
 			return oCharger2;
 		} );
-		TinyCore.register( 'charger3', function ( oSandBox )
+		TinyCore.Module.register( 'charger3', function ( oSandBox )
 		{
 			return oCharger3;
 		} );
 
-		TinyCore.startAll( ['charger2', 'charger3'], {
+		TinyCore.Module.startAll( ['charger2', 'charger3'], {
 			'charger3'  : { nInc : 25 }
 		} );
 
@@ -799,49 +812,49 @@ describe( 'TinyCore.startAll', function ()
 	} );
 } );
 
-describe( 'TinyCore.stopAll', function ()
+describe( 'TinyCore.Module.stopAll', function ()
 {
 	it( 'should stop all modules', function ()
 	{
-		var oModules = TinyCore.getModules();
+		var oModules = TinyCore.Module.getModules();
 
-		TinyCore.stopAll();
+		TinyCore.Module.stopAll();
 
 		for ( sModuleName in oModules )
 		{
-			expect( TinyCore.isStarted( sModuleName ) ).toBeFalsy();
+			expect( TinyCore.Module.isStarted( sModuleName ) ).toBeFalsy();
 		}
 	} );
 
 	it( 'should stop all selected modules properly', function ()
 	{
-		var oModules = TinyCore.getModules();
+		var oModules = TinyCore.Module.getModules();
 
-		TinyCore.register( 'gps1', fpDummyCreator );
-		TinyCore.register( 'gps2', fpDummyCreator );
-		TinyCore.register( 'gps3', fpDummyCreator );
+		TinyCore.Module.register( 'gps1', fpDummyCreator );
+		TinyCore.Module.register( 'gps2', fpDummyCreator );
+		TinyCore.Module.register( 'gps3', fpDummyCreator );
 
-		TinyCore.startAll( ['gps1', 'gps2', 'gps3'] );
+		TinyCore.Module.startAll( ['gps1', 'gps2', 'gps3'] );
 
-		expect( TinyCore.isStarted( 'gps1' ) ).toBeTruthy();
-		expect( TinyCore.isStarted( 'gps2' ) ).toBeTruthy();
-		expect( TinyCore.isStarted( 'gps3' ) ).toBeTruthy();
+		expect( TinyCore.Module.isStarted( 'gps1' ) ).toBeTruthy();
+		expect( TinyCore.Module.isStarted( 'gps2' ) ).toBeTruthy();
+		expect( TinyCore.Module.isStarted( 'gps3' ) ).toBeTruthy();
 
-		TinyCore.stopAll( ['gps1', 'gps3'] );
+		TinyCore.Module.stopAll( ['gps1', 'gps3'] );
 
-		expect( TinyCore.isStarted( 'gps1' ) ).toBeFalsy();
-		expect( TinyCore.isStarted( 'gps2' ) ).toBeTruthy();
-		expect( TinyCore.isStarted( 'gps3' ) ).toBeFalsy();
+		expect( TinyCore.Module.isStarted( 'gps1' ) ).toBeFalsy();
+		expect( TinyCore.Module.isStarted( 'gps2' ) ).toBeTruthy();
+		expect( TinyCore.Module.isStarted( 'gps3' ) ).toBeFalsy();
 	} );
 
 	it( 'should not prevent startAll to restart all stopped modules', function ()
 	{
-		var oModules = TinyCore.getModules();
+		var oModules = TinyCore.Module.getModules();
 
-		TinyCore.stopAll();
+		TinyCore.Module.stopAll();
 
 		// Prevent errors from previous tests.
-		TinyCore.startAll( {
+		TinyCore.Module.startAll( {
 			'engines' : { nCount : 8 },
 			'wheel1' : { nCoeff : 6 },
 			'wheel3' : { nCoeff : 7},
@@ -851,29 +864,29 @@ describe( 'TinyCore.stopAll', function ()
 
 		for ( sModuleName in oModules )
 		{
-			expect( TinyCore.isStarted( sModuleName ) ).toBeTruthy();
+			expect( TinyCore.Module.isStarted( sModuleName ) ).toBeTruthy();
 		}
 	} );
 } );
 
-describe( 'TinyCore.destroy', function ()
+describe( 'TinyCore.Module.destroy', function ()
 {
 	it( 'should throw an error when trying to destroy a module that is not registered', function ()
 	{
 		expect( function ()
 		{
-			TinyCore.destroy( 'swimmingpool' );
+			TinyCore.Module.destroy( 'swimmingpool' );
 		} ).toThrow();
 	} );
 
 	it( 'should properly stop and destroy a single module', function ()
 	{
-		var oModules = TinyCore.getModules(),
+		var oModules = TinyCore.Module.getModules(),
 			fpTemp1Spy = jasmine.createSpy();
 
-		spyOn( TinyCore, 'stop' );
+		spyOn( TinyCore.Module, 'stop' );
 
-		TinyCore.register( 'temp1', function ( oSandBox )
+		TinyCore.Module.register( 'temp1', function ( oSandBox )
 		{
 			return {
 				onStart : function () {},
@@ -882,62 +895,62 @@ describe( 'TinyCore.destroy', function ()
 		} );
 		expect( oModules['temp1'] ).toBeObject();
 
-		TinyCore.start( 'temp1' );
-		TinyCore.destroy( 'temp1' );
+		TinyCore.Module.start( 'temp1' );
+		TinyCore.Module.destroy( 'temp1' );
 
-		expect( TinyCore.stop ).toHaveBeenCalledWith( 'temp1' );
+		expect( TinyCore.Module.stop ).toHaveBeenCalledWith( 'temp1' );
 		expect( fpTemp1Spy ).toHaveBeenCalled();
 		expect( oModules['temp1'] ).toBeUndefined();
 	} );
 } );
 
-describe( 'TinyCore.destroyAll', function ()
+describe( 'TinyCore.Module.destroyAll', function ()
 {
 	beforeEach( function ()
 	{
-		spyOn( TinyCore, 'stop' );
+		spyOn( TinyCore.Module, 'stop' );
 	} );
 
 	it( 'should properly stop and destroy all modules', function ()
 	{
-		var oModules = TinyCore.getModules();
+		var oModules = TinyCore.Module.getModules();
 
-		TinyCore.register( 'temp2', fpDummyCreator );
-		TinyCore.register( 'temp3', fpDummyCreator );
-		TinyCore.start( 'temp3' );
-		TinyCore.register( 'temp4', fpDummyCreator );
+		TinyCore.Module.register( 'temp2', fpDummyCreator );
+		TinyCore.Module.register( 'temp3', fpDummyCreator );
+		TinyCore.Module.start( 'temp3' );
+		TinyCore.Module.register( 'temp4', fpDummyCreator );
 
 		expect( oModules['temp2'] ).toBeObject();
 		expect( oModules['temp3'] ).toBeObject();
-		expect( TinyCore.isStarted( 'temp3' ) ).toBeTruthy();
+		expect( TinyCore.Module.isStarted( 'temp3' ) ).toBeTruthy();
 		expect( oModules['temp4'] ).toBeObject();
 
-		TinyCore.destroyAll();
+		TinyCore.Module.destroyAll();
 
-		expect( TinyCore.stop ).toHaveBeenCalledWith( 'temp2' );
-		expect( TinyCore.stop ).toHaveBeenCalledWith( 'temp3' );
-		expect( TinyCore.stop ).toHaveBeenCalledWith( 'temp4' );
+		expect( TinyCore.Module.stop ).toHaveBeenCalledWith( 'temp2' );
+		expect( TinyCore.Module.stop ).toHaveBeenCalledWith( 'temp3' );
+		expect( TinyCore.Module.stop ).toHaveBeenCalledWith( 'temp4' );
 
 		expect( oModules ).toEqual( {} );
 	} );
 
 	it( 'should properly destroy a set of chosen modules', function ()
 	{
-		var oModules = TinyCore.getModules();
+		var oModules = TinyCore.Module.getModules();
 
-		TinyCore.register( 'temp5', fpDummyCreator );
-		TinyCore.register( 'temp6', fpDummyCreator );
-		TinyCore.register( 'temp7', fpDummyCreator );
+		TinyCore.Module.register( 'temp5', fpDummyCreator );
+		TinyCore.Module.register( 'temp6', fpDummyCreator );
+		TinyCore.Module.register( 'temp7', fpDummyCreator );
 
 		expect( oModules['temp5'] ).toBeObject();
 		expect( oModules['temp6'] ).toBeObject();
 		expect( oModules['temp7'] ).toBeObject();
 
-		TinyCore.destroyAll( ['temp5', 'temp7'] );
+		TinyCore.Module.destroyAll( ['temp5', 'temp7'] );
 
-		expect( TinyCore.stop ).toHaveBeenCalledWith( 'temp5' );
-		expect( TinyCore.stop ).not.toHaveBeenCalledWith( 'temp6' );
-		expect( TinyCore.stop ).toHaveBeenCalledWith( 'temp7' );
+		expect( TinyCore.Module.stop ).toHaveBeenCalledWith( 'temp5' );
+		expect( TinyCore.Module.stop ).not.toHaveBeenCalledWith( 'temp6' );
+		expect( TinyCore.Module.stop ).toHaveBeenCalledWith( 'temp7' );
 
 		expect( oModules['temp5'] ).toBeUndefined();
 		expect( oModules['temp6'] ).toBeObject();
@@ -945,37 +958,37 @@ describe( 'TinyCore.destroyAll', function ()
 	} );
 } );
 
-describe( 'TinyCore.registerAndStart', function ()
+describe( 'TinyCore.Module.registerAndStart', function ()
 {
 	it( 'should register and start a module properly', function ()
 	{
 		var fpCreator = fpDummyCreator;
 
-		spyOn( TinyCore, 'register' ).andReturn( true );
-		spyOn( TinyCore, 'start' );
+		spyOn( TinyCore.Module, 'register' ).andReturn( true );
+		spyOn( TinyCore.Module, 'start' );
 
-		TinyCore.registerAndStart( 'ism1', fpCreator );
+		TinyCore.Module.registerAndStart( 'ism1', fpCreator );
 
-		expect( TinyCore.register ).toHaveBeenCalledWith( 'ism1', fpCreator, undefined );
-		expect( TinyCore.start ).toHaveBeenCalledWith( 'ism1', null );
+		expect( TinyCore.Module.register ).toHaveBeenCalledWith( 'ism1', fpCreator, undefined );
+		expect( TinyCore.Module.start ).toHaveBeenCalledWith( 'ism1', null );
 	} );
 
 	it( 'should not start a module if the registration failed', function ()
 	{
 		var fpCreator = fpDummyCreator;
 
-		spyOn( TinyCore, 'register' ).andReturn( false );
-		spyOn( TinyCore, 'start' );
+		spyOn( TinyCore.Module, 'register' ).andReturn( false );
+		spyOn( TinyCore.Module, 'start' );
 
-		TinyCore.register( 'ism2', fpCreator );
-		TinyCore.registerAndStart( 'ism2', fpCreator );
+		TinyCore.Module.register( 'ism2', fpCreator );
+		TinyCore.Module.registerAndStart( 'ism2', fpCreator );
 
-		expect( TinyCore.register ).toHaveBeenCalledWith( 'ism2', fpCreator );
-		expect( TinyCore.start ).not.toHaveBeenCalled();
+		expect( TinyCore.Module.register ).toHaveBeenCalledWith( 'ism2', fpCreator );
+		expect( TinyCore.Module.start ).not.toHaveBeenCalled();
 	} );
 } );
 
-describe( 'TinyCore.instanciate', function ()
+describe( 'TinyCore.Module.instanciate', function ()
 {
 	it( 'should enable automatic topics subscriptions', function ()
 	{
@@ -985,7 +998,7 @@ describe( 'TinyCore.instanciate', function ()
 
 		jasmine.Clock.useMock();
 
-		TinyCore.register( 'fridge', function ( oSandBox )
+		TinyCore.Module.register( 'fridge', function ( oSandBox )
 		{
 			return {
 				onStart : function () {},
@@ -997,7 +1010,7 @@ describe( 'TinyCore.instanciate', function ()
 			};
 		} );
 
-		TinyCore.instanciate( 'fridge' );
+		TinyCore.Module.instanciate( 'fridge' );
 		oSandBox.publish( 'temperature:too-low' );
 		oSandBox.publish( 'temperature:too-high' );
 
@@ -1045,17 +1058,17 @@ describe( 'TinyCore.AMD.register', function ()
 	{
 		var fpCallback = jasmine.createSpy();
 
-		spyOn( TinyCore, 'register' );
+		spyOn( TinyCore.Module, 'register' );
 
 		TinyCore.AMD.register( ['foo', 'bar'], fpCallback );
 
-		expect( TinyCore.register.calls.length ).toEqual( 2 );
+		expect( TinyCore.Module.register.calls.length ).toEqual( 2 );
 
-		expect( TinyCore.register.calls[0].args[0] ).toEqual( 'foo' );
-		expect( TinyCore.register.calls[0].args[1] ).toEqual( window.require.AMDCreators[0] ); // See fake-require.js
+		expect( TinyCore.Module.register.calls[0].args[0] ).toEqual( 'foo' );
+		expect( TinyCore.Module.register.calls[0].args[1] ).toEqual( window.require.AMDCreators[0] ); // See fake-require.js
 
-		expect( TinyCore.register.calls[1].args[0] ).toEqual( 'bar' );
-		expect( TinyCore.register.calls[1].args[1] ).toEqual( window.require.AMDCreators[1] );
+		expect( TinyCore.Module.register.calls[1].args[0] ).toEqual( 'bar' );
+		expect( TinyCore.Module.register.calls[1].args[1] ).toEqual( window.require.AMDCreators[1] );
 
 		expect( fpCallback ).toHaveBeenCalled();
 	} );
@@ -1068,22 +1081,22 @@ describe( 'TinyCore.AMD.registerAndStart', function ()
 		var oStartData2 = { b : 2, c : 3 },
 			fpCallback = jasmine.createSpy();
 
-		spyOn( TinyCore, 'register' );
-		spyOn( TinyCore, 'start' );
+		spyOn( TinyCore.Module, 'register' );
+		spyOn( TinyCore.Module, 'start' );
 
 		TinyCore.AMD.registerAndStart( ['baz', 'qux'], { 'qux' : oStartData2 }, fpCallback );
 
-		expect( TinyCore.register.calls.length ).toEqual( 2 );
+		expect( TinyCore.Module.register.calls.length ).toEqual( 2 );
 
-		expect( TinyCore.register.calls[0].args[0] ).toEqual( 'baz' );
-		expect( TinyCore.register.calls[0].args[1] ).toEqual( window.require.AMDCreators[0] ); // See fake-require.js
-		expect( TinyCore.start.calls[0].args[0] ).toEqual( 'baz' );
-		expect( TinyCore.start.calls[0].args[1] ).toBeUndefined();
+		expect( TinyCore.Module.register.calls[0].args[0] ).toEqual( 'baz' );
+		expect( TinyCore.Module.register.calls[0].args[1] ).toEqual( window.require.AMDCreators[0] ); // See fake-require.js
+		expect( TinyCore.Module.start.calls[0].args[0] ).toEqual( 'baz' );
+		expect( TinyCore.Module.start.calls[0].args[1] ).toBeUndefined();
 
-		expect( TinyCore.register.calls[1].args[0] ).toEqual( 'qux' );
-		expect( TinyCore.register.calls[1].args[1] ).toEqual( window.require.AMDCreators[1] );
-		expect( TinyCore.start.calls[1].args[0] ).toEqual( 'qux' );
-		expect( TinyCore.start.calls[1].args[1] ).toEqual( oStartData2 );
+		expect( TinyCore.Module.register.calls[1].args[0] ).toEqual( 'qux' );
+		expect( TinyCore.Module.register.calls[1].args[1] ).toEqual( window.require.AMDCreators[1] );
+		expect( TinyCore.Module.start.calls[1].args[0] ).toEqual( 'qux' );
+		expect( TinyCore.Module.start.calls[1].args[1] ).toEqual( oStartData2 );
 
 		expect( fpCallback ).toHaveBeenCalled();
 	} );

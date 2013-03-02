@@ -9,11 +9,11 @@
 
 	/* ------------------------------------ HELPERS ------------------------------------ */
 
-	// Improve minification
+	// Helps minification
 	var _true_ = true, _false_ = false, _null_ = null;
 
 	/**
-	 * A good way to determine the class of an object
+	 * Determines the class of an object
 	 * @type {Function}
 	 * @param {Mixed} oMixed
 	 * @return {Boolean}
@@ -24,7 +24,7 @@
 	};
 
 	/**
-	 * Determine if the paramater is a function
+	 * Determine if the parameter is a function
 	 * @type {Function}
 	 * @param {Mixed} oMixed
 	 * @return {Boolean}
@@ -35,14 +35,14 @@
 	};
 
 	/**
-	 * Runs through all the properties of an object, applying a callback function on each of them.
+	 * Runs through all the properties of an object, applying a callback function on each of them
 	 * @type {Function}
 	 * @param {Object} oObject
 	 * @param {Function} fpCallback
 	 */
 	var _fpForEach = function ( oObject, fpCallback )
 	{
-		var sProperty = '';
+		var sProperty;
 
 		for ( sProperty in oObject )
 		{
@@ -78,7 +78,7 @@
 	};
 
 	/**
-	 * Converts an array-like object to an actual array.
+	 * Converts an array-like object to an actual array
 	 * @type {Function}
 	 * @param {Object} oArrayLike
 	 * @return {Array}
@@ -89,7 +89,8 @@
 	};
 
 	/**
-	 * "try-catch" function decoration. Avoid double decoration if called twice on the same function.
+	 * "try-catch" function decoration
+	 * Avoid double decoration if called twice on the same function
 	 * @type {Function}
 	 * @param {Function} fpFunc
 	 * @param {Object} oContext
@@ -98,7 +99,7 @@
 	*/
 	var _fpTryCatchDecorator = function ( fpFunc, oContext, sErrMsg )
 	{
-		var fpDecoratedFunc = _null_;
+		var fpDecoratedFunc;
 
 		if ( fpFunc.__decorated__ )
 		{
@@ -201,9 +202,9 @@
 				 */
 				subscribe : function ( aTopics, fpHandler, oContext )
 				{
-					var nTopicsCount = 0,
-						nIndex = 0,
-						sTopic = '';
+					var nIndex = 0,
+						nTopicsCount,
+						sTopic;
 
 					if ( _fpIsFunction( fpHandler ) )
 					{
@@ -261,7 +262,7 @@
 				{
 					var aTopics = _fpIsClass( aTopics, 'Array' ) ? aTopics : [aTopics],
 						nTopicsCount = aTopics.length,
-						oSubs = _null_;
+						oSubs;
 
 					while ( nTopicsCount-- )
 					{
@@ -286,6 +287,7 @@
 			}
 		};
 
+		// The public API
 		return {
 			/**
 			 * Builds a new sandbox
@@ -315,31 +317,156 @@
 		};
 	} () );
 
-	/* ------------------------------------ CORE ------------------------------------ */
+	/* ------------------------------------ MODULES ------------------------------------ */
 
 	/**
-	 * Modules data
+	 * The modules manager
 	 * @type {Object}
-	 * @type {Function} fpCreator The function invoked to create a new module's instance
-	 * @type {String} sSandBoxType The type of sandbox used
-	 * @type {Object} oInstance The instance of the module or null if the module has not been started
-	 * @type {Boolean} bIsStarted Whether the module is started or not
 	 */
-	var _oModules = {};
-
-	/**
-	 * Checks if a module has been registered or not and throws an exception accordingly
-	 * @type {Function}
-	 * @param {String} sModuleName
-	 * @throws {Error}
-	 */
-	var _fpCheckModuleRegistration = function ( sModuleName )
+	var _oModulesManager = ( function ()
 	{
-		if ( !_oModules[sModuleName] )
+		/**
+		 * Modules data
+		 * @type {Object}
+		 * @type {Function} fpCreator The function invoked to create a new module's instance
+		 * @type {String} sSandBoxType The type of sandbox used
+		 * @type {Object} oInstance The instance of the module or null if the module has not been started
+		 * @type {Boolean} bIsStarted Whether the module is started or not
+		 */
+		var _oModules = {};
+
+		/**
+		 * Checks if a module has been registered or not and throws an exception accordingly
+		 * @type {Function}
+		 * @param {String} sModuleName
+		 * @throws {Error}
+		 */
+		var _fpCheckModuleRegistration = function ( sModuleName )
 		{
-			throw new Error( 'Module "'+sModuleName+'" is not registered!' );
-		}
-	};
+			if ( !_oModules[sModuleName] )
+			{
+				throw new Error( 'Module "'+sModuleName+'" is not registered!' );
+			}
+		};
+
+		// The public API
+		return {
+			/**
+			 * Registers a new module
+			 * @param {String} sModuleName The module name
+			 * @param {Function} fpCreator The function that creates and returns a module instance
+			 * @param {String} sSandBoxType Optional, the type of sandbox to provide to the module's instance
+			 * @return {Boolean} Whether the module has been successfully registered or not
+			 * @throws {Error} If the creator is not a function
+			 */
+			register : function ( sModuleName, fpCreator, sSandBoxType )
+			{
+				if ( !_oModules[sModuleName] )
+				{
+					if ( !_fpIsFunction( fpCreator ) )
+					{
+						throw new Error( 'The creator of module "'+sModuleName+'" is not a function!' );	
+					}
+
+					_oModules[sModuleName] = {
+						fpCreator	: fpCreator,
+						sSandBoxType : sSandBoxType || '',
+						oInstance	: _null_,
+						bIsStarted	: _false_
+					};
+					return _true_;
+				}
+				return _false_;
+			},
+
+			/**
+			 * Starts a module by creating a new module instance and calling its "onStart" method with oStartData passed as parameter
+			 * @param {String} sModuleName The module name
+			 * @param {Object} oStartData Data to be passed to the module "onStart" method
+			 */
+			start : function ( sModuleName, oStartData )
+			{
+				_fpCheckModuleRegistration( sModuleName );
+
+				if ( !_oModules[sModuleName].bIsStarted )
+				{
+					if ( !_oModules[sModuleName].oInstance )
+					{
+						_oModules[sModuleName].oInstance = this.instanciate( sModuleName );
+					}
+					_oModules[sModuleName].oInstance.onStart( oStartData ); // onStart must be defined in the module.
+					_oModules[sModuleName].bIsStarted = _true_;
+				}
+			},
+
+			/**
+			 * Stops a module by calling its "onStop" method
+			 * @param {String} sModuleName The module name
+			 */
+			stop : function ( sModuleName )
+			{
+				_fpCheckModuleRegistration( sModuleName );
+
+				if ( _oModules[sModuleName].bIsStarted && _oModules[sModuleName].oInstance )
+				{
+					if ( _fpIsFunction( _oModules[sModuleName].oInstance.onStop ) )
+					{
+						_oModules[sModuleName].oInstance.onStop();
+					}
+					_oModules[sModuleName].oInstance.__sandbox__.unSubscribeAll();
+					_oModules[sModuleName].bIsStarted = _false_;
+				}
+			},
+
+			/**
+			 * Instanciates a module, the purpose of this method is mainly to test a module
+			 * @param {String} sModuleName The module name
+			 * @return {Object} The module instance
+			 */
+			instanciate : function ( sModuleName )
+			{
+				var oSandBox,
+					oInstance;
+
+				_fpCheckModuleRegistration( sModuleName );
+
+				oSandBox = _oSandBoxFactory.build( _oModules[sModuleName].sSandBoxType );
+				oInstance = _oModules[sModuleName].fpCreator( oSandBox );
+
+				if ( !_oTinyCore.debugMode )
+				{
+					// Decorate the instance's methods by wrapping them into a try-catch statement
+					_fpForEach( oInstance, function ( oInstanceProp, sInstancePropName )
+					{
+						if ( _fpIsFunction( oInstanceProp ) )
+						{
+							oInstance[sInstancePropName] = _fpTryCatchDecorator( oInstanceProp, oInstance, 'Error in module "'+sModuleName+'" executing method "'+sInstancePropName+'": ' );
+						}
+					} );
+				}
+
+				oInstance.__sandbox__ = oSandBox;
+
+				return oInstance;
+			},
+
+			/**
+			 * Returns the data related to all registered modules
+			 * Allows the extensions to have access to the modules data
+			 * @return {Object} The modules data ; each property is itself an object containing the following properties :
+			 * @return {Function} fpCreator The function invoked to create a new module's instance
+			 * @return {String} sSandBoxType The type of sandbox used
+			 * @return {Object} oInstance The instance of the module or null if the module has not been started
+			 * @return {Boolean} bIsStarted Whether the module is started or not
+			 */
+			getModules : function ()
+			{
+				return _oModules;
+			},
+		};
+	} () );
+
+	/* ------------------------------------ CORE ------------------------------------ */
 
 	/**
 	 * The core
@@ -350,11 +477,11 @@
 		 * Current version
 		 * @type {String}
 		 */
-		version : '0.3.1',
+		version : '0.4.0',
 
 		/**
 		 * Debug mode : if true, error in modules methods and topics subscribers will not be caught
-		 * if false, errors will be caught and logged
+		 * if false, errors will be caught and logged using the error handler
 		 * @type {Boolean}
 		 */
 		debugMode : _false_,
@@ -369,117 +496,10 @@
 		},
 
 		/**
-		 * Registers a new module
-		 * @param {String} sModuleName The module name
-		 * @param {Function} fpCreator The function that creates and returns a module instance
-		 * @param {String} sSandBoxType Optional, the type of sandbox to provide to the module's instance
-		 * @return {Boolean} Whether the module has been successfully registered or not
-		 * @throws {Error} If the creator is not a function
+		 * The modules manager
+		 * @type {Object}
 		 */
-		register : function ( sModuleName, fpCreator, sSandBoxType )
-		{
-			if ( !_oModules[sModuleName] )
-			{
-				if ( !_fpIsFunction( fpCreator ) )
-				{
-					throw new Error( 'The creator of module "'+sModuleName+'" is not a function!' );	
-				}
-
-				_oModules[sModuleName] = {
-					fpCreator	: fpCreator,
-					sSandBoxType : sSandBoxType || '',
-					oInstance	: _null_,
-					bIsStarted	: _false_
-				};
-				return _true_;
-			}
-			return _false_;
-		},
-
-		/**
-		 * Starts a module by creating a new module instance and calling its "onStart" method with oStartData passed as parameter
-		 * @param {String} sModuleName The module name
-		 * @param {Object} oStartData Data to be passed to the module "onStart" method
-		 */
-		start : function ( sModuleName, oStartData )
-		{
-			_fpCheckModuleRegistration( sModuleName );
-
-			if ( !_oModules[sModuleName].bIsStarted )
-			{
-				if ( !_oModules[sModuleName].oInstance )
-				{
-					_oModules[sModuleName].oInstance = this.instanciate( sModuleName );
-				}
-				_oModules[sModuleName].oInstance.onStart( oStartData ); // onStart must be defined in the module.
-				_oModules[sModuleName].bIsStarted = _true_;
-			}
-		},
-
-		/**
-		 * Stops a module by calling its "onStop" method
-		 * @param {String} sModuleName The module name
-		 */
-		stop : function ( sModuleName )
-		{
-			_fpCheckModuleRegistration( sModuleName );
-
-			if ( _oModules[sModuleName].bIsStarted && _oModules[sModuleName].oInstance )
-			{
-				if ( _fpIsFunction( _oModules[sModuleName].oInstance.onStop ) )
-				{
-					_oModules[sModuleName].oInstance.onStop();
-				}
-				_oModules[sModuleName].oInstance.__sandbox__.unSubscribeAll();
-				_oModules[sModuleName].bIsStarted = _false_;
-			}
-		},
-
-		/**
-		 * Instanciates a module, the purpose of this method is mainly to test a module
-		 * @param {String} sModuleName The module name
-		 * @return {Object} The module instance
-		 */
-		instanciate : function ( sModuleName )
-		{
-			var oSandBox = _null_,
-				oInstance = _null_;
-
-			_fpCheckModuleRegistration( sModuleName );
-
-			oSandBox = _oSandBoxFactory.build( _oModules[sModuleName].sSandBoxType );
-			oInstance = _oModules[sModuleName].fpCreator( oSandBox );
-
-			if ( !_oTinyCore.debugMode )
-			{
-				// Decorate the instance's methods by wrapping them into a try-catch statement
-				_fpForEach( oInstance, function ( oInstanceProp, sInstancePropName )
-				{
-					if ( _fpIsFunction( oInstanceProp ) )
-					{
-						oInstance[sInstancePropName] = _fpTryCatchDecorator( oInstanceProp, oInstance, 'Error in module "'+sModuleName+'" executing method "'+sInstancePropName+'": ' );
-					}
-				} );
-			}
-
-			oInstance.__sandbox__ = oSandBox;
-
-			return oInstance;
-		},
-
-		/**
-		 * Returns the data related to all registered modules
-		 * Allows the extensions to have access to the modules data
-		 * @return {Object} The modules data ; each property is itself an object containing the following properties :
-		 * @return {Function} fpCreator The function invoked to create a new module's instance
-		 * @return {String} sSandBoxType The type of sandbox used
-		 * @return {Object} oInstance The instance of the module or null if the module has not been started
-		 * @return {Boolean} bIsStarted Whether the module is started or not
-		 */
-		getModules : function ()
-		{
-			return _oModules;
-		},
+		Module : _oModulesManager,
 
 		/**
 		 * The sandbox factory
@@ -500,6 +520,6 @@
 	if ( oEnv.define )
 	{
 		// Define an AMD module.
-		define( 'TinyCore',  _oTinyCore );
+		oEnv.define( 'TinyCore',  _oTinyCore );
 	}
 } ( this ) );

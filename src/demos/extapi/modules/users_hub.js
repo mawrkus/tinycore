@@ -2,7 +2,7 @@
  * A fake users hub module.
  * Note that this module will NOT have access to dom and utils functions through its sandbox.
  */
-TinyCore.register( 'users_hub', function ( oSandBox )
+TinyCore.Module.register( 'users_hub', function ( oSandBox )
 {
 	/**
 	 * The module object.

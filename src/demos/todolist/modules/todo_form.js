@@ -3,7 +3,7 @@
  * Topics subscribed : "storage:sync"
  * Topics published : "todo:add"
  */
-TinyCore.register( 'todo_form', function ( oSandBox )
+TinyCore.Module.register( 'todo_form', function ( oSandBox )
 {
 	// Shortcuts and private variables.
 	var _dom = oSandBox.dom,

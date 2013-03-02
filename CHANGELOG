@@ -1,3 +1,12 @@
+March 01, 2013 - v0.4.0
+
+* Core : improved consistency by adding TinyCore.Module to regroup all modules-related methods.
+* Extension / ExtAPI : split in two extensions : ExtError and ExtModule, refactored accordingly.
+* Extension / AMD : refactored accordingly.
+* UT : refactored accordingly.
+* Demos : refactored accordingly, added an index file with links to all demos.
+* Doc : refactored and updated accordingly (added benefits).
+
 February 23, 2013 - v0.3.1
 
 * Core : fixed a bug in _fpTryCatchDecorator where the result of the original function call was not returned.

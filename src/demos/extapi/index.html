@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 	<head>
 		<meta charset="utf-8">
 		<title>TinyCore /// extended API and auto topics subscriptions</title>
 
 		<script type="text/javascript" src="../../lib/require-2.1.4.min.js"></script>
 		<script type="text/javascript" src="../../TinyCore.js"></script>
-		<script type="text/javascript" src="../../extensions/TinyCore.ExtAPI.js"></script>
+		<script type="text/javascript" src="../../extensions/TinyCore.ExtModule.js"></script>
 		<script type="text/javascript" src="sandboxes/basic.js"></script>
 		<script type="text/javascript" src="modules/users_hub.js"></script>
 		<script type="text/javascript" src="modules/users_monitoring_auto_topics.js"></script>
@@ -31,27 +31,34 @@
 		<div id="users_info_box" class="box"></div>
 
 		<script type="text/javascript">
-			var oInfoBox = document.getElementById( 'users_info_box' ),
-				oStartupData = { 'users_monitoring' : { containerID : 'users_info_box' } },
-				displayModulesStatus = function ()
-				{
-					oInfoBox.innerHTML += '<p>Module status>users_monitoring is started? '+ TinyCore.isStarted( 'users_monitoring' )+'</p>';
-
-					oInfoBox.innerHTML += '<p>Module status>users_hub is started? '+ TinyCore.isStarted( 'users_hub' )+'</p>';
-				};
-			
-			TinyCore.startAll( ['users_monitoring', 'users_hub'], oStartupData );
-
-			displayModulesStatus();
-
-			setTimeout( function ()
+			window.onload = function ()
 			{
-				TinyCore.stopAll();
+				var oInfoBox = document.getElementById( 'users_info_box' ),
+					oStartupData = { 'users_monitoring' : { containerID : 'users_info_box' } },
+					displayModulesStatus = function ()
+					{
+						oInfoBox.innerHTML += '<p>Module status>users_monitoring is started? '+ TinyCore.Module.isStarted( 'users_monitoring' )+'</p>';
+
+						oInfoBox.innerHTML += '<p>Module status>users_hub is started? '+ TinyCore.Module.isStarted( 'users_hub' )+'</p>';
+					};
+
+				oInfoBox.innerHTML += '<p><strong>Init</strong></p>';
+
+				displayModulesStatus();
 				
+				TinyCore.Module.startAll( ['users_monitoring', 'users_hub'], oStartupData );
+
 				displayModulesStatus();
 
-				TinyCore.destroyAll();
-			}, 5000 );
+				setTimeout( function ()
+				{
+					TinyCore.Module.stopAll();
+					
+					displayModulesStatus();
+
+					TinyCore.Module.destroyAll();
+				}, 5000 );
+			};
 		</script>
 	</body>
 </html>

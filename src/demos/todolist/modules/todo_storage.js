@@ -5,7 +5,7 @@
  * Topics subscribed : "todo:add", "todo:update", "todo:remove"
  * Topics published : "storage:sync"
  */
-TinyCore.register( 'todo_storage', function ( oSandBox )
+TinyCore.Module.register( 'todo_storage', function ( oSandBox )
 {
 	// Shortcut and private variable.
 	var _storage = oSandBox.storage,
