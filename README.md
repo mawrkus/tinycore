@@ -11,6 +11,8 @@ Inspiration : "Scalable JavaScript Application Architecture", by Nicholas C. Zak
 - Video : [http://www.youtube.com/watch?v=vXjVFPosQHw](http://www.youtube.com/watch?v=vXjVFPosQHw)
 - Slides : [http://www.slideshare.net/nzakas/scalable-javascript-application-architecture-2012](http://www.slideshare.net/nzakas/scalable-javascript-application-architecture-2012)
 
+Online demo : <a href="http://www.sparring-partner.be/tinycore.js/demos/todolist/index.html" target="_blank">A simple todo list application</a>
+
 ## Features
 
 - Less than 2.5Kb minified
