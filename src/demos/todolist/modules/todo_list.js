@@ -1,6 +1,6 @@
 /**
  * The list module, responsible for adding/updating/removing todos in/from the list.
- * Topics subscribed : "todo:add", "list:clear", "list:clean", "storage:sync"
+ * Topics subscribed : "todo:add", "list:clear", "list:clean", "todo:search", "storage:sync"
  * Topics published : "todo:upddate", "todo:remove"
  */
 TinyCore.Module.register( 'todo_list', function ( oSandBox )
@@ -29,7 +29,7 @@ TinyCore.Module.register( 'todo_list', function ( oSandBox )
 
 			oSandBox.subscribe( 'list:clear', function ( oTopic )
 			{
-				self.cropList( function ()
+				self.forEachTodo( self.removeTodo, function ()
 				{
 					return true;	
 				} );
@@ -37,9 +37,22 @@ TinyCore.Module.register( 'todo_list', function ( oSandBox )
 
 			oSandBox.subscribe( 'list:clean', function ( oTopic )
 			{
-				self.cropList( function ( oCurrentListItem )
+				self.forEachTodo( self.removeTodo, function ( oCurrentListItem )
 				{
-					return _dom.hasClass( oCurrentListItem, 'done' );
+					return _dom.hasClass( oCurrentListItem, 'done' ) && _dom.isVisible( oCurrentListItem );
+				} );
+			} );
+
+			oSandBox.subscribe( 'todo:search', function ( oTopic )
+			{
+				var oData = oTopic.data;
+
+				self.forEachTodo( function ( oCurrentListItem )
+				{
+					var sTodoID = _dom.getData( oCurrentListItem, 'todo-id' ),
+						sTodoName = _dom.html( _dom.getById( 'todo-name-'+sTodoID ) );
+
+					_dom.toggle( oCurrentListItem, sTodoName.indexOf( oData.query ) !== -1 );
 				} );
 			} );
 
@@ -69,19 +82,61 @@ TinyCore.Module.register( 'todo_list', function ( oSandBox )
 		 */
 		restoreList : function ( oList )
 		{
-			var aListItems = _dom.getByClass( 'todo-item' ),
-				nCount = aListItems.length,
-				oCurrentTodo = null;
+			var oCurrentTodo = null;
 
-			while ( nCount-- )
+			this.forEachTodo( function ( oCurrentListItem )
 			{
-				_oDOM.remove( aListItems[nCount] );
-			}
+				_oDOM.remove( oCurrentListItem );	
+			} );
 
 			for ( sTodoID in oList )
 			{
 				oCurrentTodo = oList[sTodoID];
 				this.addTodo( sTodoID, oCurrentTodo.name, oCurrentTodo.done );
+			}
+		},
+
+		/**
+		 * This method will be called when any element of the list is clicked.
+		 * @param  {Event} eEvent The click event object
+		 */
+		onListClick : function ( eEvent )
+		{
+			var oTarget = eEvent.target;
+
+			// Event delegation.
+			while ( oTarget !== _oList )
+			{
+				if ( _dom.hasClass( oTarget, 'todo-check-all' ) )
+				{
+					var self = this,
+						bDone = oTarget.checked;
+
+					this.forEachTodo(
+						function ( oCurrentListItem )
+						{
+							self.toggleTodo( oCurrentListItem, bDone );
+						}, 
+						function ( oCurrentListItem )
+						{
+							return bDone !== _dom.hasClass( oCurrentListItem, 'done' ) && _dom.isVisible( oCurrentListItem );
+						}
+					);
+					break;
+				}
+				else if ( _dom.hasClass( oTarget, 'todo-check' ) )
+				{
+					this.toggleTodo( oTarget.parentNode );	
+					break;
+				}
+				else if ( _dom.hasClass( oTarget, 'todo-remove' ) )
+				{
+					this.removeTodo( oTarget.parentNode );
+					eEvent.preventDefault();
+					break;
+				}
+
+				oTarget = oTarget.parentNode;
 			}
 		},
 
@@ -106,59 +161,6 @@ TinyCore.Module.register( 'todo_list', function ( oSandBox )
 		},
 
 		/**
-		 * This method will be called when any element of the list is clicked.
-		 * @param  {Event} eEvent The click event object
-		 */
-		onListClick : function ( eEvent )
-		{
-			var oTarget = eEvent.target;
-
-			// Event delegation.
-			while ( oTarget !== _oList )
-			{
-				if ( _dom.hasClass( oTarget, 'todo-check-all' ) )
-				{
-					this.toggleAllTodos( oTarget.checked );
-					break;
-				}
-				else if ( _dom.hasClass( oTarget, 'todo-check' ) )
-				{
-					this.toggleTodo( oTarget.parentNode );	
-					break;
-				}
-				else if ( _dom.hasClass( oTarget, 'todo-remove' ) )
-				{
-					this.removeTodo( oTarget.parentNode );
-					eEvent.preventDefault();
-					break;
-				}
-
-				oTarget = oTarget.parentNode;
-			}
-		},
-
-		/**
-		 * Toggles all todos.
-		 * @param {Boolean} bDone Whether to mark them as done or not
-		 */
-		toggleAllTodos : function ( bDone )
-		{
-			var aListItems = _dom.getByClass( 'todo-item' ),
-				nCount = aListItems.length,
-				oCurrentListItem = null;
-
-			while ( nCount-- )
-			{
-				oCurrentListItem = aListItems[nCount];
-
-				if ( bDone !== _dom.hasClass( oCurrentListItem, 'done' ) )
-				{
-					this.toggleTodo( oCurrentListItem, bDone );
-				}
-			}
-		},
-
-		/**
 		 * Toggles a todo (mark it as done or not and vice-versa, yes).
 		 * @param {DOM Element} oListItem
 		 * @param {Boolean} bDone Optional, whether to mark them as done or not
@@ -179,27 +181,6 @@ TinyCore.Module.register( 'todo_list', function ( oSandBox )
 		},
 
 		/**
-		 * Removes the todos by using a filtering function.
-		 * @param {Function} fpFilter A function receiving the current todo list item element and returning a boolean value that indicates if it should be removed or not
-		 */
-		cropList : function ( fpFilter )
-		{
-			var aListItems = _dom.getByClass( 'todo-item' ),
-				nCount = aListItems.length,
-				oCurrentListItem = null;
-
-			while ( nCount-- )
-			{
-				oCurrentListItem = aListItems[nCount];
-
-				if ( fpFilter( oCurrentListItem ) )
-				{
-					this.removeTodo( oCurrentListItem );
-				}
-			}
-		},
-
-		/**
 		 * Removes a todo.
 		 * @param {DOM Element} oListItem
 		 */
@@ -212,6 +193,30 @@ TinyCore.Module.register( 'todo_list', function ( oSandBox )
 
 			// Let's broadcast the news...
 			oSandBox.publish( 'todo:remove', { name : sTodoName, id : sTodoID, done : _dom.hasClass( oListItem, 'done' ) } );
+		},
+
+		/**
+		 * Performs an action on each todo, depending on the result of a filtering function.
+		 * @param {Function} fpAction The function that will performs the action
+		 * @param {Function} fpFilter Optional, a function receiving the current todo list item element and returning a boolean value that indicates if the action should be executed on that todo or not
+		 */
+		forEachTodo : function ( fpAction, fpFilter )
+		{
+			var aListItems = _dom.getByClass( 'todo-item' ),
+				nCount = aListItems.length,
+				oCurrentListItem = null;
+
+			fpFilter = fpFilter || function ( oCurrentListItem ) { return true };
+
+			while ( nCount-- )
+			{
+				oCurrentListItem = aListItems[nCount];
+
+				if ( fpFilter( oCurrentListItem ) )
+				{
+					fpAction( oCurrentListItem );
+				}
+			}
 		}
 	};	
 }, 'domlib_sandbox' );

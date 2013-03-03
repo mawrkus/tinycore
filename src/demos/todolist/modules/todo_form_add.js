@@ -1,9 +1,9 @@
 /**
- * The form module, responsible for publishing a topic with the new todo(s) data, when the user submits the form.
+ * The add module, responsible for publishing a topic with the new todo(s) data, when the user submits the form.
  * Topics subscribed : "storage:sync"
  * Topics published : "todo:add"
  */
-TinyCore.Module.register( 'todo_form', function ( oSandBox )
+TinyCore.Module.register( 'todo_form_add', function ( oSandBox )
 {
 	// Shortcuts and private variables.
 	var _dom = oSandBox.dom,
@@ -27,9 +27,10 @@ TinyCore.Module.register( 'todo_form', function ( oSandBox )
 				_nCurrentTodoID = oTopic.data.lastid + 1;
 			} );
 
-			_oForm = _dom.getById( 'todo-form' );
-			_oInput = _dom.getById( 'todo-input' );
+			_oForm = _dom.getById( 'todo-form-add' );
+			_oInput = _dom.getById( 'add-input' );
 
+			_oInput.value = '';
 			_events.focus( _oInput );
 
 			_events.bind( _oForm, 'submit', this.onFormSubmit );

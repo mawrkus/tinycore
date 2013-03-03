@@ -24,7 +24,7 @@ Online demo : <a href="http://www.sparring-partner.be/tinycore.js/demos/todolist
 ## Benefits
 
 - Decoupled application architecture
-- Divide & conquer : each *module* implements a functionality or a small set of functionalities
+- Divide & conquer : each *module* implements only a functionality or a small set of functionalities
 - Modules are independent : change/removal/failure of one does not affect the others
 - Reusability : modules can be reused across a number of different applications
 - Testing : modules can be tested individually both inside and outside of the application

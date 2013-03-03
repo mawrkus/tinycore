@@ -11,17 +11,21 @@
 		<script type="text/javascript" src="sandboxes/domlib.js"></script>
 		<script type="text/javascript" src="sandboxes/storage.js"></script>
 
-		<script type="text/javascript" src="modules/todo_form.js"></script>
+		<script type="text/javascript" src="modules/todo_form_add.js"></script>
 		<script type="text/javascript" src="modules/todo_list.js"></script>
 		<script type="text/javascript" src="modules/todo_summary.js"></script>
+		<script type="text/javascript" src="modules/todo_form_search.js"></script>
 		<script type="text/javascript" src="modules/todo_storage.js"></script>
 	</head>
 	<body>
 		<div id="container">
 			<h1>A simple todo list app</h1>
-			<form id="todo-form">
-				<input id="todo-input" placeholder="Enter your comma-separated todos..." />
-				<input id="todo-submit" type="submit" value="Add" />
+			<form id="todo-form-add" class="todo-form">
+				<input id="add-input" class="todo-input" placeholder="Enter your comma-separated todos..." />
+			</form>
+			<form id="search-form" class="todo-form">
+				<input id="search-input" class="todo-input" placeholder="Quick search..." />
+				<a title="reset" href="#" id="search-reset"></a>
 			</form>
 			<span id="summary">
 				<span id="count-done"></span>/<span id="count-total"></span> todo(s) completed - <a href="#" id="clear-completed" class="clear">clear completed</a> - <a href="#" id="clear-list" class="clear">clear all</a>
@@ -37,9 +41,10 @@
 		<script type="text/javascript">
 			window.onload = function ()
 			{
-				TinyCore.Module.start( 'todo_form' );
+				TinyCore.Module.start( 'todo_form_add' );
 				TinyCore.Module.start( 'todo_list' );
-				TinyCore.Module.start( 'todo_summary' );
+				TinyCore.Module.start( 'todo_summary' ); // optional
+				TinyCore.Module.start( 'todo_form_search' ); // optional
 				TinyCore.Module.start( 'todo_storage' ); // optional
 			};
 		</script>

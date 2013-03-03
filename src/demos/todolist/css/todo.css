@@ -18,29 +18,43 @@ h1 {
 	-ms-box-shadow: 0 0 2px #888;
 	-webkit-box-shadow: 0 0 2px #888;
 	box-shadow: 0 0 2px #888;
+	position: relative;
 }
 
 /* Form */
-#todo-form {
+.todo-form {
 	margin-bottom: 28px;
 }
-#todo-input {
+.todo-input {
 	border:1px solid #aaa;
 	padding:6px 12px;
-	width:262px;
+	width:258px;
 }
-#todo-input:hover, #todo-input:focus {
+.todo-input:hover, .todo-input:focus {
 	border:1px solid #666;
 }
-#todo-submit {
-	border:1px solid #aaa;
-	padding:5px 12px;
-	color:#666;
+#search-form {
+	position: absolute;
+	right:30px;
+	top:32px;
+	margin:0;
 }
-#todo-submit:hover {
-	border:1px solid #666;
-	cursor: pointer;
-	color:#333;
+#search-input {
+	width:131px;
+}
+#search-reset {
+	width:131px;
+	position: absolute;
+	top:7px;
+	right:7px;
+	display: block;
+	width: 16px;
+	height: 16px;
+	background: url(../img/reset.png) no-repeat center center;
+}
+#search-reset:hover
+{
+	background-image: url(../img/reset-red.png);
 }
 
 /* Summary */
@@ -101,4 +115,7 @@ h1 {
 }
 #todo-list .todo-item:hover .todo-remove {
 	display: block;
+}
+.hidden {
+	display: none !important;
 }

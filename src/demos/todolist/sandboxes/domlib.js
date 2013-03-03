@@ -68,7 +68,10 @@ TinyCore.SandBox.register( 'domlib_sandbox', {
 		} () ),
 		addClass : function ( oElement, sClass )
 		{
-			oElement.className += ' '+sClass;
+			if ( !this.hasClass( oElement, sClass) )
+			{
+				oElement.className += ' '+sClass;
+			}
 		},
 		removeClass : function ( oElement, sClass )
 		{
@@ -88,6 +91,18 @@ TinyCore.SandBox.register( 'domlib_sandbox', {
 		hasClass : function ( oElement, sClass )
 		{
 			return oElement.className && oElement.className.indexOf( sClass ) !== -1;
+		},
+		toggle : function ( oElement, bShowOrHide )
+		{
+			if ( typeof bShowOrHide === 'undefined' )
+			{
+				bShowOrHide = this.hasClass( oElement, 'hidden' );
+			}
+			this.toggleClass( oElement, 'hidden', !bShowOrHide );
+		},
+		isVisible : function ( oElement )
+		{
+			return !this.hasClass( oElement, 'hidden' );
 		},
 		create : function ( sTagName )
 		{
