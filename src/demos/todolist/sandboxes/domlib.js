@@ -9,7 +9,7 @@ TinyCore.SandBox.register( 'domlib_sandbox', {
 		},
 		nodesToArray : function ( aNodes )
 		{
-			var aResults = null;
+			var aResults = [];
 
 			try
 			{

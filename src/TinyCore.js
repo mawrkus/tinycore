@@ -462,7 +462,7 @@
 			getModules : function ()
 			{
 				return _oModules;
-			},
+			}
 		};
 	} () );
 
