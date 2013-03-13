@@ -96,7 +96,7 @@
 		// The public API
 		return {
 			/**
-			 * Instanciates a module and add automatic topics subscriptions if the "topics" property is present
+			 * Instanciates a module and adds automatic topics subscriptions if the "topics" property is present
 			 * @param {String} sModuleName The module name
 			 * @return {Object} The module instance
 			 */
@@ -188,12 +188,8 @@
 			 */
 			registerAndStart : function ( sModuleName, fpCreator, sSandBoxType )
 			{
-				if ( this.register( sModuleName, fpCreator, sSandBoxType ) )
-				{
-					this.start( sModuleName, _null_ );
-					return _true_;
-				}
-				return _false_;
+				this.register( sModuleName, fpCreator, sSandBoxType );
+				this.start( sModuleName, _null_ );
 			}
 		};	
 	} ( TinyCore.Module ) );

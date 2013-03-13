@@ -972,20 +972,6 @@ describe( 'TinyCore.Module.registerAndStart', function ()
 		expect( TinyCore.Module.register ).toHaveBeenCalledWith( 'ism1', fpCreator, undefined );
 		expect( TinyCore.Module.start ).toHaveBeenCalledWith( 'ism1', null );
 	} );
-
-	it( 'should not start a module if the registration failed', function ()
-	{
-		var fpCreator = fpDummyCreator;
-
-		spyOn( TinyCore.Module, 'register' ).andReturn( false );
-		spyOn( TinyCore.Module, 'start' );
-
-		TinyCore.Module.register( 'ism2', fpCreator );
-		TinyCore.Module.registerAndStart( 'ism2', fpCreator );
-
-		expect( TinyCore.Module.register ).toHaveBeenCalledWith( 'ism2', fpCreator );
-		expect( TinyCore.Module.start ).not.toHaveBeenCalled();
-	} );
 } );
 
 describe( 'TinyCore.Module.instanciate', function ()
@@ -1027,10 +1013,11 @@ describe( 'TinyCore.Module.instanciate', function ()
 
 describe( 'TinyCore.AMD', function ()
 {
-	it( 'should have an interface with the following methods/properties : config, register and registerAndStart', function ()
+	it( 'should have an interface with the following methods/properties : config, setErrorHandler, register and registerAndStart', function ()
 	{
 		expect( TinyCore.AMD ).toBeObject();
 		expect( TinyCore.AMD.config ).toBeFunction();
+		expect( TinyCore.AMD.setErrorHandler ).toBeFunction();
 		expect( TinyCore.AMD.register ).toBeFunction();
 		expect( TinyCore.AMD.registerAndStart ).toBeFunction();
 	} );

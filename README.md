@@ -1,7 +1,7 @@
 
 # TinyCore.js 
 
-`Version 0.4.0`
+`Version 0.4.1`
 
 ## Overview
 
@@ -19,7 +19,7 @@ Online demo : <a href="http://www.sparring-partner.be/tinycore.js/demos/todolist
 - Extensible
 - Supports unit testing of the modules
 - Supports async modules loading using AMD and [require.js](http://requirejs.org) (less than 1Kb extension)
-- Tested under IE7+, Safari 5.1, Opera 12, Chrome 24 and Firefox 18
+- Tested under IE7+, Safari 5.1, Opera 12, Chrome 24+ and Firefox 18+
 
 ## Benefits
 
@@ -288,7 +288,7 @@ If you do not want this decoration feature, just set `TinyCore.debugMode` to tru
 
 ### 1. TinyCore.Module's extended API : around 1Kb
 
-`Version 0.1.0`
+`Version 0.1.1`
 
 ```js
 var TinyCore.Module = {
@@ -367,7 +367,7 @@ This extension redefines `TinyCore.ErrorHandler.log` by implementing a fallback 
 
 ### 3. Asynchronous Module Definition : less than 1Kb
 
-`Version 0.1.0`
+`Version 0.2.0`
 
 Modules definition and asynchronous loading via [require.js](http://requirejs.org) [2].  
 It is basically a wrapper over `define` and `require` :
@@ -375,7 +375,7 @@ It is basically a wrapper over `define` and `require` :
 ```js
 var TinyCore.AMD = {
 	config : function ( oSettings ) {},
-	onError : function ( eError ) {},
+	setErrorHandler : function ( fpErrorHandler ),
 	register : function ( aModulesNames, fpCallback ) {},
 	registerAndStart : function ( aModulesNames, oModulesStartData, fpCallback ) {}
 };
@@ -430,7 +430,7 @@ define( ['lib/plot.js'], function ( oPlot )
 
 ## Creators
 
-- Mawkus aka Marc Mignonsin (<web@sparring-partner.be>)
+- Main dev : Mawrkus aka Marc Mignonsin (<web@sparring-partner.be>)
 - JuanMa aka Juan Manuel Garrido (<juanma.garrido@gmail.com>)
 
 ## RoadMap

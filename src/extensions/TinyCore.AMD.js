@@ -22,6 +22,8 @@
 		throw new Error( 'Cannot add AMD extension to TinyCore: require.js seems to be missing!' );
 	}
 
+	/* ------------------------------------ AMD ------------------------------------ */
+
 	/**
 	 * The extension
 	 * @type {Object}
@@ -31,7 +33,7 @@
 		 * Current version
 		 * @type {String}
 		 */
-		version : '0.1.0',
+		version : '0.2.0',
 
 		/**
 		 * Configures the loading
@@ -43,14 +45,6 @@
 		},
 
 		/**
-		 * Global error handler
-		 * @param {Error} eError
-		 */
-		onError : function ( eError )
-		{
-			TinyCore.ErrorHandler.log( 'Error loading module(s) "'+eError.requireModules+'": '+eError.message );	
-		},
-		/**
 		 * Loads and registers asynchronously modules using require.js and Asynchronous Module Definition
 		 * @param {Array} aModulesName
 		 * @param {Function} fpCallback The function to call when all modules are registered
@@ -60,7 +54,7 @@
 			require( aModulesNames, function ()
 			{
 				// We receive all the creator functions as arguments
-				var aModulesCreators = Array.prototype.slice.call( arguments, 0 ),
+				var aModulesCreators = Array.prototype.slice.call( arguments ),
 					nModulesCount = aModulesCreators.length,
 					nModuleIndex = 0,
 					sModuleName;
@@ -71,7 +65,10 @@
 					Module.register( sModuleName, aModulesCreators[nModuleIndex] );
 				};
 
-				fpCallback.call( TinyCore );
+				if ( fpCallback )
+				{
+					fpCallback.call( TinyCore );
+				}
 			} );
 		},
 
@@ -101,13 +98,28 @@
 					Module.start( sModuleName, oModulesStartData[sModuleName] );
 				};
 
-				fpCallback.call( TinyCore );
+				if ( fpCallback )
+				{
+					fpCallback.call( TinyCore );
+				}
 			} );
-		}
+		},
+
+		/**
+		 * Sets the global error handler
+		 * @param {Function} fpErrorHandler
+		 */
+        setErrorHandler : function ( fpErrorHandler )
+        {
+            require.onError = fpErrorHandler;
+        }
 	};
 
-	// Install the global error handler
-	require.onError = _oAMD.onError;
+	// Install the default global error handler
+   _oAMD.setErrorHandler( function ( eError )
+    {
+        TinyCore.ErrorHandler.log( 'Error loading module(s) "'+eError.requireModules+'": '+eError.message );	
+    } );
 
 	// Add the extension to TinyCore
 	TinyCore.extend( { AMD : _oAMD } );

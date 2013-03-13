@@ -1,3 +1,9 @@
+March 13, 2013
+
+* Extension / AMD 0.2.0 : Added a check on the optional callback function passed to register and registerAndStart.
+* Extension / AMD 0.2.0  : Replaced onError by a proper setErrorHandler method.
+* Extension / ExtAPI 0.1.1 : Starts a module even if register returns false.
+
 March 01, 2013 - v0.4.0
 
 * Core : improved consistency by adding TinyCore.Module to regroup all modules-related methods.
