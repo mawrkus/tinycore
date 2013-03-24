@@ -1,0 +1,316 @@
+<!DOCTYPE html>  <html> <head>   <title>TinyCore.docco.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               TinyCore.docco.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <pre><code>tinyCore.js 0.4.0
+https://github.com/mawrkus/tinycore
+</code></pre>             </td>             <td class="code">               <div class="highlight"><pre><span class="p">;(</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">oEnv</span> <span class="p">)</span>
+<span class="p">{</span>
+	<span class="s1">&#39;use strict&#39;</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <h2>HELPERS</h2>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Helps minification</p>             </td>             <td class="code">               <div class="highlight"><pre>	<span class="kd">var</span> <span class="nx">_true_</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">_false_</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">_null_</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Determine the class of an object</p>             </td>             <td class="code">               <div class="highlight"><pre>	<span class="kd">var</span> <span class="nx">_fpIsClass</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">oMixed</span><span class="p">,</span> <span class="nx">sClassName</span> <span class="p">)</span>
+	<span class="p">{</span>
+		<span class="k">return</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span> <span class="nx">oMixed</span> <span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;[object &#39;</span><span class="o">+</span><span class="nx">sClassName</span><span class="o">+</span><span class="s1">&#39;]&#39;</span><span class="p">;</span>
+	<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Determine if the parameter is a function</p>             </td>             <td class="code">               <div class="highlight"><pre>	<span class="kd">var</span> <span class="nx">_fpIsFunction</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">oMixed</span> <span class="p">)</span>
+	<span class="p">{</span>
+		<span class="k">return</span> <span class="nx">_fpIsClass</span><span class="p">(</span> <span class="nx">oMixed</span><span class="p">,</span> <span class="s1">&#39;Function&#39;</span> <span class="p">);</span>
+	<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Run through all the properties of an object
+and applies a callback function on each of them</p>             </td>             <td class="code">               <div class="highlight"><pre>	<span class="kd">var</span> <span class="nx">_fpForEach</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">oObject</span><span class="p">,</span> <span class="nx">fpCallback</span> <span class="p">)</span>
+	<span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">sProperty</span><span class="p">;</span>
+
+		<span class="k">for</span> <span class="p">(</span> <span class="nx">sProperty</span> <span class="k">in</span> <span class="nx">oObject</span> <span class="p">)</span>
+		<span class="p">{</span>
+			<span class="k">if</span> <span class="p">(</span> <span class="nx">oObject</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span> <span class="nx">sProperty</span> <span class="p">)</span> <span class="p">)</span>
+			<span class="p">{</span>
+				<span class="nx">fpCallback</span><span class="p">(</span> <span class="nx">oObject</span><span class="p">[</span><span class="nx">sProperty</span><span class="p">],</span> <span class="nx">sProperty</span> <span class="p">);</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>Merge recursively two objects by adding the source 
+object properties to the destination object</p>             </td>             <td class="code">               <div class="highlight"><pre>	<span class="kd">var</span> <span class="nx">_fpMerge</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">oDest</span><span class="p">,</span> <span class="nx">oSrc</span> <span class="p">)</span>
+	<span class="p">{</span>
+		<span class="nx">oDest</span> <span class="o">=</span> <span class="nx">oDest</span> <span class="o">||</span><span class="err"> </span><span class="p">{};</span>
+
+		<span class="nx">_fpForEach</span><span class="p">(</span> <span class="nx">oSrc</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">oSrcProp</span><span class="p">,</span> <span class="nx">sSrcPropName</span> <span class="p">)</span>
+		<span class="p">{</span>
+			<span class="k">if</span> <span class="p">(</span> <span class="nx">_fpIsClass</span><span class="p">(</span> <span class="nx">oSrcProp</span><span class="p">,</span> <span class="s1">&#39;Object&#39;</span> <span class="p">)</span> <span class="p">)</span>
+			<span class="p">{</span>
+				<span class="nx">oSrcProp</span> <span class="o">=</span> <span class="nx">_fpMerge</span><span class="p">(</span> <span class="nx">oDest</span><span class="p">[</span><span class="nx">sSrcPropName</span><span class="p">],</span> <span class="nx">oSrcProp</span> <span class="p">);</span>
+			<span class="p">}</span>
+
+			<span class="nx">oDest</span><span class="p">[</span><span class="nx">sSrcPropName</span><span class="p">]</span> <span class="o">=</span> <span class="nx">oSrcProp</span><span class="p">;</span>
+		<span class="p">}</span> <span class="p">);</span>
+
+		<span class="k">return</span> <span class="nx">oDest</span><span class="p">;</span>
+	<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>Convert an array-like object to an actual array</p>             </td>             <td class="code">               <div class="highlight"><pre>	<span class="kd">var</span> <span class="nx">_fpToArray</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">oArrayLike</span> <span class="p">)</span>
+	<span class="p">{</span>
+		<span class="k">return</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span> <span class="nx">oArrayLike</span> <span class="p">);</span>
+	<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>"try-catch" function decoration <br />
+Avoid double decoration if called twice on the same function</p>             </td>             <td class="code">               <div class="highlight"><pre>	<span class="kd">var</span> <span class="nx">_fpTryCatchDecorator</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">fpFunc</span><span class="p">,</span> <span class="nx">oContext</span><span class="p">,</span> <span class="nx">sErrMsg</span> <span class="p">)</span>
+	<span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">fpDecoratedFunc</span><span class="p">;</span>
+
+		<span class="k">if</span> <span class="p">(</span> <span class="nx">fpFunc</span><span class="p">.</span><span class="nx">__decorated__</span> <span class="p">)</span>
+		<span class="p">{</span>
+			<span class="k">return</span> <span class="nx">fpFunc</span><span class="p">;</span>
+		<span class="p">}</span>
+
+		<span class="nx">fpDecoratedFunc</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span>
+		<span class="p">{</span>
+			<span class="k">try</span>
+			<span class="p">{</span>
+				<span class="k">return</span> <span class="nx">fpFunc</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span> <span class="nx">oContext</span><span class="p">,</span> <span class="nx">_fpToArray</span><span class="p">(</span> <span class="nx">arguments</span> <span class="p">)</span> <span class="p">);</span>
+			<span class="p">}</span>
+			<span class="k">catch</span> <span class="p">(</span> <span class="nx">eError</span> <span class="p">)</span>
+			<span class="p">{</span>
+				<span class="nx">_oTinyCore</span><span class="p">.</span><span class="nx">ErrorHandler</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">sErrMsg</span> <span class="o">+</span> <span class="nx">eError</span><span class="p">.</span><span class="nx">message</span> <span class="p">);</span>
+			<span class="p">}</span>
+		<span class="p">};</span>
+
+		<span class="nx">fpDecoratedFunc</span><span class="p">.</span><span class="nx">__decorated__</span> <span class="o">=</span> <span class="nx">_true_</span><span class="p">;</span>
+
+		<span class="k">return</span> <span class="nx">fpDecoratedFunc</span><span class="p">;</span>
+	<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <h2>ERROR HANDLER</h2>             </td>             <td class="code">               <div class="highlight"><pre>	<span class="kd">var</span> <span class="nx">_oErrorHandler</span> <span class="o">=</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p>Log an error message</p>             </td>             <td class="code">               <div class="highlight"><pre>		<span class="nx">log</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">sMsg</span> <span class="p">)</span>
+		<span class="p">{</span>
+			<span class="nx">oEnv</span><span class="p">.</span><span class="nx">console</span> <span class="o">&amp;&amp;</span> <span class="nx">oEnv</span><span class="p">.</span><span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span> <span class="nx">sMsg</span> <span class="p">);</span>
+		<span class="p">}</span>
+	<span class="p">};</span>
+	</pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <p><em>Example of Handling Errors:</em>  </p>
+
+<iframe width="450" height="450" src="http://jsfiddle.net/juanma/nzEuH/embedded/" frameborder="0"></iframe>
+
+<p><br/></p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <h2>SANDBOX</h2>             </td>             <td class="code">               <div class="highlight"><pre>	<span class="kd">var</span> <span class="nx">_oSandBoxFactory</span> <span class="o">=</span> <span class="p">(</span> <span class="kd">function</span> <span class="p">()</span>
+	<span class="p">{</span>
+		
+		<span class="kd">var</span> <span class="nx">_oSandBoxes</span> <span class="o">=</span> <span class="p">{};</span>
+		<span class="kd">var</span> <span class="nx">_nSandBoxesCount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+		<span class="kd">var</span> <span class="nx">_oTopic2Subs</span> <span class="o">=</span> <span class="p">{};</span>
+		<span class="kd">var</span> <span class="nx">_oSub2Topics</span> <span class="o">=</span> <span class="p">{};</span>
+
+		<span class="kd">var</span> <span class="nx">_fpCreatePrototype</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">nID</span> <span class="p">)</span>
+		<span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">_sSubID</span> <span class="o">=</span> <span class="nx">nID</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <h2><em>Default methods</em></h2>             </td>             <td class="code">               <div class="highlight"><pre>			<span class="k">return</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <h3>subscribe</h3>
+
+<p>Subscribe a function (handler) to one or more topics</p>             </td>             <td class="code">               <div class="highlight"><pre>				<span class="nx">subscribe</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">aTopics</span><span class="p">,</span> <span class="nx">fpHandler</span><span class="p">,</span> <span class="nx">oContext</span> <span class="p">)</span>
+				<span class="p">{</span>
+					<span class="kd">var</span> <span class="nx">nIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+						<span class="nx">nTopicsCount</span><span class="p">,</span>
+						<span class="nx">sTopic</span><span class="p">;</span>
+
+					<span class="k">if</span> <span class="p">(</span> <span class="nx">_fpIsFunction</span><span class="p">(</span> <span class="nx">fpHandler</span> <span class="p">)</span> <span class="p">)</span>
+					<span class="p">{</span>
+						<span class="nx">aTopics</span> <span class="o">=</span> <span class="nx">_fpIsClass</span><span class="p">(</span> <span class="nx">aTopics</span><span class="p">,</span> <span class="s1">&#39;Array&#39;</span> <span class="p">)</span> <span class="o">?</span> <span class="nx">aTopics</span> <span class="o">:</span><span class="err"> </span><span class="p">[</span><span class="nx">aTopics</span><span class="p">];</span>
+
+						<span class="k">for</span> <span class="p">(</span> <span class="nx">nTopicsCount</span> <span class="o">=</span> <span class="nx">aTopics</span><span class="p">.</span><span class="nx">length</span> <span class="p">;</span> <span class="nx">nIndex</span> <span class="o">&lt;</span> <span class="nx">nTopicsCount</span><span class="p">;</span> <span class="nx">nIndex</span><span class="o">++</span> <span class="p">)</span>
+						<span class="p">{</span>
+							<span class="nx">sTopic</span> <span class="o">=</span> <span class="nx">aTopics</span><span class="p">[</span><span class="nx">nIndex</span><span class="p">];</span>
+							<span class="nx">_oTopic2Subs</span><span class="p">[</span><span class="nx">sTopic</span><span class="p">]</span> <span class="o">=</span> <span class="nx">_oTopic2Subs</span><span class="p">[</span><span class="nx">sTopic</span><span class="p">]</span> <span class="o">||</span> <span class="p">{};</span>
+
+							<span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="nx">_oTopic2Subs</span><span class="p">[</span><span class="nx">sTopic</span><span class="p">][</span><span class="nx">_sSubID</span><span class="p">]</span> <span class="p">)</span>
+							<span class="p">{</span>
+								<span class="nx">_oTopic2Subs</span><span class="p">[</span><span class="nx">sTopic</span><span class="p">][</span><span class="nx">_sSubID</span><span class="p">]</span> <span class="o">=</span> <span class="nx">_oTinyCore</span><span class="p">.</span><span class="nx">debugMode</span> <span class="o">?</span>
+									<span class="kd">function</span> <span class="p">()</span>
+									<span class="p">{</span>
+										<span class="nx">fpHandler</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span> <span class="nx">oContext</span><span class="p">,</span> <span class="nx">_fpToArray</span><span class="p">(</span> <span class="nx">arguments</span> <span class="p">)</span> <span class="p">);</span>
+									<span class="p">}</span>
+									<span class="o">:</span> <span class="nx">_fpTryCatchDecorator</span><span class="p">(</span> <span class="nx">fpHandler</span><span class="p">,</span> <span class="nx">oContext</span><span class="p">,</span> <span class="s1">&#39;Error publishing topic &quot;&#39;</span> <span class="o">+</span> <span class="nx">sTopic</span> <span class="o">+</span> <span class="s1">&#39;&quot;: &#39;</span> <span class="p">);</span>
+
+								<span class="nx">_oSub2Topics</span><span class="p">[</span><span class="nx">_sSubID</span><span class="p">]</span> <span class="o">=</span> <span class="nx">_oSub2Topics</span><span class="p">[</span><span class="nx">_sSubID</span><span class="p">]</span> <span class="o">||</span> <span class="p">[];</span>
+								<span class="nx">_oSub2Topics</span><span class="p">[</span><span class="nx">_sSubID</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span> <span class="nx">sTopic</span> <span class="p">);</span>
+							<span class="p">}</span>
+						<span class="p">}</span>
+					<span class="p">}</span>
+				<span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <h3>publish</h3>
+
+<p>Publishes a topic</p>             </td>             <td class="code">               <div class="highlight"><pre>				<span class="nx">publish</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">sTopic</span><span class="p">,</span> <span class="nx">oData</span> <span class="p">)</span>
+				<span class="p">{</span>
+					<span class="kd">var</span> <span class="nx">oSubs</span> <span class="o">=</span> <span class="nx">_oTopic2Subs</span><span class="p">[</span><span class="nx">sTopic</span><span class="p">];</span>
+
+					<span class="k">if</span> <span class="p">(</span> <span class="nx">oSubs</span> <span class="p">)</span>
+					<span class="p">{</span>
+						<span class="nx">oEnv</span><span class="p">.</span><span class="nx">setTimeout</span><span class="p">(</span> <span class="kd">function</span> <span class="p">()</span>
+						<span class="p">{</span>
+							<span class="nx">_fpForEach</span><span class="p">(</span> <span class="nx">oSubs</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">fpHandler</span> <span class="p">)</span>
+							<span class="p">{</span>
+								<span class="nx">fpHandler</span><span class="p">(</span> <span class="p">{</span> <span class="nx">name</span> <span class="o">:</span> <span class="nx">sTopic</span><span class="p">,</span> <span class="nx">data</span> <span class="o">:</span> <span class="nx">oData</span> <span class="p">}</span> <span class="p">);</span>
+							<span class="p">}</span> <span class="p">);</span>
+						<span class="p">},</span> <span class="mi">0</span> <span class="p">);</span>
+					<span class="p">}</span>
+				<span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-17">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-17">&#182;</a>               </div>               <h3>unSubscribe</h3>
+
+<p>Unsubscribe from one or more topics</p>             </td>             <td class="code">               <div class="highlight"><pre>				<span class="nx">unSubscribe</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">aTopics</span> <span class="p">)</span>
+				<span class="p">{</span>
+					<span class="kd">var</span> <span class="nx">aTopics</span> <span class="o">=</span> <span class="nx">_fpIsClass</span><span class="p">(</span> <span class="nx">aTopics</span><span class="p">,</span> <span class="s1">&#39;Array&#39;</span> <span class="p">)</span> <span class="o">?</span> <span class="nx">aTopics</span> <span class="o">:</span><span class="err"> </span><span class="p">[</span><span class="nx">aTopics</span><span class="p">],</span>
+						<span class="nx">nTopicsCount</span> <span class="o">=</span> <span class="nx">aTopics</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+						<span class="nx">oSubs</span><span class="p">;</span>
+
+					<span class="k">while</span> <span class="p">(</span> <span class="nx">nTopicsCount</span><span class="o">--</span> <span class="p">)</span>
+					<span class="p">{</span>
+						<span class="nx">oSubs</span> <span class="o">=</span> <span class="nx">_oTopic2Subs</span><span class="p">[</span><span class="nx">aTopics</span><span class="p">[</span><span class="nx">nTopicsCount</span><span class="p">]]</span>
+						<span class="k">if</span> <span class="p">(</span> <span class="nx">oSubs</span> <span class="o">&amp;&amp;</span> <span class="nx">oSubs</span><span class="p">[</span><span class="nx">_sSubID</span><span class="p">]</span> <span class="p">)</span>
+						<span class="p">{</span>
+							<span class="k">delete</span> <span class="nx">oSubs</span><span class="p">[</span><span class="nx">_sSubID</span><span class="p">];</span>
+						<span class="p">}</span>
+					<span class="p">}</span>
+				<span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-18">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-18">&#182;</a>               </div>               <h3>unSubscribeAll</h3>
+
+<p>Unsubscribe from all subscribed topics</p>             </td>             <td class="code">               <div class="highlight"><pre>				<span class="nx">unSubscribeAll</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span>
+				<span class="p">{</span>
+					<span class="k">if</span> <span class="p">(</span> <span class="nx">_oSub2Topics</span><span class="p">[</span><span class="nx">_sSubID</span><span class="p">]</span> <span class="p">)</span>
+					<span class="p">{</span>
+						<span class="k">this</span><span class="p">.</span><span class="nx">unSubscribe</span><span class="p">(</span> <span class="nx">_oSub2Topics</span><span class="p">[</span><span class="nx">_sSubID</span><span class="p">]</span> <span class="p">);</span>
+					<span class="p">}</span>
+				<span class="p">}</span>
+				</pre></div>             </td>           </tr>                               <tr id="section-19">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-19">&#182;</a>               </div>               <p><em>Example of Subscribing &amp; Notifyng Topics (Events):</em>  </p>
+
+<iframe width="450" height="450" src="http://jsfiddle.net/juanma/Sjq4S/embedded/" frameborder="0"></iframe>
+
+<p><br/>
+<em>More examples about Subscribing &amp; Notifyng Topics:</em> <br />
+- <a href="http://jsfiddle.net/juanma/T37kN/">TinyCore.js - Subscribe/Publish Events</a> <br />
+- <a href="http://jsfiddle.net/juanma/DYxqN/">TinyCore.js - Subscribe/UnSubscribe/Publish Events</a></p>             </td>             <td class="code">               <div class="highlight"><pre>			<span class="p">}</span>
+		<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-20">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-20">&#182;</a>               </div>               <h2><em>The public API</em></h2>             </td>             <td class="code">               <div class="highlight"><pre>		<span class="k">return</span> <span class="p">{</span>
+			</pre></div>             </td>           </tr>                               <tr id="section-21">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-21">&#182;</a>               </div>               <h3>build</h3>
+
+<p>Build a new sandbox</p>             </td>             <td class="code">               <div class="highlight"><pre>			<span class="nx">build</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">sType</span> <span class="p">)</span>
+			<span class="p">{</span>
+				<span class="k">return</span> <span class="nx">_fpMerge</span><span class="p">(</span> <span class="nx">_fpCreatePrototype</span><span class="p">(</span> <span class="o">++</span><span class="nx">_nSandBoxesCount</span> <span class="p">),</span> <span class="nx">_oSandBoxes</span><span class="p">[</span><span class="nx">sType</span><span class="p">]</span> <span class="o">||</span><span class="err"> </span><span class="p">{}</span> <span class="p">);</span>
+			<span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-22">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-22">&#182;</a>               </div>               <h3>register</h3>
+
+<p>Register a new sandbox</p>             </td>             <td class="code">               <div class="highlight"><pre>			<span class="nx">register</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">sType</span><span class="p">,</span> <span class="nx">oNewSandBox</span> <span class="p">)</span>
+			<span class="p">{</span>
+				<span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="nx">_oSandBoxes</span><span class="p">[</span><span class="nx">sType</span><span class="p">]</span> <span class="p">)</span>
+				<span class="p">{</span>
+					<span class="nx">_oSandBoxes</span><span class="p">[</span><span class="nx">sType</span><span class="p">]</span> <span class="o">=</span> <span class="nx">oNewSandBox</span><span class="p">;</span>
+					<span class="k">return</span> <span class="nx">_true_</span><span class="p">;</span>
+				<span class="p">}</span>
+				<span class="k">return</span> <span class="nx">_false_</span><span class="p">;</span>
+			<span class="p">}</span>
+		<span class="p">};</span>
+	<span class="p">}</span> <span class="p">()</span> <span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-23">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-23">&#182;</a>               </div>               <h2>MODULES</h2>             </td>             <td class="code">               <div class="highlight"><pre>	<span class="kd">var</span> <span class="nx">_oModulesManager</span> <span class="o">=</span> <span class="p">(</span> <span class="kd">function</span> <span class="p">()</span>
+	<span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-24">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-24">&#182;</a>               </div>               <p>Store following info info for registered modules</p>
+
+<pre><code>_oModules[sModuleName] = {  
+    fpCreator   : fpCreator,  
+    sSandBoxType : sSandBoxType || '',  
+    oInstance   : _null_,  
+    bIsStarted  : _false_  
+};  
+</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>		<span class="kd">var</span> <span class="nx">_oModules</span> <span class="o">=</span> <span class="p">{};</span></pre></div>             </td>           </tr>                               <tr id="section-25">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-25">&#182;</a>               </div>               <p>Check if a module has been registered or not
+and throws an exception accordingly</p>             </td>             <td class="code">               <div class="highlight"><pre>		<span class="kd">var</span> <span class="nx">_fpCheckModuleRegistration</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">sModuleName</span> <span class="p">)</span>
+		<span class="p">{</span>
+			<span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="nx">_oModules</span><span class="p">[</span><span class="nx">sModuleName</span><span class="p">]</span> <span class="p">)</span>
+			<span class="p">{</span>
+				<span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span> <span class="s1">&#39;Module &quot;&#39;</span><span class="o">+</span><span class="nx">sModuleName</span><span class="o">+</span><span class="s1">&#39;&quot; is not registered!&#39;</span> <span class="p">);</span>
+			<span class="p">}</span>
+		<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-26">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-26">&#182;</a>               </div>               <h2><em>The public API</em></h2>             </td>             <td class="code">               <div class="highlight"><pre>		<span class="k">return</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-27">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-27">&#182;</a>               </div>               <h3>register</h3>
+
+<p>Registers a new module</p>             </td>             <td class="code">               <div class="highlight"><pre>			<span class="nx">register</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">sModuleName</span><span class="p">,</span> <span class="nx">fpCreator</span><span class="p">,</span> <span class="nx">sSandBoxType</span> <span class="p">)</span>
+			<span class="p">{</span>
+				<span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="nx">_oModules</span><span class="p">[</span><span class="nx">sModuleName</span><span class="p">]</span> <span class="p">)</span>
+				<span class="p">{</span>
+					<span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="nx">_fpIsFunction</span><span class="p">(</span> <span class="nx">fpCreator</span> <span class="p">)</span> <span class="p">)</span>
+					<span class="p">{</span>
+						<span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span> <span class="s1">&#39;The creator of module &quot;&#39;</span><span class="o">+</span><span class="nx">sModuleName</span><span class="o">+</span><span class="s1">&#39;&quot; is not a function!&#39;</span> <span class="p">);</span>
+					<span class="p">}</span>
+
+					<span class="nx">_oModules</span><span class="p">[</span><span class="nx">sModuleName</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+						<span class="nx">fpCreator</span>	<span class="o">:</span> <span class="nx">fpCreator</span><span class="p">,</span>
+						<span class="nx">sSandBoxType</span> <span class="o">:</span> <span class="nx">sSandBoxType</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+						<span class="nx">oInstance</span>	<span class="o">:</span> <span class="nx">_null_</span><span class="p">,</span>
+						<span class="nx">bIsStarted</span>	<span class="o">:</span> <span class="nx">_false_</span>
+					<span class="p">};</span>
+					<span class="k">return</span> <span class="nx">_true_</span><span class="p">;</span>
+				<span class="p">}</span>
+				<span class="k">return</span> <span class="nx">_false_</span><span class="p">;</span>
+			<span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-28">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-28">&#182;</a>               </div>               <h3>start</h3>
+
+<p>Starts a module by creating a new module instance
+and calling its "onStart" method with oStartData passed as parameter  </p>             </td>             <td class="code">               <div class="highlight"><pre>			<span class="nx">start</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">sModuleName</span><span class="p">,</span> <span class="nx">oStartData</span> <span class="p">)</span>
+			<span class="p">{</span>
+				<span class="nx">_fpCheckModuleRegistration</span><span class="p">(</span> <span class="nx">sModuleName</span> <span class="p">);</span>
+
+				<span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="nx">_oModules</span><span class="p">[</span><span class="nx">sModuleName</span><span class="p">].</span><span class="nx">bIsStarted</span> <span class="p">)</span>
+				<span class="p">{</span>
+					<span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="nx">_oModules</span><span class="p">[</span><span class="nx">sModuleName</span><span class="p">].</span><span class="nx">oInstance</span> <span class="p">)</span>
+					<span class="p">{</span>
+						<span class="nx">_oModules</span><span class="p">[</span><span class="nx">sModuleName</span><span class="p">].</span><span class="nx">oInstance</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">instanciate</span><span class="p">(</span> <span class="nx">sModuleName</span> <span class="p">);</span>
+					<span class="p">}</span>
+					<span class="nx">_oModules</span><span class="p">[</span><span class="nx">sModuleName</span><span class="p">].</span><span class="nx">oInstance</span><span class="p">.</span><span class="nx">onStart</span><span class="p">(</span> <span class="nx">oStartData</span> <span class="p">);</span> <span class="c1">// onStart must be defined in the module.</span>
+					<span class="nx">_oModules</span><span class="p">[</span><span class="nx">sModuleName</span><span class="p">].</span><span class="nx">bIsStarted</span> <span class="o">=</span> <span class="nx">_true_</span><span class="p">;</span>
+				<span class="p">}</span>
+			<span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-29">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-29">&#182;</a>               </div>               <p><br/>
+<em>Examples of Registering &amp; Starting Modules:</em>  </p>
+
+<iframe width="450" height="450" src="http://jsfiddle.net/juanma/eQ498/embedded/" frameborder="0"></iframe>
+
+<p><br/>
+<em>More examples about Register/Start Modules:</em> <br />
+- <a href="http://jsfiddle.net/juanma/bVZy5/">TinyCore.js - Register/Start Modules (basic)</a> <br />
+- <a href="http://jsfiddle.net/juanma/36J6M/">TinyCore.js - Register/Start Modules (intermediate)</a>  </p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-30">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-30">&#182;</a>               </div>               <h3>stop</h3>
+
+<p>Stops a module by calling its "onStop" method</p>             </td>             <td class="code">               <div class="highlight"><pre>			<span class="nx">stop</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">sModuleName</span> <span class="p">)</span>
+			<span class="p">{</span>
+				<span class="nx">_fpCheckModuleRegistration</span><span class="p">(</span> <span class="nx">sModuleName</span> <span class="p">);</span>
+
+				<span class="k">if</span> <span class="p">(</span> <span class="nx">_oModules</span><span class="p">[</span><span class="nx">sModuleName</span><span class="p">].</span><span class="nx">bIsStarted</span> <span class="o">&amp;&amp;</span> <span class="nx">_oModules</span><span class="p">[</span><span class="nx">sModuleName</span><span class="p">].</span><span class="nx">oInstance</span> <span class="p">)</span>
+				<span class="p">{</span>
+					<span class="k">if</span> <span class="p">(</span> <span class="nx">_fpIsFunction</span><span class="p">(</span> <span class="nx">_oModules</span><span class="p">[</span><span class="nx">sModuleName</span><span class="p">].</span><span class="nx">oInstance</span><span class="p">.</span><span class="nx">onStop</span> <span class="p">)</span> <span class="p">)</span>
+					<span class="p">{</span>
+						<span class="nx">_oModules</span><span class="p">[</span><span class="nx">sModuleName</span><span class="p">].</span><span class="nx">oInstance</span><span class="p">.</span><span class="nx">onStop</span><span class="p">();</span>
+					<span class="p">}</span>
+					<span class="nx">_oModules</span><span class="p">[</span><span class="nx">sModuleName</span><span class="p">].</span><span class="nx">oInstance</span><span class="p">.</span><span class="nx">__sandbox__</span><span class="p">.</span><span class="nx">unSubscribeAll</span><span class="p">();</span>
+					<span class="nx">_oModules</span><span class="p">[</span><span class="nx">sModuleName</span><span class="p">].</span><span class="nx">bIsStarted</span> <span class="o">=</span> <span class="nx">_false_</span><span class="p">;</span>
+				<span class="p">}</span>
+			<span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-31">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-31">&#182;</a>               </div>               <h3>instanciate</h3>
+
+<p>Instanciates a module</p>             </td>             <td class="code">               <div class="highlight"><pre>			<span class="nx">instanciate</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">sModuleName</span> <span class="p">)</span>
+			<span class="p">{</span>
+				<span class="kd">var</span> <span class="nx">oSandBox</span><span class="p">,</span>
+					<span class="nx">oInstance</span><span class="p">;</span>
+
+				<span class="nx">_fpCheckModuleRegistration</span><span class="p">(</span> <span class="nx">sModuleName</span> <span class="p">);</span>
+
+				<span class="nx">oSandBox</span> <span class="o">=</span> <span class="nx">_oSandBoxFactory</span><span class="p">.</span><span class="nx">build</span><span class="p">(</span> <span class="nx">_oModules</span><span class="p">[</span><span class="nx">sModuleName</span><span class="p">].</span><span class="nx">sSandBoxType</span> <span class="p">);</span>
+				<span class="nx">oInstance</span> <span class="o">=</span> <span class="nx">_oModules</span><span class="p">[</span><span class="nx">sModuleName</span><span class="p">].</span><span class="nx">fpCreator</span><span class="p">(</span> <span class="nx">oSandBox</span> <span class="p">);</span>
+
+				<span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="nx">_oTinyCore</span><span class="p">.</span><span class="nx">debugMode</span> <span class="p">)</span>
+				<span class="p">{</span>
+					<span class="nx">_fpForEach</span><span class="p">(</span> <span class="nx">oInstance</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">oInstanceProp</span><span class="p">,</span> <span class="nx">sInstancePropName</span> <span class="p">)</span>
+					<span class="p">{</span>
+						<span class="k">if</span> <span class="p">(</span> <span class="nx">_fpIsFunction</span><span class="p">(</span> <span class="nx">oInstanceProp</span> <span class="p">)</span> <span class="p">)</span>
+						<span class="p">{</span>
+							<span class="nx">oInstance</span><span class="p">[</span><span class="nx">sInstancePropName</span><span class="p">]</span> <span class="o">=</span> <span class="nx">_fpTryCatchDecorator</span><span class="p">(</span> <span class="nx">oInstanceProp</span><span class="p">,</span> <span class="nx">oInstance</span><span class="p">,</span> <span class="s1">&#39;Error in module &quot;&#39;</span><span class="o">+</span><span class="nx">sModuleName</span><span class="o">+</span><span class="s1">&#39;&quot; executing method &quot;&#39;</span><span class="o">+</span><span class="nx">sInstancePropName</span><span class="o">+</span><span class="s1">&#39;&quot;: &#39;</span> <span class="p">);</span>
+						<span class="p">}</span>
+					<span class="p">}</span> <span class="p">);</span>
+				<span class="p">}</span>
+
+				<span class="nx">oInstance</span><span class="p">.</span><span class="nx">__sandbox__</span> <span class="o">=</span> <span class="nx">oSandBox</span><span class="p">;</span>
+
+				<span class="k">return</span> <span class="nx">oInstance</span><span class="p">;</span>
+			<span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-32">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-32">&#182;</a>               </div>               <h3>getModules</h3>
+
+<p>Returns the data related to all registered modules <br />
+Allows the extensions to have access to the modules data</p>             </td>             <td class="code">               <div class="highlight"><pre>			<span class="nx">getModules</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">()</span>
+			<span class="p">{</span>
+				<span class="k">return</span> <span class="nx">_oModules</span><span class="p">;</span>
+			<span class="p">}</span>
+		<span class="p">};</span>
+	<span class="p">}</span> <span class="p">()</span> <span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-33">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-33">&#182;</a>               </div>               <h2>CORE</h2>             </td>             <td class="code">               <div class="highlight"><pre>	<span class="kd">var</span> <span class="nx">_oTinyCore</span> <span class="o">=</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-34">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-34">&#182;</a>               </div>               <h3>version</h3>
+
+<p>Current version of the library</p>             </td>             <td class="code">               <div class="highlight"><pre>		<span class="nx">version</span> <span class="o">:</span> <span class="s1">&#39;0.4.0&#39;</span><span class="p">,</span></pre></div>             </td>           </tr>                               <tr id="section-35">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-35">&#182;</a>               </div>               <h3>debugMode</h3>
+
+<p>Activate debug mode setting it to <code>true</code> (will not catch errors in functions)</p>             </td>             <td class="code">               <div class="highlight"><pre>		<span class="nx">debugMode</span> <span class="o">:</span> <span class="nx">_false_</span><span class="p">,</span></pre></div>             </td>           </tr>                               <tr id="section-36">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-36">&#182;</a>               </div>               <h3>extend</h3>
+
+<p>Allows TinyCore to be extended by merging recursively an object into it</p>             </td>             <td class="code">               <div class="highlight"><pre>		<span class="nx">extend</span> <span class="o">:</span> <span class="kd">function</span> <span class="p">(</span> <span class="nx">oExtension</span> <span class="p">)</span>
+		<span class="p">{</span>
+			<span class="nx">_fpMerge</span><span class="p">(</span> <span class="k">this</span><span class="p">,</span> <span class="nx">oExtension</span> <span class="p">);</span>
+		<span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-37">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-37">&#182;</a>               </div>               <h3>Module</h3>
+
+<p>The modules manager</p>             </td>             <td class="code">               <div class="highlight"><pre>		<span class="nx">Module</span> <span class="o">:</span> <span class="nx">_oModulesManager</span><span class="p">,</span></pre></div>             </td>           </tr>                               <tr id="section-38">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-38">&#182;</a>               </div>               <h3>SandBox</h3>
+
+<p>The sandbox factory</p>             </td>             <td class="code">               <div class="highlight"><pre>		<span class="nx">SandBox</span> <span class="o">:</span> <span class="nx">_oSandBoxFactory</span><span class="p">,</span></pre></div>             </td>           </tr>                               <tr id="section-39">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-39">&#182;</a>               </div>               <h3>ErrorHandler</h3>
+
+<p>The error handler</p>             </td>             <td class="code">               <div class="highlight"><pre>		<span class="nx">ErrorHandler</span> <span class="o">:</span> <span class="nx">_oErrorHandler</span>
+	<span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-40">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-40">&#182;</a>               </div>               <p><em>Add TinyCore to the environment (windows, global, ...).</em></p>             </td>             <td class="code">               <div class="highlight"><pre>	<span class="nx">oEnv</span><span class="p">.</span><span class="nx">TinyCore</span> <span class="o">=</span> <span class="nx">_oTinyCore</span><span class="p">;</span>
+
+	<span class="k">if</span> <span class="p">(</span> <span class="nx">oEnv</span><span class="p">.</span><span class="nx">define</span> <span class="p">)</span>
+	<span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-41">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-41">&#182;</a>               </div>               <p><em>Define an AMD module.</em></p>             </td>             <td class="code">               <div class="highlight"><pre>		<span class="nx">oEnv</span><span class="p">.</span><span class="nx">define</span><span class="p">(</span> <span class="s1">&#39;TinyCore&#39;</span><span class="p">,</span>  <span class="nx">_oTinyCore</span> <span class="p">);</span>
+	<span class="p">}</span>
+<span class="p">}</span> <span class="p">(</span> <span class="k">this</span> <span class="p">)</span> <span class="p">);</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
