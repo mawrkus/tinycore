@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>TinyCore.docco.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>TinyCore.docco.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <pre><code>tinyCore.js 0.4.0
+https://github.com/mawrkus/tinycore</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>;( <span class="function"><span class="keyword">function</span> <span class="params">( oEnv )</span>
+{</span>
+	<span class="string">'use strict'</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h2">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h2>HELPERS</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Helps minification</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="keyword">var</span> _true_ = <span class="literal">true</span>, _false_ = <span class="literal">false</span>, _null_ = <span class="literal">null</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Determine the class of an object</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="function"><span class="keyword">function</span> <span class="title">_fpIsClass</span> <span class="params">( oMixed, sClassName )</span>
+	{</span>
+		<span class="keyword">return</span> Object.prototype.toString.call( oMixed ) === <span class="string">'[object '</span>+sClassName+<span class="string">']'</span>;
+	};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Determine if the parameter is a function</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="function"><span class="keyword">function</span> <span class="title">_fpIsFunction</span> <span class="params">( oMixed )</span>
+	{</span>
+		<span class="keyword">return</span> _fpIsClass( oMixed, <span class="string">'Function'</span> );
+	};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Run through all the properties of an object
+and applies a callback function on each of them</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="function"><span class="keyword">function</span> <span class="title">_fpForEach</span> <span class="params">( oObject, fpCallback )</span>
+	{</span>
+		<span class="keyword">var</span> sProperty;
+
+		<span class="keyword">for</span> ( sProperty <span class="keyword">in</span> oObject )
+		{
+			<span class="keyword">if</span> ( oObject.hasOwnProperty( sProperty ) )
+			{
+				fpCallback( oObject[sProperty], sProperty );
+			}
+		}
+	};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Merge recursively two objects by adding the source 
+object properties to the destination object</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="function"><span class="keyword">function</span> <span class="title">_fpMerge</span> <span class="params">( oDest, oSrc )</span>
+	{</span>
+		oDest = oDest || {};
+
+		_fpForEach( oSrc, <span class="function"><span class="keyword">function</span> <span class="params">( oSrcProp, sSrcPropName )</span>
+		{</span>
+			<span class="keyword">if</span> ( _fpIsClass( oSrcProp, <span class="string">'Object'</span> ) )
+			{
+				oSrcProp = _fpMerge( oDest[sSrcPropName], oSrcProp );
+			}
+
+			oDest[sSrcPropName] = oSrcProp;
+		} );
+
+		<span class="keyword">return</span> oDest;
+	};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Convert an array-like object to an actual array</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="function"><span class="keyword">function</span> <span class="title">_fpToArray</span> <span class="params">( oArrayLike )</span>
+	{</span>
+		<span class="keyword">return</span> Array.prototype.slice.call( oArrayLike );
+	};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>&quot;try-catch&quot; function decoration<br>Avoid double decoration if called twice on the same function</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="function"><span class="keyword">function</span> <span class="title">_fpTryCatchDecorator</span> <span class="params">( fpFunc, oContext, sErrMsg )</span>
+	{</span>
+		<span class="keyword">var</span> fpDecoratedFunc;
+
+		<span class="keyword">if</span> ( fpFunc.__decorated__ )
+		{
+			<span class="keyword">return</span> fpFunc;
+		}
+
+		fpDecoratedFunc = <span class="function"><span class="keyword">function</span> <span class="params">()</span>
+		{</span>
+			<span class="keyword">try</span>
+			{
+				<span class="keyword">return</span> fpFunc.apply( oContext, _fpToArray( arguments ) );
+			}
+			<span class="keyword">catch</span> ( eError )
+			{
+				_oTinyCore.ErrorHandler.log( sErrMsg + eError.message );
+			}
+		};
+
+		fpDecoratedFunc.__decorated__ = _true_;
+
+		<span class="keyword">return</span> fpDecoratedFunc;
+	};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h2">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <h2>ERROR HANDLER</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="keyword">var</span> _oErrorHandler = {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>Log an error message</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		log : <span class="function"><span class="keyword">function</span> <span class="params">( sMsg )</span>
+		{</span>
+			oEnv.console &amp;&amp; oEnv.console.error( sMsg );
+		}
+	};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p><em>Example of Handling Errors:</em>  </p>
+<p><iframe width="450" height="450" src="http://jsfiddle.net/juanma/nzEuH/embedded/" frameborder="0"></iframe>
+<br/></p>
+<h2>SANDBOX</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="keyword">var</span> _oSandBoxFactory = ( <span class="function"><span class="keyword">function</span> <span class="params">()</span>
+	{</span>
+		
+		<span class="keyword">var</span> _oSandBoxes = {};
+		<span class="keyword">var</span> _nSandBoxesCount = <span class="number">0</span>;
+		<span class="keyword">var</span> _oTopic2Subs = {};
+		<span class="keyword">var</span> _oSub2Topics = {};
+
+		<span class="keyword">var</span> _fpCreatePrototype = <span class="function"><span class="keyword">function</span> <span class="params">( nID )</span>
+		{</span>
+			<span class="keyword">var</span> _sSubID = nID;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h2">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <h2><em>Default methods</em></h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="keyword">return</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <h3>subscribe</h3>
+<p>Subscribe a function (handler) to one or more topics</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>				subscribe : <span class="function"><span class="keyword">function</span> <span class="params">( aTopics, fpHandler, oContext )</span>
+				{</span>
+					<span class="keyword">var</span> nIndex = <span class="number">0</span>,
+						nTopicsCount,
+						sTopic;
+
+					<span class="keyword">if</span> ( _fpIsFunction( fpHandler ) )
+					{
+						aTopics = _fpIsClass( aTopics, <span class="string">'Array'</span> ) ? aTopics : [aTopics];
+
+						<span class="keyword">for</span> ( nTopicsCount = aTopics.length ; nIndex &lt; nTopicsCount; nIndex++ )
+						{
+							sTopic = aTopics[nIndex];
+							_oTopic2Subs[sTopic] = _oTopic2Subs[sTopic] || {};
+
+							<span class="keyword">if</span> ( !_oTopic2Subs[sTopic][_sSubID] )
+							{
+								_oTopic2Subs[sTopic][_sSubID] = _oTinyCore.debugMode ?
+									<span class="function"><span class="keyword">function</span> <span class="params">()</span>
+									{</span>
+										fpHandler.apply( oContext, _fpToArray( arguments ) );
+									}
+									: _fpTryCatchDecorator( fpHandler, oContext, <span class="string">'Error publishing topic "'</span> + sTopic + <span class="string">'": '</span> );
+
+								_oSub2Topics[_sSubID] = _oSub2Topics[_sSubID] || [];
+								_oSub2Topics[_sSubID].push( sTopic );
+							}
+						}
+					}
+				},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <h3>publish</h3>
+<p>Publishes a topic</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>				publish : <span class="function"><span class="keyword">function</span> <span class="params">( sTopic, oData )</span>
+				{</span>
+					<span class="keyword">var</span> oSubs = _oTopic2Subs[sTopic];
+
+					<span class="keyword">if</span> ( oSubs )
+					{
+						oEnv.setTimeout( <span class="function"><span class="keyword">function</span> <span class="params">()</span>
+						{</span>
+							_fpForEach( oSubs, <span class="function"><span class="keyword">function</span> <span class="params">( fpHandler )</span>
+							{</span>
+								fpHandler( { name : sTopic, data : oData } );
+							} );
+						}, <span class="number">0</span> );
+					}
+				},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <h3>unSubscribe</h3>
+<p>Unsubscribe from one or more topics</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>				unSubscribe : <span class="function"><span class="keyword">function</span> <span class="params">( aTopics )</span>
+				{</span>
+					<span class="keyword">var</span> aTopics = _fpIsClass( aTopics, <span class="string">'Array'</span> ) ? aTopics : [aTopics],
+						nTopicsCount = aTopics.length,
+						oSubs;
+
+					<span class="keyword">while</span> ( nTopicsCount-- )
+					{
+						oSubs = _oTopic2Subs[aTopics[nTopicsCount]]
+						<span class="keyword">if</span> ( oSubs &amp;&amp; oSubs[_sSubID] )
+						{
+							<span class="keyword">delete</span> oSubs[_sSubID];
+						}
+					}
+				},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <h3>unSubscribeAll</h3>
+<p>Unsubscribe from all subscribed topics</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>				unSubscribeAll : <span class="function"><span class="keyword">function</span> <span class="params">()</span>
+				{</span>
+					<span class="keyword">if</span> ( _oSub2Topics[_sSubID] )
+					{
+						<span class="keyword">this</span>.unSubscribe( _oSub2Topics[_sSubID] );
+					}
+				}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p><em>Example of Subscribing &amp; Notifyng Topics (Events):</em>  </p>
+<p><iframe width="450" height="450" src="http://jsfiddle.net/juanma/Sjq4S/embedded/" frameborder="0"></iframe>
+<br/>
+<em>More examples about Subscribing &amp; Notifyng Topics:</em><br>- <a href="http://jsfiddle.net/juanma/T37kN/">TinyCore.js - Subscribe/Publish Events</a><br>- <a href="http://jsfiddle.net/juanma/DYxqN/">TinyCore.js - Subscribe/UnSubscribe/Publish Events</a></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			}
+		};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h2">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <h2><em>The public API</em></h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="keyword">return</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <h3>build</h3>
+<p>Build a new sandbox</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			build : <span class="function"><span class="keyword">function</span> <span class="params">( sType )</span>
+			{</span>
+				<span class="keyword">return</span> _fpMerge( _fpCreatePrototype( ++_nSandBoxesCount ), _oSandBoxes[sType] || {} );
+			},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <h3>register</h3>
+<p>Register a new sandbox</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			register : <span class="function"><span class="keyword">function</span> <span class="params">( sType, oNewSandBox )</span>
+			{</span>
+				<span class="keyword">if</span> ( !_oSandBoxes[sType] )
+				{
+					_oSandBoxes[sType] = oNewSandBox;
+					<span class="keyword">return</span> _true_;
+				}
+				<span class="keyword">return</span> _false_;
+			}
+		};
+	} () );</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h2">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <h2>MODULES</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="keyword">var</span> _oModulesManager = ( <span class="function"><span class="keyword">function</span> <span class="params">()</span>
+	{</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>Store following info info for registered modules</p>
+<pre><code>_oModules[sModuleName] = {  
+    fpCreator    : fpCreator,  
+    sSandBoxType : sSandBoxType || &#39;&#39;,  
+    oInstance    : _null_,  
+    bIsStarted    : _false_  
+};  </code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="keyword">var</span> _oModules = {};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <p>Check if a module has been registered or not
+and throws an exception accordingly</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="keyword">var</span> _fpCheckModuleRegistration = <span class="function"><span class="keyword">function</span> <span class="params">( sModuleName )</span>
+		{</span>
+			<span class="keyword">if</span> ( !_oModules[sModuleName] )
+			{
+				<span class="keyword">throw</span> <span class="keyword">new</span> Error( <span class="string">'Module "'</span>+sModuleName+<span class="string">'" is not registered!'</span> );
+			}
+		};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h2">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <h2><em>The public API</em></h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="keyword">return</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <h3>register</h3>
+<p>Registers a new module</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			register : <span class="function"><span class="keyword">function</span> <span class="params">( sModuleName, fpCreator, sSandBoxType )</span>
+			{</span>
+				<span class="keyword">if</span> ( !_oModules[sModuleName] )
+				{
+					<span class="keyword">if</span> ( !_fpIsFunction( fpCreator ) )
+					{
+						<span class="keyword">throw</span> <span class="keyword">new</span> Error( <span class="string">'The creator of module "'</span>+sModuleName+<span class="string">'" is not a function!'</span> );
+					}
+
+					_oModules[sModuleName] = {
+						fpCreator	: fpCreator,
+						sSandBoxType : sSandBoxType || <span class="string">''</span>,
+						oInstance	: _null_,
+						bIsStarted	: _false_
+					};
+					<span class="keyword">return</span> _true_;
+				}
+				<span class="keyword">return</span> _false_;
+			},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-30">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-30">&#182;</a>
+              </div>
+              <h3>start</h3>
+<p>Starts a module by creating a new module instance
+and calling its &quot;onStart&quot; method with oStartData passed as parameter  </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			start : <span class="function"><span class="keyword">function</span> <span class="params">( sModuleName, oStartData )</span>
+			{</span>
+				_fpCheckModuleRegistration( sModuleName );
+
+				<span class="keyword">if</span> ( !_oModules[sModuleName].bIsStarted )
+				{
+					<span class="keyword">if</span> ( !_oModules[sModuleName].oInstance )
+					{
+						_oModules[sModuleName].oInstance = <span class="keyword">this</span>.instanciate( sModuleName );
+					}
+					_oModules[sModuleName].oInstance.onStart( oStartData ); <span class="comment">// onStart must be defined in the module.</span>
+					_oModules[sModuleName].bIsStarted = _true_;
+				}
+			},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-31">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-31">&#182;</a>
+              </div>
+              <p><br/>
+<em>Examples of Registering &amp; Starting Modules:</em>  </p>
+<p><iframe width="450" height="450" src="http://jsfiddle.net/juanma/eQ498/embedded/" frameborder="0"></iframe>
+<br/>
+<em>More examples about Register/Start Modules:</em><br>- <a href="http://jsfiddle.net/juanma/bVZy5/">TinyCore.js - Register/Start Modules (basic)</a><br>- <a href="http://jsfiddle.net/juanma/36J6M/">TinyCore.js - Register/Start Modules (intermediate)</a>  </p>
+<h3>stop</h3>
+<p>Stops a module by calling its &quot;onStop&quot; method</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			stop : <span class="function"><span class="keyword">function</span> <span class="params">( sModuleName )</span>
+			{</span>
+				_fpCheckModuleRegistration( sModuleName );
+
+				<span class="keyword">if</span> ( _oModules[sModuleName].bIsStarted &amp;&amp; _oModules[sModuleName].oInstance )
+				{
+					<span class="keyword">if</span> ( _fpIsFunction( _oModules[sModuleName].oInstance.onStop ) )
+					{
+						_oModules[sModuleName].oInstance.onStop();
+					}
+					_oModules[sModuleName].oInstance.__sandbox__.unSubscribeAll();
+					_oModules[sModuleName].bIsStarted = _false_;
+				}
+			},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <h3>instanciate</h3>
+<p>Instanciates a module</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			instanciate : <span class="function"><span class="keyword">function</span> <span class="params">( sModuleName )</span>
+			{</span>
+				<span class="keyword">var</span> oSandBox,
+					oInstance;
+
+				_fpCheckModuleRegistration( sModuleName );
+
+				oSandBox = _oSandBoxFactory.build( _oModules[sModuleName].sSandBoxType );
+				oInstance = _oModules[sModuleName].fpCreator( oSandBox );
+
+				<span class="keyword">if</span> ( !_oTinyCore.debugMode )
+				{
+					_fpForEach( oInstance, <span class="function"><span class="keyword">function</span> <span class="params">( oInstanceProp, sInstancePropName )</span>
+					{</span>
+						<span class="keyword">if</span> ( _fpIsFunction( oInstanceProp ) )
+						{
+							oInstance[sInstancePropName] = _fpTryCatchDecorator( oInstanceProp, oInstance, <span class="string">'Error in module "'</span>+sModuleName+<span class="string">'" executing method "'</span>+sInstancePropName+<span class="string">'": '</span> );
+						}
+					} );
+				}
+
+				oInstance.__sandbox__ = oSandBox;
+
+				<span class="keyword">return</span> oInstance;
+			},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-33">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-33">&#182;</a>
+              </div>
+              <h3>getModules</h3>
+<p>Returns the data related to all registered modules<br>Allows the extensions to have access to the modules data</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			getModules : <span class="function"><span class="keyword">function</span> <span class="params">()</span>
+			{</span>
+				<span class="keyword">return</span> _oModules;
+			}
+		};
+	} () );</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h2">
+                <a class="pilcrow" href="#section-34">&#182;</a>
+              </div>
+              <h2>CORE</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-35">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-35">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="keyword">var</span> _oTinyCore = {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-36">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-36">&#182;</a>
+              </div>
+              <h3>version</h3>
+<p>Current version of the library</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		version : <span class="string">'0.4.0'</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-37">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-37">&#182;</a>
+              </div>
+              <h3>debugMode</h3>
+<p>Activate debug mode setting it to <code>true</code> (will not catch errors in functions)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		debugMode : _false_,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-38">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-38">&#182;</a>
+              </div>
+              <h3>extend</h3>
+<p>Allows TinyCore to be extended by merging recursively an object into it</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		extend : <span class="function"><span class="keyword">function</span> <span class="params">( oExtension )</span>
+		{</span>
+			_fpMerge( <span class="keyword">this</span>, oExtension );
+		},</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-39">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-39">&#182;</a>
+              </div>
+              <h3>Module</h3>
+<p>The modules manager</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		Module : _oModulesManager,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-40">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-40">&#182;</a>
+              </div>
+              <h3>SandBox</h3>
+<p>The sandbox factory</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		SandBox : _oSandBoxFactory,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-41">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h3">
+                <a class="pilcrow" href="#section-41">&#182;</a>
+              </div>
+              <h3>ErrorHandler</h3>
+<p>The error handler</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		ErrorHandler : _oErrorHandler
+	};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-42">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-42">&#182;</a>
+              </div>
+              <p><em>Add TinyCore to the environment (windows, global, ...).</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	oEnv.TinyCore = _oTinyCore;
+
+	<span class="keyword">if</span> ( oEnv.define )
+	{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-43">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-43">&#182;</a>
+              </div>
+              <p><em>Define an AMD module.</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		oEnv.define( <span class="string">'TinyCore'</span>,  _oTinyCore );
+	}
+} ( <span class="keyword">this</span> ) );</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

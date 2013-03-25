@@ -18,7 +18,7 @@
 	 * @param {Mixed} oMixed
 	 * @return {Boolean}
 	*/
-	var _fpIsClass = function ( oMixed, sClassName )
+	function _fpIsClass ( oMixed, sClassName )
 	{
 		return Object.prototype.toString.call( oMixed ) === '[object '+sClassName+']';
 	};
@@ -29,7 +29,7 @@
 	 * @param {Mixed} oMixed
 	 * @return {Boolean}
 	*/
-	var _fpIsFunction = function ( oMixed )
+	function _fpIsFunction ( oMixed )
 	{
 		return _fpIsClass( oMixed, 'Function' );
 	};
@@ -40,7 +40,7 @@
 	 * @param {Object} oObject
 	 * @param {Function} fpCallback
 	 */
-	var _fpForEach = function ( oObject, fpCallback )
+	function _fpForEach ( oObject, fpCallback )
 	{
 		var sProperty;
 
@@ -60,7 +60,8 @@
 	 * @param {Object} oSrc The source object
 	 * @return {Object}
 	*/
-	var _fpMerge = function ( oDest, oSrc )
+	
+	function _fpMerge ( oDest, oSrc )
 	{
 		oDest = oDest || {};
 
@@ -83,7 +84,7 @@
 	 * @param {Object} oArrayLike
 	 * @return {Array}
 	*/
-	var _fpToArray = function ( oArrayLike )
+	function _fpToArray ( oArrayLike )
 	{
 		return Array.prototype.slice.call( oArrayLike );
 	};
@@ -97,7 +98,7 @@
 	 * @param {String} sErrMsg
 	 * @return {Function}
 	*/
-	var _fpTryCatchDecorator = function ( fpFunc, oContext, sErrMsg )
+	function _fpTryCatchDecorator ( fpFunc, oContext, sErrMsg )
 	{
 		var fpDecoratedFunc;
 
