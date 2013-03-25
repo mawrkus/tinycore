@@ -44,7 +44,7 @@ This will give you access to the global variable `TinyCore` and its components :
 
 ###1.- How to Register and Start a Module
 
-<iframe width="450" height="450" src="http://jsfiddle.net/juanma/eQ498/embedded/js,result" frameborder="0"></iframe>
+[TinyCore.js - Register and Start a Modules](http://jsfiddle.net/juanma/eQ498/embedded/js,result)
 
 ####1.1.- Register a Module
 
@@ -74,7 +74,7 @@ Once the module is registered, we can start it
 
 ###2.- How to Subscribe/Publish Topics
 
-<iframe width="450" height="450" src="http://jsfiddle.net/juanma/Sjq4S/embedded/" frameborder="0"></iframe>
+[TinyCore.js - Subscribe/Publish Topics](http://jsfiddle.net/juanma/Sjq4S/embedded/)
 
 ####2.1.- Subscribe to a Topic
 From one module we can listen to some "event"

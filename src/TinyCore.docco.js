@@ -12,20 +12,20 @@
 	var _true_ = true, _false_ = false, _null_ = null;
 
 	// Determine the class of an object
-	var _fpIsClass = function ( oMixed, sClassName )
+	function _fpIsClass ( oMixed, sClassName )
 	{
 		return Object.prototype.toString.call( oMixed ) === '[object '+sClassName+']';
 	};
 
 	// Determine if the parameter is a function
-	var _fpIsFunction = function ( oMixed )
+	function _fpIsFunction ( oMixed )
 	{
 		return _fpIsClass( oMixed, 'Function' );
 	};
 
 	// Run through all the properties of an object
 	// and applies a callback function on each of them
-	var _fpForEach = function ( oObject, fpCallback )
+	function _fpForEach ( oObject, fpCallback )
 	{
 		var sProperty;
 
@@ -40,7 +40,7 @@
 
 	// Merge recursively two objects by adding the source 
 	// object properties to the destination object
-	var _fpMerge = function ( oDest, oSrc )
+	function _fpMerge ( oDest, oSrc )
 	{
 		oDest = oDest || {};
 
@@ -58,14 +58,14 @@
 	};
 
 	// Convert an array-like object to an actual array
-	var _fpToArray = function ( oArrayLike )
+	function _fpToArray ( oArrayLike )
 	{
 		return Array.prototype.slice.call( oArrayLike );
 	};
 
 	// "try-catch" function decoration  
 	// Avoid double decoration if called twice on the same function
-	var _fpTryCatchDecorator = function ( fpFunc, oContext, sErrMsg )
+	function _fpTryCatchDecorator ( fpFunc, oContext, sErrMsg )
 	{
 		var fpDecoratedFunc;
 
