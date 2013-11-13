@@ -329,4 +329,5 @@ Feel free to extend/redefine those methods according to your needs.
 ## Thanks
 
 JuanMa : https://github.com/juanmaguitar
+
 Thomas : https://github.com/thomasklein
