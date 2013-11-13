@@ -1,8 +1,5 @@
 module.exports = function ( grunt )
 {
-	// TODO : Check https://github.com/markdalgleish/grunt-micro
-
-
 	// Project configuration.
 	grunt.initConfig(
 	{
