@@ -18,7 +18,7 @@ Main sources of inspiration :
 
 "The secret to building large apps is never build large apps. Break your applications into small pieces. Then, assemble those testable, bite-sized pieces into your big application" - Justin Meyer, author JavaScriptMVC.
 
-Online demo : [A simple todo list application](http://www.sparring-partner.be/tinycore/demos/todolist/localfiles/index.html)
+Online demo : [A simple todo list application](http://www.sparring-partner.be/tinycore/src/demos/todolist/localfiles/)
 
 ## Features
 
