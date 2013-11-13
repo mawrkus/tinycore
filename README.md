@@ -325,3 +325,8 @@ If you do not want this decoration feature, set `TinyCore.debugMode` to `true`. 
 The `report` method throws an exception when `TinyCore.debugMode` is `true`, or calls `TinyCore.Error.log` otherwise.
 
 Feel free to extend/redefine those methods according to your needs.
+
+## Thanks
+
+JuanMa : https://github.com/juanmaguitar
+Thomas : https://github.com/thomasklein
