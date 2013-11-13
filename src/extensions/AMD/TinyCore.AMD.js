@@ -1,7 +1,7 @@
 /**
  * AMD extension for TinyCore.js
  * Load modules asynchronously using require.js and starts them
- * @author Mawkus aka Marc Mignonsin (web@sparring-partner.be)
+ * @author mawrkus (web@sparring-partner.be)
  * @requires TinyCore.js
  * @requires require.js version >= 2.1.4
 */
@@ -11,13 +11,29 @@
 
 	var TinyCore = oEnv.TinyCore,
 		Utils = TinyCore.Utils,
-		Module = TinyCore.Module,
-		Toolbox = TinyCore.Toolbox;
+		Module = TinyCore.Module;
 
 	if ( !oEnv.require || !oEnv.define )
 	{
 		throw new Error( 'Cannot add AMD extension to TinyCore: require.js seems to be missing!' );
 	}
+
+	/* Private. */
+
+	/**
+	 * The default configuration for require.js.
+	 * @type {Object}
+	 */
+	var DEFAULT_REQUIRE_CONFIG = {
+			baseUrl : 'modules'
+		},
+		/**
+		 * The current configuration.
+		 * @type {Object}
+		 */
+		_oConfig = {
+			require : Utils.extend( {}, DEFAULT_REQUIRE_CONFIG )
+		};
 
 	/**
 	 * The AMD extension.
@@ -25,12 +41,18 @@
 	 */
 	var _oAMDExt = {
 		/**
-		 * Configures require.
-		 * @param {Object} oSettings The options of configuration, see http://requirejs.org/docs/api.html#config
+		 * Configures the extension, both require.js and the DOM boot loader.
+		 * @param {Object} oSettings Optional, the settings, see http://requirejs.org/docs/api.html#config for require.js
+		 * @return {Object} The current configuration, if no parameter has been provided
 		 */
 		config : function ( oSettings )
 		{
-			oEnv.require.config( oSettings );
+			if ( typeof oSettings === 'undefined' )
+			{
+				return _oConfig;
+			}
+			Utils.extend( _oConfig, oSettings );
+			oEnv.require.config( _oConfig.require );
 		},
 		/**
 		* Sets the global error handler.
@@ -63,8 +85,8 @@
 		},
 		/**
 		 * Loads asynchronously modules/scripts.
-		 * @param {Array} aResourcesNames
-		 * @param {Function} fpCallback The function to call when all modules are loaded, it receives tha array of modules names
+		 * @param {Array|String} aResourcesNames
+		 * @param {Function} fpCallback The function to call when all modules are loaded, it receives the array of modules names
 		 */
 		require : function ( aResourcesNames, fpCallback )
 		{
@@ -72,28 +94,36 @@
 		},
 		/**
 		 * Loads asynchronously modules and starts them.
-		 * @param {Object} oModulesData E.g. { 'm1' : { startData:{} }, ... }
-		 * @param {Function} fpCallback The function to call when all modules are loaded and started, it receives tha array of modules names
+		 * @param {Array|String|Object} aModulesData E.g. [ { name : 'm1', startData:{} }, { name : 'm2', startData:{} }, ... ]
+		 * @param {Function} fpCallback Optional, the function to call when all modules are loaded and started, it receives the array of modules names
 		 */
-		requireAndStart : function ( oModulesData, fpCallback )
+		requireAndStart : function ( aModulesData, fpCallback )
 		{
-			var aModules = [];
+			var aModulesNames = [];
 
-			Utils.forEach( oModulesData, function ( oModuleData, sModuleName )
+			if ( !Utils.isArray( aModulesData ) )
 			{
-				aModules.push( sModuleName );
+				aModulesData = [aModulesData];
+			}
+
+			aModulesData.forEach( function ( data, nIndex )
+			{
+				if ( typeof data === 'string' )
+				{
+					aModulesData[nIndex] = data = { name : data, startData : {} };
+				}
+				aModulesNames.push( data.name );
 			} );
 
-			_oAMDExt.require( aModules, function ()
+			_oAMDExt.require( aModulesNames, function ()
 			{
-				Utils.forEach( oModulesData, function ( oModuleData, sModuleName )
+				aModulesData.forEach( function ( oModuleData )
 				{
-					Module.start( sModuleName, oModuleData.startData );
+					Module.start( oModuleData.name, oModuleData.startData );
 				} );
-
 				if ( fpCallback )
 				{
-					fpCallback();
+					fpCallback( aModulesData );
 				}
 			} );
 		}
@@ -101,9 +131,9 @@
 
 	// Install the default global error handler
    _oAMDExt.setErrorHandler( function ( eError )
-    {
-        TinyCore.Error.log( 'Error loading module(s) "'+eError.requireModules+'": '+eError.message );
-    } );
+	{
+		TinyCore.Error.log( 'Error loading module(s) "'+eError.requireModules+'": '+eError.message );
+	} );
 
 	// Define TinyCore a little bit more.
 	TinyCore.AMD = _oAMDExt;

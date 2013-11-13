@@ -1,0 +1,104 @@
+body {
+	font-family: Georgia, serif;
+	font-size: 13px;
+	color:#333;
+}
+
+h1 {
+	margin: 0 0 40px;
+}
+
+#container {
+	width: 800px;
+	margin: 10px auto;
+	position: relative;
+	padding:20px 40px;
+	border: 1px solid #777;
+	-moz-box-shadow: 0 0 1px #999;
+	-ms-box-shadow: 0 0 1px #999;
+	-webkit-box-shadow: 0 0 1px #999;
+	box-shadow: 0 0 1px #999;
+	position: relative;
+}
+
+.tpl {
+	display: none;
+}
+
+label {
+	margin-right: 4px;
+}
+
+.form-input {
+	border:1px solid #AAA;
+	padding:6px 12px;
+	box-shadow:inset 0 0 1px #999;
+}
+.form-input:focus {
+	border:1px solid #0B5FA2;
+}
+.button {
+	background-color: #0B70BE;
+	color: #FFF;
+	border: 0;
+	padding:6px 12px;
+}
+
+a {
+	text-decoration: none;
+	color: #0B70BE;
+}
+a:hover {
+	text-decoration: underline;
+}
+
+.chat-window {
+	margin: 40px 0 0 40px;
+	width: 210px;
+	float: left;
+}
+
+.user-text, .activity, .messages {
+	width: 100%;
+	border:1px solid #AAA;
+	padding:6px 12px;
+}
+.user-text {
+	margin-top:10px;
+	height: 16px;
+	overflow: hidden;
+}
+.messages {
+	height: 240px;
+	overflow: auto;
+	margin-top: 3px;
+}
+.username {
+	float:left;
+	font-weight: bold;
+}
+.timestamp {
+	float:right;
+	color: #666;
+	font-size: 12px;
+}
+.usermsg {
+	clear: both;
+}
+
+.tools {
+	width: 100%;
+	text-align: right;
+}
+.tools .username {
+	float: none;
+}
+
+.activity {
+	height: 12px;
+	font-style: italic;
+	color: #555;
+}
+.activity.active {
+	border: 1px solid #888;
+}

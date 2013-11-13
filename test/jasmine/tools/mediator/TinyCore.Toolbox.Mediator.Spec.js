@@ -9,13 +9,13 @@ describe( 'TinyCore.Toolbox.request(\'mediator\')', function ()
 {
 	var oMediator = TinyCore.Toolbox.request( 'mediator' );
 
-	it( 'should create an object having the following methods/properties : subscribe, publish, unSubscribe, unSubscribeAll', function ()
+	it( 'should create an object having the following methods/properties : subscribe, publish, unsubscribe, unsubscribeAll', function ()
 	{
 		expect( oMediator ).toBeObject();
 		expect( oMediator.subscribe ).toBeFunction();
 		expect( oMediator.publish ).toBeFunction();
-		expect( oMediator.unSubscribe ).toBeFunction();
-		expect( oMediator.unSubscribeAll ).toBeFunction();
+		expect( oMediator.unsubscribe ).toBeFunction();
+		expect( oMediator.unsubscribeAll ).toBeFunction();
 	} );
 
 	it( 'should create unique mediator objects', function ()
@@ -23,7 +23,7 @@ describe( 'TinyCore.Toolbox.request(\'mediator\')', function ()
 		expect( oMediator ).not.toEqual( TinyCore.Toolbox.request( 'mediator' ) );
 	} );
 
-	describe( 'A new mediator, using subscribe, publish, unSubscribe and unSubscribeAll', function ()
+	describe( 'A new mediator, using subscribe, publish, unsubscribe and unsubscribeAll', function ()
 	{
 		var fpHandler = null;
 
@@ -46,6 +46,30 @@ describe( 'TinyCore.Toolbox.request(\'mediator\')', function ()
 			jasmine.Clock.tick( 10 ); // Should be enough.
 
 			expect( fpHandler ).toHaveBeenCalledWith( { name : 'channel:object:action', data : oData } );
+		} );
+
+		it( 'should be able to subscribe to topics, in a chosen context', function ()
+		{
+			var oContext = {
+				program : '6',
+				started : false
+			},
+			oData = {
+				playlist : ['stepkids', 'bonobo']
+			},
+			fpRadioHandler = function ( oTopic )
+			{
+				this.started = true;
+				this.current = oTopic.data.playlist[0];
+			};
+
+			oMediator.subscribe( 'bbc:radio:on', fpRadioHandler, oContext );
+			oMediator.publish( 'bbc:radio:on', oData );
+
+			jasmine.Clock.tick( 10 ); // Should be enough.
+
+			expect( oContext.started ).toBe( true );
+			expect( oContext.current ).toBe( 'stepkids' );
 		} );
 
 		it( 'should be able to subscribe to and to publish multiple topìcs', function ()
@@ -178,7 +202,7 @@ describe( 'TinyCore.Toolbox.request(\'mediator\')', function ()
 			expect( oFuelSystem.nFuelLeft ).toEqual( 85 );
 		} );
 
-		it( 'should unSubscribe properly from subscribed topics', function ()
+		it( 'should unsubscribe properly from subscribed topics', function ()
 		{
 			var oMediator = TinyCore.Toolbox.request( 'mediator' ),
 				fpHandler = jasmine.createSpy();
@@ -186,8 +210,8 @@ describe( 'TinyCore.Toolbox.request(\'mediator\')', function ()
 			jasmine.Clock.useMock();
 
 			oMediator.subscribe( ['activate-lab', 'enter-green-mode', 'deploy-solar-wings', 'ride-on'], fpHandler );
-			oMediator.unSubscribe( ['activate-lab', 'enter-green-mode'] );
-			oMediator.unSubscribe( 'ride-on' );
+			oMediator.unsubscribe( ['activate-lab', 'enter-green-mode'] );
+			oMediator.unsubscribe( 'ride-on' );
 
 			oMediator.publish( 'activate-lab' );
 			oMediator.publish( 'enter-green-mode' );
@@ -199,7 +223,7 @@ describe( 'TinyCore.Toolbox.request(\'mediator\')', function ()
 			expect( fpHandler.calls.length ).toEqual( 1 );
 		} );
 
-		it( 'should unSubscribe properly from all subscribed topics', function ()
+		it( 'should unsubscribe properly from all subscribed topics', function ()
 		{
 			var oMediator = TinyCore.Toolbox.request( 'mediator' ),
 				fpHandler = jasmine.createSpy();
@@ -207,7 +231,7 @@ describe( 'TinyCore.Toolbox.request(\'mediator\')', function ()
 			jasmine.Clock.useMock();
 
 			oMediator.subscribe( ['activate-lab', 'enter-green-mode', 'deploy-solar-wings', 'ride-on'], fpHandler );
-			oMediator.unSubscribeAll();
+			oMediator.unsubscribeAll();
 
 			oMediator.publish( 'activate-lab' );
 			oMediator.publish( 'enter-green-mode' );

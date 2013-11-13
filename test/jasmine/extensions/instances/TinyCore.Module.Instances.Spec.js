@@ -36,15 +36,15 @@ describe( 'TinyCore.Module.startInstance', function ()
 		} ).toThrow();
 	} );
 
-	it( 'should instanciate a module', function ()
+	it( 'should instantiate a module', function ()
 	{
 		TinyCore.Module.define( 'e-tank', [], fpDummyCreator );
 
-		spyOn( TinyCore.Module, 'instanciate' ).andReturn( oDummyModule );
+		spyOn( TinyCore.Module, 'instantiate' ).andReturn( oDummyModule );
 
 		TinyCore.Module.startInstance( 'e-tank', 'desert-tank' );
 
-		expect( TinyCore.Module.instanciate ).toHaveBeenCalledWith( 'e-tank' );
+		expect( TinyCore.Module.instantiate ).toHaveBeenCalledWith( 'e-tank' );
 	} );
 
 	it( 'should start several instances properly', function ()
@@ -247,6 +247,26 @@ describe( 'TinyCore.Module.stopInstance', function ()
 
 describe( 'TinyCore.Module.start', function ()
 {
+	it( 'should still start a single module properly', function ()
+	{
+		var oCyborg = {
+			sModel : 'unknown',
+			onStart : function ( oStartData )
+			{
+				this.sModel = oStartData.model;
+			}
+		};
+
+		TinyCore.Module.define( 'cyborg', [], function ()
+		{
+			return oCyborg;
+		} );
+
+		TinyCore.Module.start( 'cyborg', { model : 'T-1000' } );
+
+		expect( TinyCore.Module.getInstance( 'cyborg' ).oInstance.sModel ).toBe( 'T-1000' );
+	} );
+
 	it( 'should start all instances properly', function ()
 	{
 		var oPriss = null,
@@ -285,6 +305,31 @@ describe( 'TinyCore.Module.start', function ()
 
 describe( 'TinyCore.Module.stop', function ()
 {
+	it( 'should still stop a single module properly', function ()
+	{
+		var oAndroid = {
+			sModel : 'unknown',
+			onStart : function ( oStartData )
+			{
+				this.sModel = oStartData.model;
+			},
+			onStop : function ()
+			{
+				this.sModel = '?';
+			},
+		};
+
+		TinyCore.Module.define( 'android', [], function ()
+		{
+			return oAndroid;
+		} );
+
+		TinyCore.Module.start( 'android', { model : 'D.A.R.Y.L.' } );
+		TinyCore.Module.stop( 'android' );
+
+		expect( TinyCore.Module.getInstance( 'android' ).oInstance.sModel ).toBe( '?' );
+	} );
+
 	it( 'should stop all instances properly', function ()
 	{
 		var oRobert = null,

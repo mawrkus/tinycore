@@ -1,25 +1,32 @@
 
-# TinyCore.js 
+# TinyCore.js
 
-`Version 0.4.1`
+`Version 1.0`
 
 ## Overview
 
-A tiny modular architecture framework in JavaScript.
+A tiny JavaScript modular architecture library.
 
-Inspiration : "Scalable JavaScript Application Architecture", by Nicholas C. Zakas.
+Main sources of inspiration :
+
+"Scalable JavaScript Application Architecture", by Nicholas C. Zakas.
 - Video : [http://www.youtube.com/watch?v=vXjVFPosQHw](http://www.youtube.com/watch?v=vXjVFPosQHw)
 - Slides : [http://www.slideshare.net/nzakas/scalable-javascript-application-architecture-2012](http://www.slideshare.net/nzakas/scalable-javascript-application-architecture-2012)
 
-Online demo : <a href="http://www.sparring-partner.be/tinycore.js/demos/todolist/index.html" target="_blank">A simple todo list application</a>
+"Patterns For Large-Scale JavaScript Application Architecture", by Addy Osmani.
+- [http://addyosmani.com/largescalejavascript](http://addyosmani.com/largescalejavascript)
+
+"The secret to building large apps is never build large apps. Break your applications into small pieces. Then, assemble those testable, bite-sized pieces into your big application" - Justin Meyer, author JavaScriptMVC.
+
+Online demo : [A simple todo list application](http://www.sparring-partner.be/tinycore.js/demos/todolist/index.html)
 
 ## Features
 
-- Less than 2.5Kb minified
-- Extensible
-- Supports unit testing of the modules
-- Supports async modules loading using AMD and [require.js](http://requirejs.org) (less than 1Kb extension)
-- Tested under IE7+, Safari 5.1, Opera 12, Chrome 24+ and Firefox 18+
+- Around 3Kb minified, less than 1Kb gzipped
+- Extensible (currently 4 extensions exist)
+- Supports unit testing of the modules, with an extension dedicated to the [Jasmine framework](http://pivotal.github.io/jasmine/)
+- Supports async modules loading using the [Asynchronous Module Definition](https://github.com/amdjs/amdjs-api/wiki/AMD) format and [require.js](http://requirejs.org)
+- Works under IE8+, Safari 5.1, Opera 12, latest Chrome and Firefox
 
 ## Benefits
 
@@ -34,21 +41,29 @@ Online demo : <a href="http://www.sparring-partner.be/tinycore.js/demos/todolist
 Include TinyCore.js :
 
 ```html
-	<script type="text/javascript" src="TinyCore.js"></script> 
+	<script type="text/javascript" src="TinyCore.js"></script>
 ```
 
-This will give you access to the global variable `TinyCore` and its components : `TinyCore.Module`, `TinyCore.SandBox` and `TinyCore.ErrorHandler`.
+This will give you access to the global variable `TinyCore` and its components :
+
+- `TinyCore.Module`
+- `TinyCore.Toolbox`
+- `TinyCore.Utils`
+- `TinyCore.Error`
 
 ## Description
 
-The framework is composed of :
+We do not follow exactly the original idea from Nicholas Zakas. We use [dependency injection](http://en.wikipedia.org/wiki/Dependency_injection) to provide the modules the tools they need to perform their job. Instead of having a single sandbox object with a lot of methods, a module defines explicitly the tools it needs. The [mediator](http://addyosmani.com/largescalejavascript/#mediatorpattern), that provides a way of communication for the modules, is one of the default tools that has already been implemented (located in the "tools/mediator" folder).
 
-A. Modules  
-B. Sandbox factory  
-C. Application core
+Let's cover the following topics :
 
-We do not follow exactly the original idea from Nicholas Zakas : the functionalities provided by the base library will be passed directly to the module sandbox.
-The choice is yours, but it is strongly recommended to create an adapter to that library, in order to keep all parts of your application loosely-coupled.
+**A. Modules** : how to define a module, how to manage modules life cycles?
+
+**B. Toolbox** : how to register tools that can help the modules do their job?
+
+**C. Utils** : what is the set of existing utils?
+
+**D. Error and debugMode** : how errors can be reported/logged?
 
 ### A. Modules
 
@@ -57,388 +72,256 @@ A web application module is an independent unit of functionality in the page (HT
 Key concepts :
 
 - *Loose coupling* : any single module should be able to live on its own. Changes/removal of one module do not affect the others.
-- Each module has its own *sandbox* and needs to stay in it. The sandbox provides all the module needs to perform its job.
+- Each module has its own *sandbox* and needs to stay in it. The sandbox provides all the module needs to perform its job. In our case, the sandbox is not a single object. The sandbox is composed of a collection of objects that can be requested by the module, using dependency injection.
 
-The modules are managed by the `TinyCore.Module` object.
+The modules are managed by the `TinyCore.Module` object. It can define, starts, stops or retrieve them.
 
-#### Registering a module
-
-A module can be registered for later use like this :
+#### TinyCore.Module API
 
 ```js
-TinyCore.Module.register( 'users_monitoring', function ( oSandBox )
+TinyCore.Module.define( moduleName, toolsNames, creatorFunction )
+TinyCore.Module.start( moduleName, startData )
+TinyCore.Module.stop( moduleName, stopAndDestroy )
+TinyCore.Module.instantiate( moduleName )
+TinyCore.Module.getInstance( moduleName, instanceName )
+TinyCore.Module.getModules()
+```
+
+#### Defining a module
+
+A module can be defined for later use like this :
+
+```js
+TinyCore.Module.define( 'elevator', [], function ()
 {
 	return {
+		floor : null,
 		/**
-		 * This method will be called when the module is started.
-		 * @param {Object} oStartData Data passed to this module when started
+		 * This (mandatory) function will be called when the module is started.
+		 * @param  {Object} oStartData The data passed when starting the module.
 		 */
 		onStart : function ( oStartData )
 		{
-			// Do something when the module is started.
+			this.floor = oStartData.floor;
 		},
 		/**
-		 * This method will be called when the module is stopped.
+		 * This (optional) function will be called when the module is stopped.
 		 */
 		onStop : function ()
 		{
-			// Cleanup!
+			// Cleanup (in order to be properly restarted?)
+			this.floor = null;
+		},
+		/**
+		 * This (optional) function will be called when the module is destroyed.
+		 */
+		onDestroy : function ()
+		{
+			// Complete cleanup!
+			delete this.floor;
+		},
+		getFloor : function ()
+		{
+			return this.floor;
 		}
 	};
 } );
 ```
 
-Note that, although it's a best practice to add both `onStart` and `onStop` methods when registering a module, the only mandatory method you have to implement is `onStart`.
+Note that, although it's a best practice to provide all the `onStart`, `onStop` and `onDestroy` methods when defining a module, the only mandatory method you have to implement is `onStart`.
 
-Furthermore, a module can use the default *mediator* [1] provided by the sandbox to communicate (publish/subscribe topics) with other parts of the application :
+#### Defining a module that uses the Mediator tool
+
+Let's use the previous example :
 
 ```js
-TinyCore.Module.register( 'users_monitoring', function ( oSandBox )
+TinyCore.Module.define( 'elevator', [ 'mediator' ], function ( oMediator )
 {
 	return {
+		floor : null,
 		/**
-		 * This method will be called when the module is started.
-		 * @param {Object} oStartData Data passed to this module when started
+		 * This (mandatory) function will be called when the module is started.
+		 * @param  {Object} oStartData The data passed when starting the module.
 		 */
 		onStart : function ( oStartData )
 		{
-			this.oContainer = document.getElementById( oStartData.containerID );
-			oSandBox.subscribe( ['user:connected', 'user:disconnected'], this.processUserActivity, this );
-			oSandBox.publish( 'monitoring:start', { timestamp : +new Date } );
+			this.floor = oStartData.floor;
+			// Let's alert some text whenever the "elevator:call" topic is published.
+			oMediator.subscribe( 'elevator:call', function ( oTopic )
+			{
+				alert( 'Elevator called from floor '+oTopic.data.callFloor );
+			} );
 		},
 		/**
-		 * This method will be called when the module is stopped.
+		 * This (optional) function will be called when the module is stopped.
 		 */
 		onStop : function ()
 		{
-			oSandBox.publish( 'monitoring:stop', { timestamp : +new Date } );
-			oSandBox.unSubscribe( 'user:connected', 'user:disconnected'] );
-			this.oContainer = null;
+			// Cleanup (in order to be properly restarted?)
+			oMediator.unsubscribeAll();
+			this.floor = null;
 		},
 		/**
-		 * Handles the topics received.
-		 * @param {Object} oTopic The topic object
-		 * @param {String} oTopic.name The topic name
-		 * @param {String} oTopic.data The data associated to the topic
+		 * This (optional) function will be called when the module is destroyed.
 		 */
-		processUserActivity : function ( oTopic )
+		onDestroy : function ()
 		{
-			var sName = oTopic.name,
-				oData = oTopic.data;
-
-			switch ( sName )
-			{
-				case 'user:connected':
-					// Do something with the data associated to the topic
-					break;
-
-				case 'user:disconnected':
-					// Do something with the data associated to the topic
-					break;
-
-				default:
-					break;
-			}
+			// Complete cleanup!
+			delete this.floor;
 		},
-		/**
-		 * The container element used to display user activity.
-		 * @type {DOM Element}
-		 */
-		oContainer : null
+		getFloor : function ()
+		{
+			return this.floor;
+		}
 	};
 } );
 ```
 
-An alternative would be to use automatic topics subscription (see TinyCore's extensions).
+In this example, the Mediator tool has been requested by adding the `'mediator'` string to the 2nd parameter of `TinyCore.Module.define`.
 
-#### Starting a module
+The Mediator tool registration can be done by including the "tools/mediator/TinyCore.Toolbox.Mediator.js" file.
+
+See "B. Toolbox" for more information.
+
+#### Starting/stopping a module
 
 ```js
-TinyCore.Module.start( 'users_monitoring', { containerID : 'users_info_box' } );
+TinyCore.Module.start( 'elevator', { currentFloor : 2 } );
+TinyCore.Module.stop( 'elevator' );
+TinyCore.Module.start( 'elevator', { currentFloor : -1 } ); // restart
 ```
 
-#### Stopping a module
+#### Destroying a module
+
+When a module is no more needed in the application, you can destroy it by passing ```true``` as the 2nd parameter of  ```TinyCore.Module.stop``` :
 
 ```js
-TinyCore.Module.stop( 'users_monitoring' );
+TinyCore.Module.stop( 'elevator', true );
 ```
 
-### B. Sandbox
+It will be stopped and its definition will be removed from TinyCore. Both the ```onStop``` and the ```onDestroy``` methods will be called in the process.
 
-The sandbox provides : 
+#### Instantiating/testing a module
 
-- *Consistency* : ensures a consistent and dependable interface to the modules.		
-- *Security* : determines which part of the framework the module can access.
-- *Communication* : translates module requests into core actions.
-
-TinyCore uses a *sandbox factory* : `TinyCore.SandBox`, that allows the registration and the creation of custom sandboxes.
-
-The sandbox factory API has only two methods :
+When starting a module for the first time, a new instance is created internally through the `instantiate` method. This method can also be used to test the module's behaviour. For example, using Jasmine's expectation syntax :
 
 ```js
-TinyCore.SandBox = {
-	register : function ( sSandBoxType, oNewSandBox ) {},
-	build : function ( sSandBoxType ) {}
-};
+var oElevator = TinyCore.module.instantiate( 'elevator' ),
+	nCurrentFloor = oElevator.getCurrentFloor();
+
+expect( nCurrentFloor ).toBeNull(); // true
+
+oElevator.onStart( { floor : 3 } );
+
+expect( oElevator.floor ).toBe( 3 ); // true
+
 ```
 
-By default, each module will received a sandbox that only implements a simple publish/subscribe system :
+When setting ```TinyCore.debugMode``` to ```true```, each module instantiated will have a special property named ```__tools__```, which will be populated with the references to all the tools requested.
 
 ```js
-var oSandboxPrototype = {
-	subscribe : function ( aTopics, fpHandler, oContext ) {},
-	publish : function ( sTopic, oData ) {},
-	unSubscribe : function ( aTopics ) {},
-	unSubscribeAll : function () {}
-};
+TinyCore.debugMode = true;
+
+var oElevator = TinyCore.module.instantiate( 'elevator' );
+
+// "toBeObject" is an additional matcher defined in "test/TinyCore.SpecHelper.js"
+expect( oElevator.__tools__ ).toBeObject(); // true
+expect( oElevator.__tools__.mediator ).toBeObject(); // true
+
+spyOn( oElevator.__tools__.mediator, 'publish' );
+
+oElevator.onStart( { floor : 0 } );
+
+expect( oElevator.__tools__.mediator.subscribe ).toHaveBeenCalled(); // true
+
 ```
 
-Using the factory's register method, you can create new types of sandboxes based on this prototype.
+An extension has been developed to automatically spy on the tools methods. See the "extensions/Jasmine" folder for more information (but read the next chapter first).
 
-#### Registering a new type of sandbox
+### B. Toolbox
+
+In order to provide the modules the tools they need to perform their job, TinyCore uses a *tools factory*, `TinyCore.Toolbox`.
+
+A tool can be registered at any time for later use. Whenever a module is instantiated, the tools specified in the module definition will be requested and injected as parameters of the creator function.
+
+#### TinyCore.Toolbox API
 
 ```js
-TinyCore.SandBox.register( 'dom_and_utils', {
-	utils : {
-		proxy : function ( func, context ) } {}
-	},
-	dom : {
-		append : function ( element, html ) {}
-	}
+TinyCore.Toolbox.register( toolName, creatorFunction )
+TinyCore.Toolbox.request( toolName )
+```
+
+Any tool that has already been registered can be requested by the module :
+
+**phone_tools.js :**
+```js
+TinyCore.Toolbox.register( 'camera', function ()
+{
+	return { takePhoto : function () {} };
+} );
+TinyCore.Toolbox.register( 'gps', function ()
+{
+	return { getActualLocation : function () {} };
+} );
+TinyCore.Toolbox.register( 'mp3', function ()
+{
+	return { play : function () {} };
 } );
 ```
 
-Then, when registering a module, you can specify the sandbox type using the last parameter :
-
+**phone_module.js :**
 ```js
-TinyCore.Module.register( 'users_monitoring', function ( oSandBox ) {
-	var _oUtils = oSandBox.utils,
-		_oDom = oSandBox.dom;
-
-	...
-}, 'dom_and_utils' );
-```
-
-This will build a new module sandbox with this augmented API :
-
-```js
-var oCustomSandbox = {
-	// Default sandbox functions.
-	subscribe : function ( aTopics, fpHandler, oContext ) {},
-	publish : function ( sTopic, oData ) {},
-	unSubscribe : function ( aTopics ) {},
-	unSubscribeAll : function () {},
-	// Custom functions.
-	utils : {
-		proxy : function ( func, context ) } {}
-	},
-	dom : {
-		append : function ( element, html ) {}
-	}
-};
-```
-
-The benefit of this approach is to be able to decide which set of functionalities each module can have access to.
-
-For instance, some modules could have access to AJAX/DOM functions while others could not, some modules should be able to publish topics while others not. Some modules could use optimized or experimental versions of certain functions, etc.
-
-### C. Core
-
-- Manages modules *lifecycles* : start/stop modules.
-- Enables *inter-modules communication* via notifications to the sandbox.
-- Handles errors : detect, trap and report errors.
-
-The core API :
-
-```js
-var TinyCore = {
-	debugMode : false,
-	extend : function ( oTinyExtension ) {},
-	Module : {
-		register : function ( sModuleName, fpCreator ) {},
-		start : function ( sModuleName, oStartData, sSandBoxType ) {},
-		stop : function ( sModuleName ) {},
-		getModules : function () {},
-		instanciate : function ( sModuleName ) {}
-	},
-	SandBox : {
-		register : function ( sSandBoxType, oNewSandBox ) {},
-		build : function ( sSandBoxType ) {}
-	},
-	ErrorHandler : {
-		log : function ( sMsg ) {}
-	}
-};
-```
-
-`TinyCore.extend` can be used to add extensions to TinyCore (see below).  
-`TinyCore.Module.getModules` method returns all the modules that have been registered, useful when developing an extension.  
-`TinyCore.Module.instanciate` method returns a module's instance that can be used for unit tests.  
-
-#### Errors handling
-
-`TinyCore.ErrorHandler` is the core error handler.
-
-By default, all the methods of a module will be *decorated* by wrapping them into a "try-catch" statement. Should any error occur, it will be caught and reported by `TinyCore.ErrorHandler.log`, which is just a wrapper over the console.error function.  
-The same will happen for the topics handlers.  
-
-If you do not want this decoration feature, just set `TinyCore.debugMode` to true. It may be preferable when developing your application.
-
-## Extensions
-
-### 1. TinyCore.Module's extended API : around 1Kb
-
-`Version 0.1.1`
-
-```js
-var TinyCore.Module = {
-	// Added/redefined :
-	isStarted : function ( sModuleName ) {},
-	startAll : function ( aModulesNamesOrStartData, oOptionalStartData ) {},
-	stopAll : function ( aModulesNames ) {},
-	destroy : function ( sModuleName ) {},
-	destroyAll : function ( aModulesNames ) {},
-	registerAndStart : function ( sModuleName, fpCreator, sSandBoxType ) {},
-	instanciate : function ( sModuleName ) {},
-
-	// Already existing :
-	register : function ( sModuleName, fpCreator ) {},
-	start : function ( sModuleName, oStartData, sSandBoxType ) {},
-	stop : function ( sModuleName ) {},
-	getModules : function () {}
-};
-```
-
-`TinyCore.Module.destroy` method will stop and remove completely a module from TinyCore.  
-
-This extension also adds the automatic topics subscriptions feature. Topics can be subscribed more easily by only adding a `topics` property to the module :
-
-```js
-TinyCore.Module.register( 'users_monitoring', function ( oSandBox )
+TinyCore.Module.define( 'phone', ['camera','gps','mp3'], function ( camera, gps, mp3 )
 {
 	return {
-		/**
-		 * This method will be called when the module is started.
-		 * @param {Object} oStartData Data passed to this module when started
-		 */
-		onStart : function ( oStartData )
+		onStart : function ()
 		{
-			this.oContainer = document.getElementById( oStartData.containerID );
-			oSandBox.publish( 'monitoring:start', { timestamp : +new Date } );
-		},
-		/**
-		 * This method will be called when the module is stopped.
-		 */
-		onStop : function ()
-		{
-			oSandBox.publish( 'monitoring:stop', { timestamp : +new Date } );
-			this.oContainer = null;
-		},
-		/**
-		 * The topics and their related handlers.
-		 * @type {Object}
-		 */
-		topics : {
-			'user:connected' : function ( oTopic )
-			{
-				// Do something with the data associated to the topic
-			},
-			'user:disconnected' : function ( oTopic )
-			{
-				// Do something with the data associated to the topic
-			}
-		},
-		/**
-		 * The container element used to display user activity.
-		 * @type {DOM Element}
-		 */
-		oContainer : null
+			camera.takePhoto();
+			gps.getActualLocation();
+			mp3.play();
+			// sensor is null
+		}
 	};
 } );
 ```
 
-In this case, all subscriptions will be made when the module is started and removed when the module is stopped.
+Note : if a tool that has not been registered is requested, `null` will passed as the corresponding parameter of the creator function.
 
-### 2. Error Handler with DOM logging : less than 1Kb
+### C. Utils
 
-`Version 0.1.0`
+TinyCore comes with a set of built-in utilities functions that are used internally.
 
-This extension redefines `TinyCore.ErrorHandler.log` by implementing a fallback when the console does not exist : the messages are logged in a DOM container.
-
-### 3. Asynchronous Module Definition : less than 1Kb
-
-`Version 0.2.0`
-
-Modules definition and asynchronous loading via [require.js](http://requirejs.org) [2].  
-It is basically a wrapper over `define` and `require` :
+#### TinyCore.Utils API
 
 ```js
-var TinyCore.AMD = {
-	config : function ( oSettings ) {},
-	setErrorHandler : function ( fpErrorHandler ),
-	register : function ( aModulesNames, fpCallback ) {},
-	registerAndStart : function ( aModulesNames, oModulesStartData, fpCallback ) {}
-};
+TinyCore.Utils.extend( obj1, obj2 /*, ... */ )
+TinyCore.Utils.forEach( obj, callback )
+TinyCore.Utils.isClass( mixed, sClassName )
+TinyCore.Utils.isArray( mixed )
+TinyCore.Utils.isFunction( mixed )
+TinyCore.Utils.isObject( mixed )
+TinyCore.Utils.tryCatchDecorator( context, func, errMsg )
+TinyCore.Utils.createModuleObject( creator, args )
 ```
 
-The callback parameter of `TinyCore.Module.register` allows you to execute some code when all modules are registered.  
-The callback parameter of `TinyCore.Module.registerAndStart` allows you to execute some code when all modules are registered and started.
+### D. Error and debugMode
+
+`TinyCore.Error` is the core error handler.
+
+The `TinyCore.debugMode` property defines how errors are reported.
+
+#### TinyCore.Error API
 
 ```js
-TinyCore.AMD.config( {
-	baseUrl : 'modules'
-} );
-
-TinyCore.AMD.registerAndStart( ['chart', 'filter'], { 
-	'chart' : { type : 'pie', colors : true },
-	'filter' : { startDate : new Date() }
-}, function ()
-{
-	console.info( 'Modules loaded and started!', this );
-} );
+TinyCore.Error.log()
+TinyCore.Error.report()
+TinyCore.debugMode = false
 ```
 
-An AMD module can be defined like this :
+By default, all the methods of a module will be *decorated* by wrapping them into a "try-catch" statement. Should any error occur, it will be caught and logged by `TinyCore.Error.log`, which is just a wrapper over the `console.error` function.
 
-```js
-// plot.js is a dependency file that will be loaded first. 
-define( ['lib/plot.js'], function ( oPlot )
-{
-	// We must return the function that will create the module
-	return function ( oSandBox )
-	{
-		return  {
-			onStart : function ( oStartData )
-			{
-				oSandBox.subscribe( ['filter:change', 'filter:reset'], function ( oTopic )
-				{
-					// Do something with this topic
-				} );
+If you do not want this decoration feature, set `TinyCore.debugMode` to `true`. It may be preferable when developing your application. Set it back to `false` in production.
 
-				// Let's use the plot library!
-				oPlot.init();
-				oPlot.draw( oStartData.graphType );
-			},
-			onStop : function ()
-			{
-				oSandBox.publish( 'chart:stop');
-			}
-		};
-	};
-} );
-```
+The `report` method throws an exception when `TinyCore.debugMode` is `true`, or calls `TinyCore.Error.log` otherwise.
 
-## Creators
-
-- Main dev : Mawrkus aka Marc Mignonsin (<web@sparring-partner.be>)
-- JuanMa aka Juan Manuel Garrido (<juanma.garrido@gmail.com>)
-
-## RoadMap
-
-- More demos
-- Full API documentation
-- More extensions
-- Add a source map
-
-[1]: See Addy Osmani's ["Learning JavaScript Design Patterns"](http://addyosmani.com/resources/essentialjsdesignpatterns/book/#mediatorpatternjavascript) book for a good description of this pattern.  
-[2]: require.js and AMD : [http://requirejs.org](http://requirejs.org)
+Feel free to extend/redefine those methods according to your needs.

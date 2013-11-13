@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>TinyCore /// chat</title>
+
+		<link rel="stylesheet" href="css/chat.css">
+	</head>
+	<body>
+		<div id="container">
+			<h1>A chat (multiple module instances)</h1>
+			<form id="new-user-form">
+				<label for="username">What's your username?</label>
+				<input id="username" type="text" class="form-input" />
+				<button type="submit" id="enter" title="Join the chat!" class="button">Join the chat!</button>
+			</form>
+			<form id="chat-window-tpl" class="chat-window tpl">
+				<p class="tools">
+					<span class="username"></span> /// <a href="#" title="exit" class="exit">exit</a>
+				</p>
+				<div class="activity"></div>
+				<div class="messages">
+					<p class="timestamp">Conversation started on the <span class="start-date"></span> at <span class="start-time"></span></p>
+				</div>
+				<input type="text" class="form-input user-text" placeholder="Type your message here" value="" />
+			</form>
+			<div id="chat-windows"></div>
+		</div>
+
+		<script type="text/javascript" src="../../../build/TinyCore.min.js"></script>
+		<script type="text/javascript" src="../../../build/extensions/Instances/TinyCore.Module.Instances.min.js"></script>
+		<script type="text/javascript" src="../../../build/tools/mediator/TinyCore.Toolbox.Mediator.min.js"></script>
+
+		<script type="text/javascript" src="../__tools__/dom.js"></script>
+		<script type="text/javascript" src="../__tools__/events.js"></script>
+
+		<script type="text/javascript" src="modules/app.js"></script>
+		<script type="text/javascript" src="modules/hub.js"></script>
+		<script type="text/javascript" src="modules/chat_client.js"></script>
+		<script type="text/javascript">
+			window.onload = function ()
+			{
+				TinyCore.Module.start( 'app' );
+			};
+		</script>
+	</body>
+</html>

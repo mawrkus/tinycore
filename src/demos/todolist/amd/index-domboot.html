@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>TinyCore /// todo list</title>
+
+		<link rel="stylesheet" href="../_css/todo.css">
+	</head>
+	<body>
+		<div id="container">
+			<h1>A todo list (AMD &amp; DOM boot)</h1>
+			<form id="todo-form-add" class="todo-form" data-tc-modules="todo_form_add">
+				<input id="add-input" class="todo-input" placeholder="Enter your comma-separated todos..." />
+			</form>
+			<form id="search-form" class="todo-form" data-tc-modules="todo_form_search">
+				<input id="search-input" class="todo-input" placeholder="Quick search..." />
+				<a title="reset" href="#" id="search-reset"></a>
+			</form>
+			<span id="summary" data-tc-modules="todo_summary">
+				<span id="count-done"></span>/<span id="count-total"></span> completed - <a href="#" id="clear-completed" class="clear">clear completed</a> - <a href="#" id="clear-list" class="clear">clear all</a>
+			</span>
+			<ul id="todo-list" data-tc-modules="todo_list">
+				<li id="list-header">
+					<input type="checkbox" class="todo-check-all" id="todo-check-all" />
+					<span class="label">Name</span>
+				</li>
+			</ul>
+		</div>
+
+		<script type="text/javascript" src="../../../../build/TinyCore.min.js"></script>
+		<script type="text/javascript" src="../../../../build/extensions/AMD/require-2.1.4.min.js"></script>
+		<script type="text/javascript" src="../../../../build/extensions/AMD/TinyCore.AMD.domBoot.min.js"></script>
+		<script type="text/javascript">
+			window.onload = function ()
+			{
+				TinyCore.AMD.config( {
+					require : {
+						paths : {
+							'tools' : '../../../__tools__',
+							'mediator' : '../../../../tools/mediator/TinyCore.Toolbox.Mediator'
+						}
+					},
+					domBoot : {
+						nodesIgnored : { H1 : true, LI : true, A : true }
+					}
+				} );
+
+				TinyCore.AMD.domBoot( function ( aModulesData )
+				{
+					console.info( 'DOM boot ok. '+aModulesData.length+' module(s) loaded:', aModulesData );
+
+					// must be last one to sync up
+					TinyCore.AMD.requireAndStart( 'todo_storage', function ()
+					{
+						console.info( '"todo_storage" loaded & started.' );
+					} );
+				} );
+			};
+		</script>
+	</body>
+</html>

@@ -1,6 +1,6 @@
 /**
  * Utilities for TinyCore.js
- * @author Mawrkus (web@sparring-partner.be)
+ * @author mawrkus (web@sparring-partner.be)
 */
 ;( function ( oEnv )
 {
@@ -10,8 +10,58 @@
 
 	var _oObjectProto = Object.prototype,
 		_hasOwnProp = _oObjectProto.hasOwnProperty,
-		_toString = _oObjectProto.toString,
-		_slice = Array.prototype.slice;
+		_toString = _oObjectProto.toString;
+
+	/* ES5 shims, from MDN. */
+
+	if ( !Array.prototype.forEach )
+	{
+		Array.prototype.forEach = function( fn, scope )
+		{
+			var i, len;
+			for ( i = 0, len = this.length; i < len; ++i )
+			{
+				if ( i in this )
+				{
+					fn.call( scope, this[ i ], i, this );
+				}
+			}
+		};
+	}
+
+	if ( !Function.prototype.bind )
+	{
+		Function.prototype.bind = function( oThis )
+		{
+			if ( typeof this !== "function" )
+			{
+				// closest thing possible to the ECMAScript 5 internal IsCallable function
+				throw new TypeError( "Function.prototype.bind - what is trying to be bound is not callable" );
+			}
+
+			var aArgs = Array.prototype.slice.call( arguments, 1 ),
+				fToBind = this,
+				fNOP = function( ) {},
+				fBound = function( )
+				{
+					return fToBind.apply( this instanceof fNOP && oThis ? this : oThis,
+						aArgs.concat( Array.prototype.slice.call( arguments ) ) );
+				};
+
+			fNOP.prototype = this.prototype;
+			fBound.prototype = new fNOP();
+
+			return fBound;
+		};
+	}
+
+	if ( !String.prototype.trim )
+	{
+		String.prototype.trim = function( )
+		{
+			return this.replace( /^\s+|\s+$/g, '' );
+		};
+	}
 
 	/**
 	 * TinyCore.js utilities functions.
@@ -90,9 +140,10 @@
 		*/
 		extend : function ()
 		{
-			var nArgsCount = arguments.length,
+			var args = arguments,
+				nArgsCount = args.length,
 				nIndex = 1,
-				oDest = arguments[0] || {},
+				oDest = args[0] || {},
 				fpCopy = function ( val, key )
 				{
 					oDest[key] = _oUtils.isObject( val ) ? _oUtils.extend( oDest[key], val ) : val;
@@ -100,20 +151,10 @@
 
 			for ( ; nIndex<nArgsCount; nIndex++ )
 			{
-				_oUtils.forEach( arguments[nIndex], fpCopy );
+				_oUtils.forEach( args[nIndex], fpCopy );
 			}
 
 			return oDest;
-		},
-		/**
-		 * Converts an array-like object to a real array.
-		 * @type {Function}
-		 * @param {Mixed} mixed
-		 * @return {Array}
-		*/
-		toArray : function ( mixed )
-		{
-			return _slice.call( mixed );
 		},
 		/**
 		 * "try-catch" function decoration with logging in case of error.
@@ -148,17 +189,14 @@
 			return fpDecoratedFunc;
 		},
 		/**
-		 * Creates a new function that will be executed in the context passed as parameter.
-		 * @param {Object} oContext
-		 * @param {Function} fpFunc
-		 * @return {Function}
+		 * Creates a new module object.
+		 * @param  {Function} fpCreator
+		 * @param  {Array} aArgs
+		 * @return {Object}
 		 */
-		bind : function ( oContext, fpFunc )
+		createModuleObject : function ( fpCreator, aArgs )
 		{
-			return function ()
-			{
-				fpFunc.apply( oContext, arguments );
-			};
+			return fpCreator.apply( null, aArgs );
 		}
 	};
 

@@ -39,21 +39,11 @@ TinyCore.Module.define( 'user', [ 'dom', 'db' ], function ( DOM, DB )
 	};
 } );
 
-TinyCore.Module.define( 'superuser', [ 'db' ], function ( DB )
-{
-	return {
-		onStart : function ( oStartData )
-		{
-			var userData = DB.find( { user : oStartData.user } );
-		}
-	};
-} );
-
 describe( 'TinyCore.Toolbox.request', function ()
 {
-	it( 'should allow stubbed tools to be passed to the creator function of the module ', function ()
+	it( 'should provide unique tools, with all methods stubbed, to the creator function of the module', function ()
 	{
-		var oUserModule = TinyCore.Module.instanciate( 'user' ),
+		var oUserModule = TinyCore.Module.instantiate( 'user' ),
 			DB = TinyCore.Toolbox.request( 'db' ),
 			DOM = TinyCore.Toolbox.request( 'dom' ),
 			oStartData = { user : 'blake' };
@@ -65,17 +55,5 @@ describe( 'TinyCore.Toolbox.request', function ()
 
 		expect( DOM.byClass.calls.length ).toBe( 1 );
 		expect( DOM.byClass ).toHaveBeenCalledWith( '.current-user' );
-	} );
-
-	it( 'should allow stubbed tools to be properly passed to the creator function of another module', function ()
-	{
-		var oUserModule = TinyCore.Module.instanciate( 'superuser' ),
-			DB = TinyCore.Toolbox.request( 'db' ),
-			oStartData = { user : 'william' };
-
-		oUserModule.onStart( oStartData );
-
-		expect( DB.find.calls.length ).toBe( 1 );
-		expect( DB.find ).toHaveBeenCalledWith( oStartData );
 	} );
 } );

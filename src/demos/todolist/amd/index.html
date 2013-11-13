@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>TinyCore /// todo list</title>
+
+		<link rel="stylesheet" href="../_css/todo.css">
+	</head>
+	<body>
+		<div id="container">
+			<h1>A todo list (AMD)</h1>
+			<form id="todo-form-add" class="todo-form">
+				<input id="add-input" class="todo-input" placeholder="Enter your comma-separated todos..." />
+			</form>
+			<form id="search-form" class="todo-form">
+				<input id="search-input" class="todo-input" placeholder="Quick search..." />
+				<a title="reset" href="#" id="search-reset"></a>
+			</form>
+			<span id="summary">
+				<span id="count-done"></span>/<span id="count-total"></span> completed - <a href="#" id="clear-completed" class="clear">clear completed</a> - <a href="#" id="clear-list" class="clear">clear all</a>
+			</span>
+			<ul id="todo-list">
+				<li id="list-header">
+					<input type="checkbox" class="todo-check-all" id="todo-check-all" />
+					<span class="label">Name</span>
+				</li>
+			</ul>
+		</div>
+
+		<script type="text/javascript" src="../../../../build/TinyCore.min.js"></script>
+		<script type="text/javascript" src="../../../../build/extensions/AMD/require-2.1.4.min.js"></script>
+		<script type="text/javascript" src="../../../../build/extensions/AMD/TinyCore.AMD.min.js"></script>
+		<script type="text/javascript">
+			window.onload = function ()
+			{
+				TinyCore.AMD.config( {
+					require : {
+						baseUrl : 'modules',
+						paths : {
+							'tools' : '../../../__tools__',
+							'mediator' : '../../../../tools/mediator/TinyCore.Toolbox.Mediator'
+						}
+					}
+				} );
+
+				TinyCore.AMD.requireAndStart( [
+					'todo_form_add',
+					'todo_list',
+					// optional
+					'todo_summary',
+					'todo_form_search',
+					// must be last one to sync up
+					'todo_storage'
+				], function ( aModulesData )
+				{
+					console.info( aModulesData.length+' module(s) loaded:', aModulesData );
+				} );
+			};
+		</script>
+	</body>
+</html>

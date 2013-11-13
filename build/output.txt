@@ -1,0 +1,67 @@
+Running "concat:core" (concat) task
+File "build/TinyCore.js" created.
+
+Running "jshint:core" (jshint) task
+>> 1 file lint free.
+
+Running "uglify:core" (uglify) task
+File "build/TinyCore.min.js" created.
+Original: 13959 bytes.
+Minified: 3356 bytes.
+Gzipped:  753 bytes.
+
+Running "jshint:mediator" (jshint) task
+>> 1 file lint free.
+
+Running "uglify:mediator" (uglify) task
+File "build/tools/mediator/TinyCore.Toolbox.Mediator.min.js" created.
+Original: 3744 bytes.
+Minified: 786 bytes.
+Gzipped:  214 bytes.
+
+Running "jshint:amd" (jshint) task
+>> 2 files lint free.
+
+Running "concat:amd" (concat) task
+File "build/extensions/AMD/require-2.1.4.min.js" created.
+File "build/extensions/AMD/TinyCore.AMD.domBoot.js" created.
+
+Running "uglify:amd" (uglify) task
+File "build/extensions/AMD/TinyCore.AMD.min.js" created.
+Original: 3619 bytes.
+Minified: 911 bytes.
+Gzipped:  252 bytes.
+File "build/extensions/AMD/TinyCore.AMD.domBoot.min.js" created.
+Original: 14027 bytes.
+Minified: 3334 bytes.
+Gzipped:  807 bytes.
+
+Running "jshint:inheritance" (jshint) task
+>> 1 file lint free.
+
+Running "uglify:inheritance" (uglify) task
+File "build/extensions/Inheritance/TinyCore.Module.Inheritance.min.js" created.
+Original: 3928 bytes.
+Minified: 903 bytes.
+Gzipped:  254 bytes.
+
+Running "jshint:instances" (jshint) task
+>> 1 file lint free.
+
+Running "uglify:instances" (uglify) task
+File "build/extensions/Instances/TinyCore.Module.Instances.min.js" created.
+Original: 4307 bytes.
+Minified: 919 bytes.
+Gzipped:  223 bytes.
+
+Running "jshint:jasmine" (jshint) task
+>> 1 file lint free.
+
+Running "uglify:jasmine" (uglify) task
+File "build/extensions/Jasmine/TinyCore.Toolbox.Jasmine.min.js" created.
+Original: 1719 bytes.
+Minified: 444 bytes.
+Gzipped:  144 bytes.
+
+Done, without errors.
+[Finished in 3.3s]

@@ -1,6 +1,6 @@
 /**
  * Multi-instances extension for TinyCore.js
- * @author Mawkus aka Marc Mignonsin (web@sparring-partner.be)
+ * @author mawrkus (web@sparring-partner.be)
  * @requires TinyCore.js
 */
 ;( function ( oEnv )
@@ -31,7 +31,7 @@
 			if ( !oInstanceData )
 			{
 				oInstanceData = Module.getModules()[sModuleName].oInstances[sInstanceName] = {
-					oInstance : Module.instanciate( sModuleName )
+					oInstance : Module.instantiate( sModuleName )
 				};
 			}
 
@@ -47,7 +47,7 @@
 		 * Stops a module instance by calling its "onStop" method if it exists and unsubscribing from all subscribed topics.
 		 * @param {String} sModuleName The module name
 		 * @param {String} sInstanceName The instance name
-		 * @return {Boolean} Whether the module should also be destroyed or not
+		 * @param {Boolean} Whether the instance should also be destroyed or not
 		 * @return {Boolean} Whether the instance has been stopped or not
 		 * @throws {Error} If the module has not been defined
 		 */
@@ -88,18 +88,34 @@
 		 * @return {Boolean} Whether all instances have been started or not
 		 * @throws {Error} If the module has not been defined
 		 */
-		start : function ( sModuleName, oStartData )
+		start : ( function ( fpOriginalStart )
 		{
-			var oModules = Module.getModules(),
-				bAllStarted = true;
-
-			Utils.forEach( oModules[sModuleName].oInstances, function ( oInstance, sInstanceName )
+			return function ( sModuleName, oStartData )
 			{
-				bAllStarted = bAllStarted && Module.startInstance( sModuleName, sInstanceName, oStartData );
-			} );
+				var oModuleData = Module.getModules()[sModuleName],
+					bHasInstances = false,
+					bAllStarted = true;
 
-			return bAllStarted;
-		},
+				if ( oModuleData )
+				{
+					Utils.forEach( oModuleData.oInstances, function ( oInstance, sInstanceName )
+					{
+						bHasInstances = true;
+						if ( !Module.startInstance( sModuleName, sInstanceName, oStartData ) )
+						{
+							bAllStarted = false;
+						}
+					} );
+				}
+
+				if ( !bHasInstances )
+				{
+					return fpOriginalStart.apply( Module, arguments );
+				}
+
+				return bAllStarted;
+			};
+		} ( Module.start ) ),
 		/**
 		 * Redefinition of the original method to stop all instances.
 		 * @param {String} sModuleName The module name
@@ -114,10 +130,13 @@
 
 			Utils.forEach( oModules[sModuleName].oInstances, function ( oInstance, sInstanceName )
 			{
-				bAllStopped = bAllStopped && Module.stopInstance( sModuleName, sInstanceName, bAndDestroy );
+				if( !Module.stopInstance( sModuleName, sInstanceName, bAndDestroy ) )
+				{
+					bAllStopped = false;
+				}
 			} );
 
-			if ( bAllStopped )
+			if ( bAndDestroy && bAllStopped )
 			{
 				delete oModules[sModuleName];
 			}

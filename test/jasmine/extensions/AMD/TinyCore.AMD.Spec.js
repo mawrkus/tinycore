@@ -23,14 +23,29 @@ describe( 'TinyCore.AMD.config', function ()
 	it( 'should call config() from require.js properly', function ()
 	{
 		var oSettings = {
-			baseUrl : '../../foo'
+			require : {
+				baseUrl : '../../foo'
+			}
 		};
 
 		spyOn( require, 'config' );
 
 		TinyCore.AMD.config( oSettings );
 
-		expect( require.config ).toHaveBeenCalledWith( oSettings );
+		expect( require.config ).toHaveBeenCalledWith( oSettings.require );
+	} );
+
+	it( 'should return the current configuration if no parameter is passed', function ()
+	{
+		var oSettings = {
+			require : {
+				baseUrl : '../../bar'
+			}
+		};
+
+		TinyCore.AMD.config( oSettings );
+
+		expect( TinyCore.AMD.config() ).toEqual( oSettings );
 	} );
 } );
 
@@ -74,7 +89,7 @@ describe( 'TinyCore.AMD.define', function ()
 
 describe( 'TinyCore.AMD.require', function ()
 {
-	it( 'should call the require.js require() function properly', function ()
+	it( 'should call the require() function from require.js properly', function ()
 	{
 		var aModuleNames = ['init', 'start', 'go'],
 			fpCallback = jasmine.createSpy();
@@ -93,30 +108,28 @@ describe( 'TinyCore.AMD.requireAndStart', function ()
 {
 	it( 'should properly require and start the modules using require.js and TinyCore', function ()
 	{
-		var oModulesData = {
-				'red' : {
-					startData : { light : true }
-				},
-				'blue' : {
-					startData : { dark : false }
-				}
-			},
-			aModules2Load = ['red', 'blue'],
+		var aModulesData = [
+				{ name : 'red', startData : { light : true } },
+				'green',
+				{ name : 'blue', startData : { dark : false } }
+			],
 			fpCallback = jasmine.createSpy();
 
 		spyOn( TinyCore.AMD, 'require' ).andCallThrough();
 		spyOn( TinyCore.Module, 'start' );
 
-		TinyCore.AMD.requireAndStart( oModulesData, fpCallback );
+		TinyCore.AMD.requireAndStart( aModulesData, fpCallback );
 
 		expect( TinyCore.AMD.require.calls.length ).toBe( 1 );
-		expect( TinyCore.AMD.require.calls[0].args[0] ).toEqual( aModules2Load );
+		expect( TinyCore.AMD.require.calls[0].args[0] ).toEqual( ['red', 'green', 'blue'] );
 
-		expect( TinyCore.Module.start.calls.length ).toBe( aModules2Load.length );
-		expect( TinyCore.Module.start.calls[0].args[0] ).toBe( aModules2Load[0] );
-		expect( TinyCore.Module.start.calls[0].args[1] ).toBe( oModulesData[aModules2Load[0]].startData );
-		expect( TinyCore.Module.start.calls[1].args[0] ).toBe( aModules2Load[1] );
-		expect( TinyCore.Module.start.calls[1].args[1] ).toBe( oModulesData[aModules2Load[1]].startData );
+		expect( TinyCore.Module.start.calls.length ).toBe( 3 );
+		expect( TinyCore.Module.start.calls[0].args[0] ).toBe( aModulesData[0].name );
+		expect( TinyCore.Module.start.calls[0].args[1] ).toBe( aModulesData[0].startData );
+		expect( TinyCore.Module.start.calls[1].args[0] ).toBe( 'green' );
+		expect( TinyCore.Module.start.calls[1].args[1] ).toEqual( {} );
+		expect( TinyCore.Module.start.calls[2].args[0] ).toBe( aModulesData[2].name );
+		expect( TinyCore.Module.start.calls[2].args[1] ).toBe( aModulesData[2].startData );
 
 		expect( fpCallback ).toHaveBeenCalled();
 	} );

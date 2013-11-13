@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>TinyCore /// widgets</title>
+
+		<link rel="stylesheet" href="css/widgets.css">
+	</head>
+	<body>
+		<div id="container">
+			<h1>Inheritance, automatic topics &amp; events subscriptions</h1>
+
+			<form id="widget-text" class="widget widget-text">
+				<p>
+					[<a href="#widget-text" id="start0">Start</a>] | [<a href="#widget-text" id="stop0" class="disabled">Stop</a>]
+				</p>
+				<p>
+					<input type="text" id="text-input" class="form-input" value="" placeholder="Enter a color..." disabled="disabled" />
+					<button type="submit" class="submit button" title="Add" disabled="disabled">Add</button>
+				</p>
+			</form>
+
+			<form id="widget-select" class="widget widget-select">
+				<p>
+					[<a href="#widget-select" id="start1">Start</a>] | [<a href="#widget-select" id="stop1" class="disabled">Stop</a>]
+				</p>
+				<select id="select-input" class="form-input form-select" disabled="disabled">
+					<option value="">(Choose a color)</option>
+					<option value="red">Red</option>
+					<option value="green">Green</option>
+					<option value="blue">Blue</option>
+				</select>
+			</form>
+
+			<div class="activity-container">
+				<h2>Widgets activity</h2>
+				<div id="activity-view" />
+			</div>
+		</div>
+
+		<script type="text/javascript" src="../../../build/TinyCore.min.js"></script>
+		<script type="text/javascript" src="../../../build/extensions/Inheritance/TinyCore.Module.Inheritance.min.js"></script>
+		<script type="text/javascript" src="../../../build/tools/mediator/TinyCore.Toolbox.Mediator.min.js"></script>
+
+		<script type="text/javascript" src="../__tools__/events.js"></script>
+
+		<script type="text/javascript" src="modules/app.js"></script>
+		<script type="text/javascript" src="modules/activity-log.js"></script>
+		<script type="text/javascript" src="modules/widget-generic.js"></script>
+		<script type="text/javascript" src="modules/widget-text.js"></script>
+		<script type="text/javascript" src="modules/widget-select.js"></script>
+		<script type="text/javascript">
+			window.onload = function ()
+			{
+				TinyCore.Module.start( 'app' );
+			};
+		</script>
+	</body>
+</html>

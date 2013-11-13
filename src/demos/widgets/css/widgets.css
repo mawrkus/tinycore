@@ -1,0 +1,81 @@
+body {
+	font-family: Georgia, serif;
+	font-size: 13px;
+	color:#333;
+}
+
+h1 {
+	margin: 0 0 20px;
+}
+h2 {
+	margin: 0 0 4px;
+}
+
+#container {
+	width: 800px;
+	margin: 10px auto;
+	padding:20px 40px;
+	border: 1px solid #777;
+	-moz-box-shadow: 0 0 1px #999;
+	-ms-box-shadow: 0 0 1px #999;
+	-webkit-box-shadow: 0 0 1px #999;
+	box-shadow: 0 0 1px #999;
+}
+
+.form-input {
+	border:1px solid #AAA;
+	padding:6px 12px;
+	box-shadow:inset 0 0 1px #999;
+}
+.form-input:focus {
+	border:1px solid #0B5FA2;
+}
+.form-select {
+	padding:4px 2px;
+}
+.button {
+	background-color: #0B70BE;
+	color: #FFF;
+	border: 0;
+	padding:6px 12px;
+}
+.button:disabled {
+	background-color: #CCC;
+	color: #6D6D6D;
+}
+
+a {
+	text-decoration: none;
+	color: #0B70BE;
+}
+a:hover {
+	text-decoration: underline;
+}
+.disabled {
+	color: #555;
+}
+.disabled:hover {
+	text-decoration: none;
+}
+
+.widget {
+	margin: 10px 0 30px;
+	float: left;
+	width: 50%;
+}
+
+.activity-container {
+	clear: both;
+}
+#activity-view {
+	height:300px;
+	overflow: auto;
+	border-top: 1px solid #777;
+	border-bottom: 1px solid #777;
+	padding: 4px 4px 4px 8px;
+	color: #444;
+	font-size: 12px;
+}
+.activity {
+	margin: 2px 0 0;
+}

@@ -1,6 +1,6 @@
 /**
  * Error handling for TinyCore.js
- * @author Mawrkus (web@sparring-partner.be)
+ * @author mawrkus (web@sparring-partner.be)
 */
 ;( function ( oEnv )
 {
@@ -22,6 +22,21 @@
 			if ( oEnv.console && oEnv.console.error )
 			{
 				oEnv.console.error( sMsg );
+			}
+		},
+		/**
+		 * Throws an exception if in debug mode, log the error essage if not.
+		 * @param  {String} sMsg
+		 */
+		report : function ( sMsg )
+		{
+			if ( TinyCore.debugMode )
+			{
+				throw new Error( sMsg );
+			}
+			else
+			{
+				_oErrorHandler.log( sMsg );
 			}
 		}
 	};

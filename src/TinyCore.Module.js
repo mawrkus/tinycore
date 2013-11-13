@@ -1,6 +1,6 @@
 /**
  * Modules management for TinyCore.js
- * @author Mawrkus (web@sparring-partner.be)
+ * @author mawrkus (web@sparring-partner.be)
 */
 ;( function ( oEnv )
 {
@@ -8,7 +8,8 @@
 
 	var TinyCore = oEnv.TinyCore,
 		Utils = TinyCore.Utils,
-		Toolbox = TinyCore.Toolbox;
+		Toolbox = TinyCore.Toolbox,
+		Error = TinyCore.Error;
 
 	/**
 	 * The modules data, where each key is a module name and the associated value an object holding the module data.
@@ -31,7 +32,7 @@
 		 * @param {String} sModuleName The module name
 		 * @param {Array} aToolsNames An array of tools names, that will be requested to the Toolbox and passed as arguments of fpCreator
 		 * @param {Function} fpCreator The function that creates and returns a module instance
-		 * @return {String} The module name, if it has been successfuly defined, or false if not.
+		 * @return {Boolean} Whether the module was successfuly or not.
 		 */
 		define : function ( sModuleName, aToolsNames, fpCreator )
 		{
@@ -43,8 +44,7 @@
 			_oModulesData[sModuleName] = {
 				fpCreator	: fpCreator,
 				oInstances	: {},
-				aToolsNames : aToolsNames,
-				aTools : []
+				aToolsNames : aToolsNames
 			};
 
 			return true;
@@ -58,13 +58,13 @@
 		 */
 		start : function ( sModuleName, oStartData )
 		{
-			// We use the module name as the default instance name.
-			var oInstanceData = _oModule.getInstance( sModuleName, sModuleName );
+			var oInstanceData = _oModule.getInstance( sModuleName );
 
 			if ( !oInstanceData )
 			{
+				// We use the module name as the default instance name.
 				oInstanceData = _oModulesData[sModuleName].oInstances[sModuleName] = {
-					oInstance : _oModule.instanciate( sModuleName )
+					oInstance : _oModule.instantiate( sModuleName )
 				};
 			}
 
@@ -79,14 +79,13 @@
 		/**
 		 * Stops a module instance by calling its "onStop" method (if it exists) and by unsubscribing from all the subscribed topics.
 		 * @param {String} sModuleName The module name
-		 * @return {Boolean} Whether the module should also be destroyed or not
+		 * @param {Boolean} Whether the module should also be destroyed or not
 		 * @return {Boolean} Whether the module has been stopped or not
 		 * @throws {Error} If the module has not been defined
 		 */
 		stop : function ( sModuleName, bAndDestroy )
 		{
-			// We use the module name as the default instance name.
-			var oInstanceData = _oModule.getInstance( sModuleName, sModuleName );
+			var oInstanceData = _oModule.getInstance( sModuleName );
 
 			if ( !oInstanceData || !oInstanceData.oInstance )
 			{
@@ -115,39 +114,45 @@
 			return !oInstanceData.bIsStarted;
 		},
 		/**
-		 * Instanciates a module.
+		 * Instantiates a module.
 		 * @param {String} sModuleName The module name
 		 * @return {Object} The module instance
 		 * @throws {Error} If the module has not been defined
 		 */
-		instanciate : function ( sModuleName )
+		instantiate : function ( sModuleName )
 		{
 			var oModuleData = _oModulesData[sModuleName],
 				aToolsNames = oModuleData.aToolsNames,
 				nToolIndex = aToolsNames.length,
 				sToolName,
+				aTools = [],
 				oInstance;
 
 			if ( !oModuleData )
 			{
-				throw new Error( 'The module "'+sModuleName+'" is not defined!' );
+				Error.report( 'The module "'+sModuleName+'" is not defined!' );
 			}
 
-			// Lazy requests of the tools.
-			if ( nToolIndex && !oModuleData.aTools.length )
+			while ( nToolIndex-- )
 			{
+				sToolName = aToolsNames[nToolIndex];
+				aTools.unshift( Toolbox.request( sToolName ) );
+			}
+
+			oInstance = Utils.createModuleObject( oModuleData.fpCreator, aTools );
+
+			if ( TinyCore.debugMode )
+			{
+				oInstance.__tools__ = oInstance.__tools__ || {};
+				nToolIndex = aToolsNames.length;
 				while ( nToolIndex-- )
 				{
-					sToolName = aToolsNames[nToolIndex];
-					oModuleData.aTools.unshift( Toolbox.request( sToolName ) || sToolName );
+					oInstance.__tools__[aToolsNames[nToolIndex]] = aTools[nToolIndex];
 				}
 			}
-
-			oInstance = oModuleData.fpCreator.apply( null, oModuleData.aTools );
-
-			if ( !TinyCore.debugMode )
+			else
 			{
-				// Decorate the instance's methods by wrapping them into a try-catch statement.
+				// Catch errors by wrapping all the instance's methods into a try-catch statement.
 				Utils.forEach( oInstance, function ( instanceProp, sPropName )
 				{
 					if ( Utils.isFunction( instanceProp ) )
@@ -172,7 +177,7 @@
 		/**
 		 * Returns a specified module's instance data.
 		 * @param {String} sModuleName
-		 * @param {String} sInstanceName
+		 * @param {String} sInstanceName Optional
 		 * @return {Object} oInstanceData The instance data
 		 * @return {Object} oInstanceData.oInstance The instance of the module
 		 * @return {Boolean} oInstanceData.bIsStarted Whether the module is started or not
@@ -183,7 +188,12 @@
 			var oModuleData = _oModulesData[sModuleName];
 			if ( !oModuleData )
 			{
-				throw new Error( 'The module "'+sModuleName+'" is not defined!' );
+				Error.report( 'The module "'+sModuleName+'" is not defined!' );
+			}
+			if ( typeof sInstanceName === 'undefined' )
+			{
+				// Return the default module instance.
+				sInstanceName = sModuleName;
 			}
 			return oModuleData.oInstances[sInstanceName];
 		}

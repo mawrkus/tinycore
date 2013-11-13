@@ -33,12 +33,12 @@ describe( 'TinyCore', function ()
 
 describe( 'TinyCore.Module', function ()
 {
-	it( 'should have an interface with the following properties/methods : define, start, stop, instanciate, getModules and getInstance', function ()
+	it( 'should have an interface with the following properties/methods : define, start, stop, instantiate, getModules and getInstance', function ()
 	{
 		expect( TinyCore.Module.define ).toBeFunction();
 		expect( TinyCore.Module.start ).toBeFunction();
 		expect( TinyCore.Module.stop ).toBeFunction();
-		expect( TinyCore.Module.instanciate ).toBeFunction();
+		expect( TinyCore.Module.instantiate ).toBeFunction();
 		expect( TinyCore.Module.getModules ).toBeFunction();
 		expect( TinyCore.Module.getInstance ).toBeFunction();
 	} );
@@ -60,17 +60,17 @@ describe( 'TinyCore.Module.define', function ()
 	} );
 } );
 
-describe( 'TinyCore.Module.instanciate', function ()
+describe( 'TinyCore.Module.instantiate', function ()
 {
-	it( 'should throw an error when trying to instanciate a module that is not defined', function ()
+	it( 'should throw an error when trying to instantiate a module that is not defined', function ()
 	{
 		expect( function ()
 		{
-			TinyCore.Module.instanciate( '!' );
+			TinyCore.Module.instantiate( '!' );
 		} ).toThrow();
 	} );
 
-	it( 'should instanciate properly a previously-defined module', function ()
+	it( 'should instantiate properly a previously-defined module', function ()
 	{
 		var oModule = {
 			sCypherKey : 'kvbs6E2NSw72sdb903bnjK',
@@ -84,7 +84,8 @@ describe( 'TinyCore.Module.instanciate', function ()
 			return oModule;
 		} );
 
-		oTestedModule = TinyCore.Module.instanciate( 'com-3MHz' );
+		oTestedModule = TinyCore.Module.instantiate( 'com-3MHz' );
+		oModule.__tools__ = {}; // Automatically added in debug mode.
 
 		expect( oModule ).toEqual( oTestedModule );
 	} );
@@ -115,13 +116,13 @@ describe( 'TinyCore.Module.instanciate', function ()
 			};
 		} );
 
-		TinyCore.Module.instanciate( 'space-vehicle' );
+		TinyCore.Module.instantiate( 'space-vehicle' );
 
 		expect( oPassedTools.teleport ).toEqual( oTeleport );
 		expect( oPassedTools.scanner ).toEqual( oScanner );
 	} );
 
-	it( 'should pass the names of unregistered tools as arguments to the creator function', function ()
+	it( 'should pass null as arguments to the creator function for unregistered tools', function ()
 	{
 		var oScanner = { on : false, toggle : function () { this.on = !this.on; } },
 			oToolsFactory = {
@@ -144,10 +145,52 @@ describe( 'TinyCore.Module.instanciate', function ()
 			};
 		} );
 
-		TinyCore.Module.instanciate( 'space-surf' );
+		TinyCore.Module.instantiate( 'space-surf' );
 
-		expect( oPassedTools.teleport ).toEqual( 'waves-teleport' );
+		expect( oPassedTools.teleport ).toBeNull();
 		expect( oPassedTools.scanner ).toEqual( oScanner );
+	} );
+
+	it( 'should automatically add the tools passed to the creator function as "private" properties of the instance (debugMode=true only)', function ()
+	{
+		var oLifterTool = { on : false, toggle : function () { this.on = !this.on; } },
+			oPassedLifter,
+			oTestedModule;
+
+		expect( TinyCore.Toolbox.register( 'lifter', function ( nToolID ) { return oLifterTool; } ) ).toBe( true );
+
+		TinyCore.Module.define( 'air-surf', ['lifter', 'smoother'], function ( oLifter, sSmother )
+		{
+			oPassedLifter = oLifter;
+			return { onStart : function ( oStartData ) {} };
+		} );
+
+		oTestedModule = TinyCore.Module.instantiate( 'air-surf' );
+
+		expect( oPassedLifter ).toEqual( oLifterTool );
+		expect( oTestedModule.__tools__.lifter ).toEqual( oPassedLifter );
+		expect( oTestedModule.__tools__.smoother ).toBeNull();
+	} );
+
+	it( 'should not add the tools passed to the creator function as "private" properties of the instance (debugMode=false)', function ()
+	{
+		var oLifterTool = { on : false, toggle : function () { this.on = !this.on; } },
+			oTestedModule;
+
+		TinyCore.debugMode = false;
+
+		expect( TinyCore.Toolbox.register( 'nitro', function ( nToolID ) { return oLifterTool; } ) ).toBe( true );
+
+		TinyCore.Module.define( 'air-bike', ['nitro', 'pneumatics'], function ( oNitro, sPneumatics )
+		{
+			return { onStart : function ( oStartData ) {} };
+		} );
+
+		oTestedModule = TinyCore.Module.instantiate( 'air-bike' );
+
+		expect( oTestedModule.__tools__ ).toBeUndefined();
+
+		TinyCore.debugMode = true;
 	} );
 } );
 
@@ -185,7 +228,7 @@ describe( 'TinyCore.Module.getInstance', function ()
 
 	it( 'should return undefined if no instance has been started', function ()
 	{
-		expect( TinyCore.Module.getInstance( 'clone', 'clone' ) ).toBeUndefined();
+		expect( TinyCore.Module.getInstance( 'clone' ) ).toBeUndefined();
 	} );
 
 	it( 'should return a proper object if a a module instance has been previously started', function ()
@@ -194,7 +237,7 @@ describe( 'TinyCore.Module.getInstance', function ()
 
 		TinyCore.Module.start( 'clone' );
 
-		oInstanceData = TinyCore.Module.getInstance( 'clone', 'clone' );
+		oInstanceData = TinyCore.Module.getInstance( 'clone' );
 		expect( oInstanceData ).toBeObject();
 		expect( oInstanceData.oInstance ).toBeObject();
 		expect( oInstanceData.oInstance.sName ).toEqual( 'generic' );
@@ -211,15 +254,15 @@ describe( 'TinyCore.Module.start', function ()
 		} ).toThrow();
 	} );
 
-	it( 'should instanciate a module', function ()
+	it( 'should instantiate a module', function ()
 	{
 		TinyCore.Module.define( 'e-tank', [], fpDummyCreator );
 
-		spyOn( TinyCore.Module, 'instanciate' ).andReturn( oDummyModule );
+		spyOn( TinyCore.Module, 'instantiate' ).andReturn( oDummyModule );
 
 		TinyCore.Module.start( 'e-tank' );
 
-		expect( TinyCore.Module.instanciate ).toHaveBeenCalledWith( 'e-tank' );
+		expect( TinyCore.Module.instantiate ).toHaveBeenCalledWith( 'e-tank' );
 	} );
 
 	it( 'should start a module properly', function ()
@@ -242,7 +285,7 @@ describe( 'TinyCore.Module.start', function ()
 
 		TinyCore.Module.start( 'engines', oStartData );
 
-		expect( oModule.nCount ).toEqual( 8 );
+		expect( TinyCore.Module.getInstance( 'engines' ).oInstance.nCount ).toEqual( 8 );
 	} );
 
 	it( 'should not start a module that has already been started', function ()
@@ -263,7 +306,7 @@ describe( 'TinyCore.Module.start', function ()
 		TinyCore.Module.start( 'antenna' );
 		TinyCore.Module.start( 'antenna' );
 
-		expect( oModule.nCount ).toEqual( 6 );
+		expect( TinyCore.Module.getInstance( 'antenna' ).oInstance.nCount ).toEqual( 6 );
 	} );
 } );
 
@@ -296,7 +339,7 @@ describe( 'TinyCore.Module.stop', function ()
 
 		TinyCore.Module.stop( 'atmosphere' );
 
-		expect( oModule.bContainsO2 ).toBeFalsy();
+		expect( TinyCore.Module.getInstance( 'atmosphere' ).oInstance.bContainsO2 ).toBeFalsy();
 	} );
 
 	it( 'should not stop a module that has already been stopped', function ()
@@ -318,7 +361,7 @@ describe( 'TinyCore.Module.stop', function ()
 		TinyCore.Module.stop( 'heat' );
 		TinyCore.Module.stop( 'heat' );
 
-		expect( oModule.nTemp ).toEqual( 16 );
+		expect( TinyCore.Module.getInstance( 'heat' ).oInstance.nTemp ).toEqual( 16 );
 	} );
 
 	it( 'should still allow a module to be restarted', function ()
@@ -344,7 +387,7 @@ describe( 'TinyCore.Module.stop', function ()
 		TinyCore.Module.stop( 'shield' );
 		TinyCore.Module.start( 'shield' );
 
-		expect( oModule.nPower ).toEqual( 3 );
+		expect( TinyCore.Module.getInstance( 'shield' ).oInstance.nPower ).toEqual( 3 );
 	} );
 
 	it( 'should allow the complete destruction of a module', function ()
@@ -431,8 +474,38 @@ describe( 'TinyCore.Toolbox.request', function ()
 
 describe( 'TinyCore.Error', function ()
 {
-	it( 'should have an interface with the following properties/methods : log', function ()
+	it( 'should have an interface with the following properties/methods : log, report', function ()
 	{
 		expect( TinyCore.Error.log ).toBeFunction();
+		expect( TinyCore.Error.report ).toBeFunction();
+	} );
+} );
+
+describe( 'TinyCore.Error.report', function ()
+{
+	it( 'should throw an exception if TinyCore.debugMode is true', function ()
+	{
+		TinyCore.debugMode = true;
+
+		expect( function ()
+		{
+			TinyCore.Error.report( ':(' );
+		} ).toThrow( ':(' );
+	} );
+
+	it( 'should call TinyCore.Error.log if TinyCore.debugMode is false', function ()
+	{
+		TinyCore.debugMode = false;
+
+		spyOn( TinyCore.Error, 'log' );
+
+		expect( function ()
+		{
+			TinyCore.Error.report( ":'(" );
+		} ).not.toThrow();
+
+		expect( TinyCore.Error.log ).toHaveBeenCalledWith( ":'(" );
+
+		TinyCore.debugMode = true; // set back the default value
 	} );
 } );

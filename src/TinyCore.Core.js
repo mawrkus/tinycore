@@ -1,7 +1,7 @@
 /**
  * TinyCore.js
  * A tiny yet extensible JS modular architecture.
- * @author Mawrkus (web@sparring-partner.be)
+ * @author mawrkus (web@sparring-partner.be)
 */
 ;( function ( oEnv )
 {
@@ -16,7 +16,7 @@
 		 * Current version
 		 * @type {String}
 		 */
-		version : '0.5.0',
+		version : '1.0',
 		/**
 		 * Debug mode : if true, error in modules methods and topics subscribers will not be caught,
 		 * if false, errors will be caught and logged using the error handler.
@@ -47,5 +47,10 @@
 
 	// Add TinyCore to the environment.
 	oEnv.TinyCore = _oTinyCore;
+
+	if ( oEnv.define )
+	{
+		oEnv.define( 'TinyCore', _oTinyCore );
+	}
 
 } ( this ) );

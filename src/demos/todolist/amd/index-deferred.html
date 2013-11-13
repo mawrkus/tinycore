@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>TinyCore /// todo list</title>
+
+		<link rel="stylesheet" href="../_css/todo.css">
+	</head>
+	<body>
+		<div id="container" data-tc-modules="todo_storage" data-tc-defer="time:5000">
+			<h1>A todo list (AMD deferred load)</h1>
+			<form id="todo-form-add" class="todo-form">
+				<input id="add-input" class="todo-input" placeholder="Enter your comma-separated todos..." data-tc-modules='todo_form_add' data-tc-defer="event:click" />
+			</form>
+			<form id="search-form" class="todo-form">
+				<input id="search-input" class="todo-input" placeholder="Quick search..." data-tc-modules="todo_form_search" data-tc-defer="distance:50;time:10000" />
+				<a title="reset" href="#" id="search-reset"></a>
+			</form>
+			<span id="summary" data-tc-modules="todo_summary" data-tc-defer="time:1000">
+				<span id="count-done"></span>/<span id="count-total"></span> completed - <a href="#" id="clear-completed" class="clear">clear completed</a> - <a href="#" id="clear-list" class="clear">clear all</a>
+			</span>
+			<ul id="todo-list" data-tc-modules="todo_list" data-tc-defer="time:1000">
+				<li id="list-header">
+					<input type="checkbox" class="todo-check-all" id="todo-check-all" />
+					<span class="label">Name</span>
+				</li>
+			</ul>
+		</div>
+
+		<script type="text/javascript" src="../../../../build/TinyCore.min.js"></script>
+		<script type="text/javascript" src="../../../../build/extensions/AMD/require-2.1.4.min.js"></script>
+		<script type="text/javascript" src="../../../../build/extensions/AMD/TinyCore.AMD.domBoot.min.js"></script>
+		<script type="text/javascript">
+			window.onload = function ()
+			{
+				TinyCore.AMD.config( {
+					require : {
+						paths : {
+							'tools' : '../../../__tools__',
+							'mediator' : '../../../../tools/mediator/TinyCore.Toolbox.Mediator'
+						}
+					},
+					domBoot : {
+						nodesIgnored : { H1 : true, LI : true, A : true }
+					}
+				} );
+
+				TinyCore.AMD.domBoot( function ( aModulesData )
+				{
+					console.info( 'DOM boot ok. '+aModulesData.length+' module(s) loaded:', aModulesData );
+				} );
+			};
+		</script>
+	</body>
+</html>

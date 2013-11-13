@@ -1,0 +1,38 @@
+<snippet>
+	<content><![CDATA[
+/**
+ * The $1 module, ...
+ * @author ...
+ * Topics subscribed : ""
+ * Topics published : ""
+ */
+TinyCore.Module.define( '$1', [$2], function ( $3 )
+{
+	'use strict';
+
+	return {
+		/**
+		 * This method is called when the module is started.
+		 * @param  {Object} oStartData The start data.
+		 */
+		onStart : function ( oStartData )
+		{
+			$4
+		},
+		/**
+		 * This method is called when the module is stopped.
+		 */
+		onStop : function ()
+		{
+		},
+		/**
+		 * This method is called when the module is destroyed.
+		 */
+		onDestroy : function ()
+		{
+		}
+	};
+} );
+]]></content>
+	<tabTrigger>mod</tabTrigger>
+</snippet>

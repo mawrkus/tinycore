@@ -1,6 +1,6 @@
 /**
  * Jasmine testing extension for the Toolbox of TinyCore.js
- * @author Mawkus aka Marc Mignonsin (web@sparring-partner.be)
+ * @author mawrkus (web@sparring-partner.be)
  * @requires TinyCore.js
 */
 ;( function ( oEnv )
@@ -63,12 +63,13 @@
 				var oTool = _oStubbedTools[sToolName];
 				if ( oTool )
 				{
-					// Just in case, because spies are torn down at the end of every spec.
+					// Spies are torn down at the end of every spec.
 					return _fpCreateStub( oTool );
 				}
 
-				oTool = fpOriginalRequest.call( Toolbox, sToolName );
+				oTool = fpOriginalRequest.apply( Toolbox, arguments );
 
+				// We always return the same stubbed version.
 				_oStubbedTools[sToolName] = _fpCreateStub( oTool );
 
 				return oTool;

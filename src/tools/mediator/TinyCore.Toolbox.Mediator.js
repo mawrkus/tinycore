@@ -1,6 +1,12 @@
+// isArray
+// tryCatchDecorator
+// extend
+// forEach
+// bind
+
 /**
  * A mediator implementation for the TinyCore.js modules.
- * @author Mawrkus (web@sparring-partner.be)
+ * @author mawrkus (web@sparring-partner.be)
  * @requires TinyCore
 */
 ;( function ( oEnv )
@@ -11,35 +17,39 @@
 		Utils = TinyCore.Utils;
 
 	/**
-	 * The topics data, e.g. :
-	 * {
-	 *	'graph:color:change' : { 0:fn0, 3:fn3 },
-	 *	'filter:date:change' : { 1:fn1, 2:fn2 ,3:fn3 }
-	 * }
-	 * 0, 1, 2, 3 are the IDs of the subscribers and fn0, fn1, fn2, fn3, their related handlers.
-	 * @type {Object}
-	 */
-	var _oTopic2Subs = {},
-	/**
-	 * The subscribers data, given a subscriber's ID, this will allow us to retrieve easily all the topics subscribed, e.g. :
-	 * {
-	 *	0 : [ 'graph:color:change' ],
-	 *  1 : [ 'filter:date:change' ],
-	 *  2 : [ 'filter:date:change' ],
-	 *  3 : [ 'graph:color:change', 'filter:date:change' ],
-	 * }
-	 * 0, 1, 2, 3 are the IDs of the subscribers.
-	 * @type {Object}
-	 */
-	_oSub2Topics = {};
-
-	/**
-	 * Creates a new mediator.
+	 * The one and only mediator.
 	 * param {Number} nID The internal mediator ID
-	 * @return {Object}
 	 */
-	var _fpCreateMediator = function ( nID )
+	var Mediator = function ( nID )
 	{
+		this.nSubscriberID = nID;
+	};
+
+	Mediator.prototype = ( function ()
+	{
+		/**
+		 * The topics data, e.g. :
+		 * {
+		 *	'graph:color:change' : { 0:fn0, 3:fn3 },
+		 *	'filter:date:change' : { 1:fn1, 2:fn2 ,3:fn3 }
+		 * }
+		 * 0, 1, 2, 3 are the IDs of the subscribers and fn0, fn1, fn2, fn3, their related handlers.
+		 * @type {Object}
+		 */
+		var _oTopic2Subs = {},
+			/**
+			 * The subscribers data, given a subscriber's ID, this will allow us to retrieve easily all the topics subscribed, e.g. :
+			 * {
+			 *	0 : [ 'graph:color:change' ],
+			 *  1 : [ 'filter:date:change' ],
+			 *  2 : [ 'filter:date:change' ],
+			 *  3 : [ 'graph:color:change', 'filter:date:change' ],
+			 * }
+			 * 0, 1, 2, 3 are the IDs of the subscribers.
+			 * @type {Object}
+			 */
+			_oSub2Topics = {};
+
 		return {
 			/**
 			 * Subscribes to one or more topics.
@@ -50,27 +60,24 @@
 			subscribe : function ( topics, fpHandler, oContext )
 			{
 				var aTopics = Utils.isArray( topics ) ? topics : [topics],
-					nIndex = 0,
-					nTopicsCount = aTopics.length,
-					sTopic;
+					nSubscriberID = this.nSubscriberID;
 
-				for ( ; nIndex < nTopicsCount; nIndex++ )
+				aTopics.forEach( function ( sTopic )
 				{
-					sTopic = aTopics[nIndex];
 					_oTopic2Subs[sTopic] = _oTopic2Subs[sTopic] || {};
 
 					// Don't allow the same subscriber twice.
-					if ( !_oTopic2Subs[sTopic][nID] )
+					if ( !_oTopic2Subs[sTopic][nSubscriberID] )
 					{
 						// Catch handler errors?
-						_oTopic2Subs[sTopic][nID] = TinyCore.debugMode ?
-														Utils.bind( oContext, fpHandler ) :
+						_oTopic2Subs[sTopic][nSubscriberID] = TinyCore.debugMode ?
+														fpHandler.bind( oContext ) :
 														Utils.tryCatchDecorator( oContext, fpHandler, 'Error publishing topic "' + sTopic + '": ' );
 
-						_oSub2Topics[nID] = _oSub2Topics[nID] || [];
-						_oSub2Topics[nID].push( sTopic );
+						_oSub2Topics[nSubscriberID] = _oSub2Topics[nSubscriberID] || [];
+						_oSub2Topics[nSubscriberID].push( sTopic );
 					}
-				}
+				} );
 			},
 			/**
 			 * Publishes a topic.
@@ -95,35 +102,39 @@
 			 * Unsubscribes from one or more topics.
 			 * @param {String|Array} topics A topic or an array of topics to unsubscribe from
 			 */
-			unSubscribe : function ( topics )
+			unsubscribe : function ( topics )
 			{
 				var aTopics = Utils.isArray( topics ) ? topics : [topics],
 					nTopicsCount = aTopics.length,
-					oSubs;
+					oSubs,
+					nSubscriberID = this.nSubscriberID;
 
 				while ( nTopicsCount-- )
 				{
 					oSubs = _oTopic2Subs[aTopics[nTopicsCount]];
-					if ( oSubs && oSubs[nID] )
+					if ( oSubs && oSubs[nSubscriberID] )
 					{
-						delete oSubs[nID];
+						delete oSubs[nSubscriberID];
 					}
 				}
 			},
 			/**
 			 * Unsubscribes from all subscribed topics.
 			 */
-			unSubscribeAll : function ()
+			unsubscribeAll : function ()
 			{
-				if ( _oSub2Topics[nID] )
+				if ( _oSub2Topics[this.nSubscriberID] )
 				{
-					this.unSubscribe( _oSub2Topics[nID] );
+					this.unsubscribe( _oSub2Topics[this.nSubscriberID] );
 				}
 			}
 		};
-	};
+	} () );
 
 	// Add our mediator factory to the available TinyCore tools.
-	TinyCore.Toolbox.register( 'mediator', _fpCreateMediator );
+	TinyCore.Toolbox.register( 'mediator', function ( nID )
+	{
+		return new Mediator( nID );
+	} );
 
 } ( this ) );

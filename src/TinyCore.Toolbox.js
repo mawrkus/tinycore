@@ -1,6 +1,6 @@
 /**
  * A tools factory for TinyCore.js
- * @author Mawrkus (web@sparring-partner.be)
+ * @author mawrkus (web@sparring-partner.be)
 */
 ;( function ( oEnv )
 {
