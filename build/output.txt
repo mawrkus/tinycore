@@ -6,9 +6,9 @@ Running "jshint:core" (jshint) task
 
 Running "uglify:core" (uglify) task
 File "build/TinyCore.min.js" created.
-Original: 13959 bytes.
-Minified: 3356 bytes.
-Gzipped:  753 bytes.
+Original: 13961 bytes.
+Minified: 3358 bytes.
+Gzipped:  754 bytes.
 
 Running "jshint:mediator" (jshint) task
 >> 1 file lint free.

@@ -17,7 +17,7 @@
 		 * Current version
 		 * @type {String}
 		 */
-		version : '1.0',
+		version : '1.0.0',
 		/**
 		 * Debug mode : if true, error in modules methods and topics subscribers will not be caught,
 		 * if false, errors will be caught and logged using the error handler.
