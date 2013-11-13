@@ -271,7 +271,7 @@ TinyCore.Toolbox.register( 'mp3', function ()
 
 **phone_module.js :**
 ```js
-TinyCore.Module.define( 'phone', ['camera','gps','mp3'], function ( camera, gps, mp3 )
+TinyCore.Module.define( 'phone', ['camera','gps','mp3','sensor'], function ( camera, gps, mp3, sensor )
 {
 	return {
 		onStart : function ()
