@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>TinyCore /// elevators</title>
+
+		<!--link rel="stylesheet" href="css/elevators.css"-->
+
+		<script type="text/javascript" src="../../TinyCore.js"></script>
+		<script type="text/javascript" src="../../TinyCore.Utils.js"></script>
+		<script type="text/javascript" src="../../TinyCore.Module.js"></script>
+		<script type="text/javascript" src="../../TinyCore.SandBox.js"></script>
+		<script type="text/javascript" src="../../TinyCore.Error.js"></script>
+
+		<script type="text/javascript" src="../../extensions/TinyCore.PolyInstances.js"></script>
+
+		<script type="text/javascript" src="sandboxes/domlib.js"></script>
+
+		<script type="text/javascript" src="modules/cpu.js"></script>
+		<script type="text/javascript" src="modules/elevator.js"></script>
+		<script type="text/javascript" src="modules/user.js"></script>
+
+		<style type="text/css">
+			th, td {
+				min-width: 100px;
+				text-align: center;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="container">
+			<h1>Multiple instances : an elevators simulation</h1>
+			<table>
+				<tr>
+					<th>Floor</th>
+					<th>A</th>
+					<th>B</th>
+					<th>C</th>
+				</tr>
+				<tr>
+					<td>
+						<p>#2</p>
+						<button type="button" class="call-elevator" data-user-floor="2" data-dest-floor="2">2</button>
+						<button type="button" class="call-elevator" data-user-floor="2" data-dest-floor="1">1</button>
+						<button type="button" class="call-elevator" data-user-floor="2" data-dest-floor="0">0</button>
+						<button type="button" class="call-elevator" data-user-floor="2" data-dest-floor="-1">-1</button>
+					</td>
+					<td>X</td>
+					<td>
+					</td>
+					<td>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<p>#1</p>
+						<button type="button" class="call-elevator" data-user-floor="1" data-dest-floor="2">2</button>
+						<button type="button" class="call-elevator" data-user-floor="1" data-dest-floor="1">1</button>
+						<button type="button" class="call-elevator" data-user-floor="1" data-dest-floor="0">0</button>
+						<button type="button" class="call-elevator" data-user-floor="1" data-dest-floor="-1">-1</button>
+					</td>
+					<td>
+					</td>
+					<td>X</td>
+					<td>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<p>#0</p>
+						<button type="button" class="call-elevator" data-user-floor="0" data-dest-floor="2">2</button>
+						<button type="button" class="call-elevator" data-user-floor="0" data-dest-floor="1">1</button>
+						<button type="button" class="call-elevator" data-user-floor="0" data-dest-floor="0">0</button>
+						<button type="button" class="call-elevator" data-user-floor="0" data-dest-floor="-1">-1</button>
+					</td>
+					<td>
+					</td>
+					<td>
+					</td>
+					<td>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<p>#-1</p>
+						<button type="button" class="call-elevator" data-user-floor="-1" data-dest-floor="2">2</button>
+						<button type="button" class="call-elevator" data-user-floor="-1" data-dest-floor="1">1</button>
+						<button type="button" class="call-elevator" data-user-floor="-1" data-dest-floor="0">0</button>
+						<button type="button" class="call-elevator" data-user-floor="-1" data-dest-floor="-1">-1</button>
+					</td>
+					<td>
+					</td>
+					<td>
+					</td>
+					<td>X</td>
+				</tr>
+			</table>
+		</div>
+
+		<script type="text/javascript">
+			window.onload = function ()
+			{
+				TinyCore.Module.start( 'cpu' );
+				TinyCore.Module.startInstance( 'elevator', 'A', { floor : 2 } );
+				TinyCore.Module.startInstance( 'elevator', 'B', { floor : 1 } );
+				TinyCore.Module.startInstance( 'elevator', 'C', { floor : -1 } );
+				TinyCore.Module.start( 'user', { floor : 0 } );
+			};
+		</script>
+	</body>
+</html>

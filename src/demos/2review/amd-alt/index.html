@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>TinyCore /// AMD example</title>
+		<script type="text/javascript" src="../../lib/require-2.1.4.min.js"></script>
+	</head>
+	<body>
+		<h1>AMD and require.js example</h1>
+		<p>Have a look at the console logs.</p>
+
+		<script type="text/javascript">
+			require.config( {
+				baseUrl : 'modules'
+			} );
+
+			require.onError = function ( eError )
+			{
+				console.error( 'Error loading module(s) "'+eError.requireModules+'": '+eError.message );
+			};
+
+			require( [ '../../TinyCore.build.js', 'chart' ], function ( TinyCore, sChart )
+			{
+				console.info('Here weee go...', arguments);
+				window.TinyCore.Module.start( 'chart', { type : 'pie', colors : true } );
+			} );
+
+			/*require( [
+						'../../TinyCore.js',
+						'../../TinyCore.Utils.js',
+						'../../TinyCore.Module.js',
+						'../../TinyCore.SandBox.js',
+						'../../TinyCore.Error.js',
+						'chart'
+						], function ( TinyCore, Utils, Module, SandBox, Error, sChart )
+			{
+				console.info('Here weee go...', arguments);
+				window.TinyCore.Module.start( 'chart', { type : 'pie', colors : true } );
+			} );*/
+		</script>
+	</body>
+</html>
