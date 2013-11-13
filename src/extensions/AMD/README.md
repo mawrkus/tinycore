@@ -145,4 +145,4 @@ When calling `TinyCore.AMD.domBoot`, the DOM is scanned for finding modules decl
 - "todo_form_search", loaded when the mouse pointer is closer than 50px or after 10s
 - "todo_summary" and "todo_list", loaded after 1s
 
-If no deferred strategies were declared, the modules would have been loaded directly.
+Without any deferred strategies declared, modules are loaded directly.
