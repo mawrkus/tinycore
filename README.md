@@ -206,7 +206,7 @@ It will be stopped and its definition will be removed from TinyCore. Both the ``
 When starting a module for the first time, a new instance is created internally through the `instantiate` method. This method can also be used to test the module's behaviour. For example, using Jasmine's expectation syntax :
 
 ```js
-var oElevator = TinyCore.module.instantiate( 'elevator' ),
+var oElevator = TinyCore.Module.instantiate( 'elevator' ),
 	nCurrentFloor = oElevator.getCurrentFloor();
 
 expect( nCurrentFloor ).toBeNull(); // true
@@ -222,7 +222,7 @@ When setting ```TinyCore.debugMode``` to ```true```, each module instantiated wi
 ```js
 TinyCore.debugMode = true;
 
-var oElevator = TinyCore.module.instantiate( 'elevator' );
+var oElevator = TinyCore.Module.instantiate( 'elevator' );
 
 // "toBeObject" is an additional matcher defined in "test/TinyCore.SpecHelper.js"
 expect( oElevator.__tools__ ).toBeObject(); // true
