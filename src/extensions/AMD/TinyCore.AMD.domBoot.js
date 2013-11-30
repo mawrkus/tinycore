@@ -297,7 +297,7 @@
 			_oDeferredData._loaded = {};
 
 			// Events handlers.
-			Utils.forEach( _oDeferredData.event, function ( aEventData, sEventName )
+			Utils.forIn( _oDeferredData.event, function ( aEventData, sEventName )
 			{
 				aEventData.forEach( function ( oDeferData )
 				{
@@ -307,7 +307,7 @@
 			delete _oDeferredData.event;
 
 			// Timers.
-			Utils.forEach( _oDeferredData.time, function ( aTimingData, nDelay )
+			Utils.forIn( _oDeferredData.time, function ( aTimingData, nDelay )
 			{
 				var aAllModulesData = [];
 
@@ -321,7 +321,7 @@
 			delete _oDeferredData.time;
 
 			// Distances.
-			Utils.forEach( _oDeferredData.distance, function ( aDistanceData )
+			Utils.forIn( _oDeferredData.distance, function ( aDistanceData )
 			{
 				aAllDeferData = aAllDeferData.concat( aDistanceData );
 			} );

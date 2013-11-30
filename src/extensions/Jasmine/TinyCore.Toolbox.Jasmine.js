@@ -35,7 +35,7 @@
 				return null;
 			}
 
-			Utils.forEach( oObject, function ( prop, propName )
+			Utils.forIn( oObject, function ( prop, propName )
 			{
 				if ( Utils.isFunction( prop ) && !prop.isSpy )
 				{

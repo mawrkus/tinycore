@@ -114,7 +114,7 @@
 		 * @param {Object} oObject
 		 * @param {Function} fpCallback
 		 */
-		forEach : function ( oObject, fpCallback )
+		forIn : function ( oObject, fpCallback )
 		{
 			if ( !oObject || !_oUtils.isObject( oObject ) )
 			{
@@ -151,7 +151,7 @@
 
 			for ( ; nIndex<nArgsCount; nIndex++ )
 			{
-				_oUtils.forEach( args[nIndex], fpCopy );
+				_oUtils.forIn( args[nIndex], fpCopy );
 			}
 
 			return oDest;

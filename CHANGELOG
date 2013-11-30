@@ -1,3 +1,10 @@
+November 30, 2013 - v1.0.1
+
+* Doc : added links in README to the extensions documentation and a README file in src/extensions.
+* Utils : renamed Utils.forEach to Utils.forIn (consistency).
+* Grunt : added the "clean" task to remove temporary build files.
+* Tests : removed duplicated "inheritance+instances" tests files.
+
 November 13, 2013 - v1.0.0
 
 * Massive refactoring/code/files reorganization, API changes.

@@ -6,62 +6,65 @@ Running "jshint:core" (jshint) task
 
 Running "uglify:core" (uglify) task
 File "build/TinyCore.min.js" created.
-Original: 13961 bytes.
-Minified: 3358 bytes.
-Gzipped:  754 bytes.
+Original: 13955 bytes.
+Minified: 3352 bytes.
+Gzipped:  756 bytes.
 
 Running "jshint:mediator" (jshint) task
 >> 1 file lint free.
 
 Running "uglify:mediator" (uglify) task
 File "build/tools/mediator/TinyCore.Toolbox.Mediator.min.js" created.
-Original: 3744 bytes.
-Minified: 786 bytes.
+Original: 3680 bytes.
+Minified: 784 bytes.
 Gzipped:  214 bytes.
 
 Running "jshint:amd" (jshint) task
->> 2 files lint free.
+>> 1 file lint free.
 
 Running "concat:amd" (concat) task
 File "build/extensions/AMD/require-2.1.4.min.js" created.
-File "build/extensions/AMD/TinyCore.AMD.domBoot.js" created.
+File "build/extensions/AMD/TinyCore.AMD+domBoot.js" created.
 
 Running "uglify:amd" (uglify) task
 File "build/extensions/AMD/TinyCore.AMD.min.js" created.
 Original: 3619 bytes.
 Minified: 911 bytes.
 Gzipped:  252 bytes.
-File "build/extensions/AMD/TinyCore.AMD.domBoot.min.js" created.
-Original: 14027 bytes.
-Minified: 3334 bytes.
-Gzipped:  807 bytes.
+File "build/extensions/AMD/TinyCore.AMD+domBoot.min.js" created.
+Original: 14021 bytes.
+Minified: 3328 bytes.
+Gzipped:  809 bytes.
+
+Running "clean:amd" (clean) task
+Cleaning build/extensions/AMD/TinyCore.AMD+domBoot.js...OK
 
 Running "jshint:inheritance" (jshint) task
 >> 1 file lint free.
 
 Running "uglify:inheritance" (uglify) task
 File "build/extensions/Inheritance/TinyCore.Module.Inheritance.min.js" created.
-Original: 3928 bytes.
-Minified: 903 bytes.
-Gzipped:  254 bytes.
+Original: 3926 bytes.
+Minified: 901 bytes.
+Gzipped:  252 bytes.
 
 Running "jshint:instances" (jshint) task
 >> 1 file lint free.
 
 Running "uglify:instances" (uglify) task
 File "build/extensions/Instances/TinyCore.Module.Instances.min.js" created.
-Original: 4307 bytes.
-Minified: 919 bytes.
-Gzipped:  223 bytes.
+Original: 4303 bytes.
+Minified: 915 bytes.
+Gzipped:  222 bytes.
 
 Running "jshint:jasmine" (jshint) task
 >> 1 file lint free.
 
 Running "uglify:jasmine" (uglify) task
 File "build/extensions/Jasmine/TinyCore.Toolbox.Jasmine.min.js" created.
-Original: 1719 bytes.
-Minified: 444 bytes.
-Gzipped:  144 bytes.
+Original: 1717 bytes.
+Minified: 442 bytes.
+Gzipped:  143 bytes.
 
 Done, without errors.
 [Finished in 3.3s]

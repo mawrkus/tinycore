@@ -17,7 +17,7 @@ module.exports = function ( grunt )
 				dest: 'build/TinyCore.js',
 				options:
 				{
-					banner: '/*! <%= pkg.name %> v<%= pkg.version %> (<%= grunt.template.today("yyyy-mm-dd") %>) | (c) 2013 Marc Mignonsin | <%= pkg.license %> license */\n'
+					banner: '/*! TinyCore v<%= pkg.version %> (<%= grunt.template.today("yyyy-mm-dd") %>) | (c) 2013 Marc Mignonsin | <%= pkg.license %> license */\n'
 				}
 			},
 			amd:
@@ -25,7 +25,7 @@ module.exports = function ( grunt )
 				files:
 				{
 					'build/extensions/AMD/require-2.1.4.min.js' : ['src/extensions/AMD/require-2.1.4.min.js'],
-					'build/extensions/AMD/TinyCore.AMD.domBoot.js' : [
+					'build/extensions/AMD/TinyCore.AMD+domBoot.js' : [
 						'src/extensions/AMD/TinyCore.AMD.js',
 						'src/extensions/AMD/TinyCore.AMD.domBoot.js'
 					]
@@ -76,7 +76,7 @@ module.exports = function ( grunt )
 			{
 				files:
 				{
-					'build/<%= pkg.name %>.min.js' : ['build/<%= pkg.name %>.js']
+					'build/TinyCore.min.js' : ['build/TinyCore.js']
 				}
 			},
 			mediator:
@@ -91,7 +91,7 @@ module.exports = function ( grunt )
 				files:
 				{
 					'build/extensions/AMD/TinyCore.AMD.min.js' : ['src/extensions/amd/TinyCore.AMD.js'],
-					'build/extensions/AMD/TinyCore.AMD.domBoot.min.js' : ['build/extensions/amd/TinyCore.AMD.domBoot.js']
+					'build/extensions/AMD/TinyCore.AMD+domBoot.min.js' : ['build/extensions/amd/TinyCore.AMD+domBoot.js']
 				}
 			},
 			inheritance:
@@ -115,6 +115,9 @@ module.exports = function ( grunt )
 					'build/extensions/Jasmine/TinyCore.Toolbox.Jasmine.min.js' : ['src/extensions/Jasmine/TinyCore.Toolbox.Jasmine.js']
 				}
 			}
+		},
+		clean : {
+			amd : ['build/extensions/AMD/TinyCore.AMD+domBoot.js']
 		},
 		karma:
 		{
@@ -148,12 +151,13 @@ module.exports = function ( grunt )
 	grunt.loadNpmTasks( 'grunt-contrib-concat' );
 	grunt.loadNpmTasks( 'grunt-contrib-jshint' );
 	grunt.loadNpmTasks( 'grunt-contrib-uglify' );
+	grunt.loadNpmTasks( 'grunt-contrib-clean' );
 	grunt.loadNpmTasks( 'grunt-karma' );
 
 	// Default task(s).
 	grunt.registerTask( 'build-core', [ 'concat:core', 'jshint:core', 'uglify:core' ] );
 	grunt.registerTask( 'build-mediator', [ 'jshint:mediator', 'uglify:mediator' ] );
-	grunt.registerTask( 'build-amd', [ 'jshint:amd', 'concat:amd', 'uglify:amd' ] );
+	grunt.registerTask( 'build-amd', [ 'jshint:amd', 'concat:amd', 'uglify:amd', 'clean:amd' ] );
 	grunt.registerTask( 'build-inheritance', [ 'jshint:inheritance', 'uglify:inheritance' ] );
 	grunt.registerTask( 'build-instances', [ 'jshint:instances', 'uglify:instances' ] );
 	grunt.registerTask( 'build-jasmine', [ 'jshint:jasmine', 'uglify:jasmine' ] );

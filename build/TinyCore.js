@@ -1,4 +1,4 @@
-/*! TinyCore v1.0.0 (2013-11-13) | (c) 2013 Marc Mignonsin | MIT license */
+/*! TinyCore v1.0.0 (2013-11-30) | (c) 2013 Marc Mignonsin | MIT license */
 /**
  * TinyCore.js
  * A tiny yet extensible JS modular architecture.
@@ -172,7 +172,7 @@
 		 * @param {Object} oObject
 		 * @param {Function} fpCallback
 		 */
-		forEach : function ( oObject, fpCallback )
+		forIn : function ( oObject, fpCallback )
 		{
 			if ( !oObject || !_oUtils.isObject( oObject ) )
 			{
@@ -209,7 +209,7 @@
 
 			for ( ; nIndex<nArgsCount; nIndex++ )
 			{
-				_oUtils.forEach( args[nIndex], fpCopy );
+				_oUtils.forIn( args[nIndex], fpCopy );
 			}
 
 			return oDest;
@@ -529,7 +529,7 @@
 			else
 			{
 				// Catch errors by wrapping all the instance's methods into a try-catch statement.
-				Utils.forEach( oInstance, function ( instanceProp, sPropName )
+				Utils.forIn( oInstance, function ( instanceProp, sPropName )
 				{
 					if ( Utils.isFunction( instanceProp ) )
 					{

@@ -98,7 +98,7 @@
 
 				if ( oModuleData )
 				{
-					Utils.forEach( oModuleData.oInstances, function ( oInstance, sInstanceName )
+					Utils.forIn( oModuleData.oInstances, function ( oInstance, sInstanceName )
 					{
 						bHasInstances = true;
 						if ( !Module.startInstance( sModuleName, sInstanceName, oStartData ) )
@@ -128,7 +128,7 @@
 			var oModules = Module.getModules(),
 				bAllStopped = true;
 
-			Utils.forEach( oModules[sModuleName].oInstances, function ( oInstance, sInstanceName )
+			Utils.forIn( oModules[sModuleName].oInstances, function ( oInstance, sInstanceName )
 			{
 				if( !Module.stopInstance( sModuleName, sInstanceName, bAndDestroy ) )
 				{

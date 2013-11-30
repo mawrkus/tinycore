@@ -90,7 +90,7 @@ TinyCore.Module.define( 'widget-generic', ['mediator', 'events'], function ( _me
 
 			var self = this;
 
-			TinyCore.Utils.forEach( self.topics, function ( fpHandler, sTopicName )
+			TinyCore.Utils.forIn( self.topics, function ( fpHandler, sTopicName )
 			{
 				_mediator.subscribe( sTopicName, fpHandler, self );
 			} );
@@ -104,7 +104,7 @@ TinyCore.Module.define( 'widget-generic', ['mediator', 'events'], function ( _me
 
 			var self = this;
 
-			TinyCore.Utils.forEach( self.events, function ( fpHandler, sEventAndSelector )
+			TinyCore.Utils.forIn( self.events, function ( fpHandler, sEventAndSelector )
 			{
 				var sParts = sEventAndSelector.split( ' ' ),
 					sEventName = sParts[0],
@@ -130,7 +130,7 @@ TinyCore.Module.define( 'widget-generic', ['mediator', 'events'], function ( _me
 
 			_mediator.unsubscribeAll();
 
-			TinyCore.Utils.forEach( _oAttachedEvents, function ( oEventData )
+			TinyCore.Utils.forIn( _oAttachedEvents, function ( oEventData )
 			{
 				_events.off( oEventData.element, oEventData.eventName, oEventData.handler );
 			} );

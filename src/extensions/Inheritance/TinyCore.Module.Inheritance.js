@@ -107,7 +107,7 @@
 				F = function () {},
 				oPrototype = fpCreator.prototype;
 
-			Utils.forEach( oModule, function ( prop, sPropName )
+			Utils.forIn( oModule, function ( prop, sPropName )
 			{
 				var protoProp = oPrototype[sPropName];
 

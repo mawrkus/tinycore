@@ -1,9 +1,3 @@
-// isArray
-// tryCatchDecorator
-// extend
-// forEach
-// bind
-
 /**
  * A mediator implementation for the TinyCore.js modules.
  * @author mawrkus (web@sparring-partner.be)
@@ -89,7 +83,7 @@
 			{
 				var oDataOrCopy = bDontCopyData ? oData : oData && Utils.extend( {}, oData );
 
-				Utils.forEach( _oTopic2Subs[sTopic], function ( fpHandler )
+				Utils.forIn( _oTopic2Subs[sTopic], function ( fpHandler )
 				{
 					// Just in case, delay the handler execution after what's currently in line.
 					oEnv.setTimeout( function ()

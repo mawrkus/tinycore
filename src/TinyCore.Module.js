@@ -153,7 +153,7 @@
 			else
 			{
 				// Catch errors by wrapping all the instance's methods into a try-catch statement.
-				Utils.forEach( oInstance, function ( instanceProp, sPropName )
+				Utils.forIn( oInstance, function ( instanceProp, sPropName )
 				{
 					if ( Utils.isFunction( instanceProp ) )
 					{
