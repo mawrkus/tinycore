@@ -1,30 +1,21 @@
-/**
- * A tools factory for TinyCore.js
- * @author mawrkus (web@sparring-partner.be)
-*/
-;( function ( oEnv )
-{
-	'use strict';
-
-	var TinyCore = oEnv.TinyCore,
-		Utils = TinyCore.Utils;
+/* ---------  Tools factory --------- */
 
 	/**
 	 * The available tools, each property holds a factory function that can create the tool requested.
 	 * @type {Object}
 	 */
 	var _oTools = {},
-	/**
-	 * The current tool ID.
-	 * @type {Number}
-	 */
-	_nToolID = -1;
+		/**
+		 * The current tool ID.
+		 * @type {Number}
+		 */
+		_nToolID = -1;
 
 	/**
 	 * The tools factory.
 	 * @type {Object}
 	 */
-	var _oToolbox = {
+	TinyCore.Toolbox = {
 		/**
 		 * Returns the tool requested.
 		 * @param {String} sToolName
@@ -33,7 +24,7 @@
 		request : function ( sToolName )
 		{
 			var oToolData = _oTools[sToolName];
-			return oToolData && oToolData.fpFactory && oToolData.fpFactory( ++_nToolID ) || null;
+			return oToolData && oToolData.fpFactory && oToolData.fpFactory( ++_nToolID ) || _null_;
 		},
 		/**
 		 * Register a new tool's factory function.
@@ -43,20 +34,15 @@
 		 */
 		register : function ( sToolName, fpFactory )
 		{
-			if ( _oTools[sToolName] || !Utils.isFunction( fpFactory ) )
+			if ( _oTools[sToolName] || !_oUtils.isFunction( fpFactory ) )
 			{
-				return false;
+				return _false_;
 			}
 
 			_oTools[sToolName] = {
 				fpFactory : fpFactory
 			};
 
-			return true;
+			return _true_;
 		}
 	};
-
-	// Define TinyCore a little bit more.
-	TinyCore.Toolbox = _oToolbox;
-
-} ( this ) );

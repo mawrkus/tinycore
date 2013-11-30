@@ -1,15 +1,4 @@
-/**
- * Modules management for TinyCore.js
- * @author mawrkus (web@sparring-partner.be)
-*/
-;( function ( oEnv )
-{
-	'use strict';
-
-	var TinyCore = oEnv.TinyCore,
-		Utils = TinyCore.Utils,
-		Toolbox = TinyCore.Toolbox,
-		Error = TinyCore.Error;
+/* ---------  Modules management --------- */
 
 	/**
 	 * The modules data, where each key is a module name and the associated value an object holding the module data.
@@ -26,7 +15,7 @@
 	 * The modules manager.
 	 * @type {Object}
 	 */
-	var _oModule = {
+	TinyCore.Module = {
 		/**
 		 * Defines a new module.
 		 * @param {String} sModuleName The module name
@@ -36,9 +25,9 @@
 		 */
 		define : function ( sModuleName, aToolsNames, fpCreator )
 		{
-			if ( _oModulesData[sModuleName] || !Utils.isFunction( fpCreator ) )
+			if ( _oModulesData[sModuleName] || !_oUtils.isFunction( fpCreator ) )
 			{
-				return false;
+				return _false_;
 			}
 
 			_oModulesData[sModuleName] = {
@@ -47,7 +36,7 @@
 				aToolsNames : aToolsNames
 			};
 
-			return true;
+			return _true_;
 		},
 		/**
 		 * Starts a module by creating a new module instance and calling its "onStart" method with oStartData passed as parameter.
@@ -58,20 +47,20 @@
 		 */
 		start : function ( sModuleName, oStartData )
 		{
-			var oInstanceData = _oModule.getInstance( sModuleName );
+			var oInstanceData = this.getInstance( sModuleName );
 
 			if ( !oInstanceData )
 			{
 				// We use the module name as the default instance name.
 				oInstanceData = _oModulesData[sModuleName].oInstances[sModuleName] = {
-					oInstance : _oModule.instantiate( sModuleName )
+					oInstance : this.instantiate( sModuleName )
 				};
 			}
 
 			if ( !oInstanceData.bIsStarted )
 			{
 				oInstanceData.oInstance.onStart( oStartData ); // onStart must be defined in the module.
-				oInstanceData.bIsStarted = true;
+				oInstanceData.bIsStarted = _true_;
 			}
 
 			return oInstanceData.bIsStarted;
@@ -85,30 +74,30 @@
 		 */
 		stop : function ( sModuleName, bAndDestroy )
 		{
-			var oInstanceData = _oModule.getInstance( sModuleName );
+			var oInstanceData = this.getInstance( sModuleName );
 
 			if ( !oInstanceData || !oInstanceData.oInstance )
 			{
-				return false;
+				return _false_;
 			}
 
 			if ( oInstanceData.bIsStarted )
 			{
-				if ( Utils.isFunction( oInstanceData.oInstance.onStop ) )
+				if ( _oUtils.isFunction( oInstanceData.oInstance.onStop ) )
 				{
 					oInstanceData.oInstance.onStop();
 				}
-				oInstanceData.bIsStarted = false;
+				oInstanceData.bIsStarted = _false_;
 			}
 
 			if ( bAndDestroy )
 			{
-				if ( Utils.isFunction( oInstanceData.oInstance.onDestroy ) )
+				if ( _oUtils.isFunction( oInstanceData.oInstance.onDestroy ) )
 				{
 					oInstanceData.oInstance.onDestroy();
 				}
 				delete _oModulesData[sModuleName];
-				return true;
+				return _true_;
 			}
 
 			return !oInstanceData.bIsStarted;
@@ -136,10 +125,10 @@
 			while ( nToolIndex-- )
 			{
 				sToolName = aToolsNames[nToolIndex];
-				aTools.unshift( Toolbox.request( sToolName ) );
+				aTools.unshift( TinyCore.Toolbox.request( sToolName ) );
 			}
 
-			oInstance = Utils.createModuleObject( oModuleData.fpCreator, aTools );
+			oInstance = _oUtils.createModuleObject( oModuleData.fpCreator, aTools );
 
 			if ( TinyCore.debugMode )
 			{
@@ -153,11 +142,11 @@
 			else
 			{
 				// Catch errors by wrapping all the instance's methods into a try-catch statement.
-				Utils.forIn( oInstance, function ( instanceProp, sPropName )
+				_oUtils.forIn( oInstance, function ( instanceProp, sPropName )
 				{
-					if ( Utils.isFunction( instanceProp ) )
+					if ( _oUtils.isFunction( instanceProp ) )
 					{
-						oInstance[sPropName] = Utils.tryCatchDecorator( oInstance, instanceProp, 'Error in module "'+sModuleName+'" executing method "'+sPropName+'": ' );
+						oInstance[sPropName] = _oUtils.tryCatchDecorator( oInstance, instanceProp, 'Error in module "'+sModuleName+'" executing method "'+sPropName+'": ' );
 					}
 				} );
 			}
@@ -188,7 +177,7 @@
 			var oModuleData = _oModulesData[sModuleName];
 			if ( !oModuleData )
 			{
-				Error.report( 'The module "'+sModuleName+'" is not defined!' );
+				TinyCore.Error.report( 'The module "'+sModuleName+'" is not defined!' );
 			}
 			if ( typeof sInstanceName === 'undefined' )
 			{
@@ -198,8 +187,3 @@
 			return oModuleData.oInstances[sInstanceName];
 		}
 	};
-
-	// Define TinyCore a little bit more.
-	TinyCore.Module = _oModule;
-
-} ( this ) );

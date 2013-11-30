@@ -1,5 +1,6 @@
 November 30, 2013 - v1.0.1
 
+* Build : reorganized the files, added Footer.js and Header.js to optimize the final build file and minification.
 * Doc : added links in README to the extensions documentation and a README file in src/extensions.
 * Utils : renamed Utils.forEach to Utils.forIn (consistency).
 * Grunt : added the "clean" task to remove temporary build files.

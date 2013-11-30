@@ -1,4 +1,3 @@
-/*! TinyCore v1.0.0 (2013-11-30) | (c) 2013 Marc Mignonsin | MIT license */
 /**
  * TinyCore.js
  * A tiny yet extensible JS modular architecture.
@@ -8,67 +7,52 @@
 {
 	'use strict';
 
+	var _null_ = null,
+		_true_ = true,
+		_false_ = false,
+		_oObjectProto = Object.prototype,
+		_hasOwnProp = _oObjectProto.hasOwnProperty,
+		_toString = _oObjectProto.toString;
+
 	/**
 	 * The core
 	 * @type {Object}
 	 */
-	var _oTinyCore = {
+	var TinyCore = {
 		/**
 		 * Current version
 		 * @type {String}
 		 */
-		version : '1.0.0',
+		version : '1.0.1',
 		/**
 		 * Debug mode : if true, error in modules methods and topics subscribers will not be caught,
 		 * if false, errors will be caught and logged using the error handler.
 		 * @type {Boolean}
 		 */
-		debugMode : false,
+		debugMode : _false_,
 		/**
 		 * The modules manager.
 		 * @type {Object}
 		 */
-		Module : null,
+		Module : _null_,
 		/**
 		 * The tools factory.
 		 * @type {Object}
 		 */
-		Toolbox : null,
+		Toolbox : _null_,
 		/**
 		 * The error handler.
 		 * @type {Object}
 		 */
-		Error : null,
+		Error : _null_,
 		/**
 		 * Utilities functions.
 		 * @type {Object}
 		 */
-		Utils : null
+		Utils : _null_
 	};
 
-	// Add TinyCore to the environment.
-	oEnv.TinyCore = _oTinyCore;
-
-	if ( oEnv.define )
-	{
-		oEnv.define( 'TinyCore', _oTinyCore );
-	}
-
-} ( this ) );
-
-/**
- * Utilities for TinyCore.js
- * @author mawrkus (web@sparring-partner.be)
-*/
-;( function ( oEnv )
-{
-	'use strict';
-
-	var TinyCore = oEnv.TinyCore;
-
-	var _oObjectProto = Object.prototype,
-		_hasOwnProp = _oObjectProto.hasOwnProperty,
-		_toString = _oObjectProto.toString;
+/* ---------  Utilities --------- */
 
 	/* ES5 shims, from MDN. */
 
@@ -122,7 +106,7 @@
 	}
 
 	/**
-	 * TinyCore.js utilities functions.
+	 * Utilities functions.
 	 * @type {Object}
 	 */
 	var _oUtils = {
@@ -242,7 +226,7 @@
 				}
 			};
 
-			fpDecoratedFunc.__decorated__ = true;
+			fpDecoratedFunc.__decorated__ = _true_;
 
 			return fpDecoratedFunc;
 		},
@@ -254,42 +238,30 @@
 		 */
 		createModuleObject : function ( fpCreator, aArgs )
 		{
-			return fpCreator.apply( null, aArgs );
+			return fpCreator.apply( _null_, aArgs );
 		}
 	};
 
-	// Define TinyCore a little bit more.
 	TinyCore.Utils = _oUtils;
 
-} ( this ) );
-
-/**
- * A tools factory for TinyCore.js
- * @author mawrkus (web@sparring-partner.be)
-*/
-;( function ( oEnv )
-{
-	'use strict';
-
-	var TinyCore = oEnv.TinyCore,
-		Utils = TinyCore.Utils;
+/* ---------  Tools factory --------- */
 
 	/**
 	 * The available tools, each property holds a factory function that can create the tool requested.
 	 * @type {Object}
 	 */
 	var _oTools = {},
-	/**
-	 * The current tool ID.
-	 * @type {Number}
-	 */
-	_nToolID = -1;
+		/**
+		 * The current tool ID.
+		 * @type {Number}
+		 */
+		_nToolID = -1;
 
 	/**
 	 * The tools factory.
 	 * @type {Object}
 	 */
-	var _oToolbox = {
+	TinyCore.Toolbox = {
 		/**
 		 * Returns the tool requested.
 		 * @param {String} sToolName
@@ -298,7 +270,7 @@
 		request : function ( sToolName )
 		{
 			var oToolData = _oTools[sToolName];
-			return oToolData && oToolData.fpFactory && oToolData.fpFactory( ++_nToolID ) || null;
+			return oToolData && oToolData.fpFactory && oToolData.fpFactory( ++_nToolID ) || _null_;
 		},
 		/**
 		 * Register a new tool's factory function.
@@ -308,39 +280,26 @@
 		 */
 		register : function ( sToolName, fpFactory )
 		{
-			if ( _oTools[sToolName] || !Utils.isFunction( fpFactory ) )
+			if ( _oTools[sToolName] || !_oUtils.isFunction( fpFactory ) )
 			{
-				return false;
+				return _false_;
 			}
 
 			_oTools[sToolName] = {
 				fpFactory : fpFactory
 			};
 
-			return true;
+			return _true_;
 		}
 	};
 
-	// Define TinyCore a little bit more.
-	TinyCore.Toolbox = _oToolbox;
-
-} ( this ) );
-
-/**
- * Error handling for TinyCore.js
- * @author mawrkus (web@sparring-partner.be)
-*/
-;( function ( oEnv )
-{
-	'use strict';
-
-	var TinyCore = oEnv.TinyCore;
+/* ---------  Error handling --------- */
 
 	/**
 	 * * The error handler.
 	 * @type  {Object}
 	 */
-	var _oErrorHandler = {
+	TinyCore.Error = {
 		/**
 		 * * Logs an error message.
 		 * @param  {String} sMsg
@@ -364,28 +323,12 @@
 			}
 			else
 			{
-				_oErrorHandler.log( sMsg );
+				this.log( sMsg );
 			}
 		}
 	};
 
-	// Define TinyCore a little bit more.
-	TinyCore.Error = _oErrorHandler;
-
-} ( this ) );
-
-/**
- * Modules management for TinyCore.js
- * @author mawrkus (web@sparring-partner.be)
-*/
-;( function ( oEnv )
-{
-	'use strict';
-
-	var TinyCore = oEnv.TinyCore,
-		Utils = TinyCore.Utils,
-		Toolbox = TinyCore.Toolbox,
-		Error = TinyCore.Error;
+/* ---------  Modules management --------- */
 
 	/**
 	 * The modules data, where each key is a module name and the associated value an object holding the module data.
@@ -402,7 +345,7 @@
 	 * The modules manager.
 	 * @type {Object}
 	 */
-	var _oModule = {
+	TinyCore.Module = {
 		/**
 		 * Defines a new module.
 		 * @param {String} sModuleName The module name
@@ -412,9 +355,9 @@
 		 */
 		define : function ( sModuleName, aToolsNames, fpCreator )
 		{
-			if ( _oModulesData[sModuleName] || !Utils.isFunction( fpCreator ) )
+			if ( _oModulesData[sModuleName] || !_oUtils.isFunction( fpCreator ) )
 			{
-				return false;
+				return _false_;
 			}
 
 			_oModulesData[sModuleName] = {
@@ -423,7 +366,7 @@
 				aToolsNames : aToolsNames
 			};
 
-			return true;
+			return _true_;
 		},
 		/**
 		 * Starts a module by creating a new module instance and calling its "onStart" method with oStartData passed as parameter.
@@ -434,20 +377,20 @@
 		 */
 		start : function ( sModuleName, oStartData )
 		{
-			var oInstanceData = _oModule.getInstance( sModuleName );
+			var oInstanceData = this.getInstance( sModuleName );
 
 			if ( !oInstanceData )
 			{
 				// We use the module name as the default instance name.
 				oInstanceData = _oModulesData[sModuleName].oInstances[sModuleName] = {
-					oInstance : _oModule.instantiate( sModuleName )
+					oInstance : this.instantiate( sModuleName )
 				};
 			}
 
 			if ( !oInstanceData.bIsStarted )
 			{
 				oInstanceData.oInstance.onStart( oStartData ); // onStart must be defined in the module.
-				oInstanceData.bIsStarted = true;
+				oInstanceData.bIsStarted = _true_;
 			}
 
 			return oInstanceData.bIsStarted;
@@ -461,30 +404,30 @@
 		 */
 		stop : function ( sModuleName, bAndDestroy )
 		{
-			var oInstanceData = _oModule.getInstance( sModuleName );
+			var oInstanceData = this.getInstance( sModuleName );
 
 			if ( !oInstanceData || !oInstanceData.oInstance )
 			{
-				return false;
+				return _false_;
 			}
 
 			if ( oInstanceData.bIsStarted )
 			{
-				if ( Utils.isFunction( oInstanceData.oInstance.onStop ) )
+				if ( _oUtils.isFunction( oInstanceData.oInstance.onStop ) )
 				{
 					oInstanceData.oInstance.onStop();
 				}
-				oInstanceData.bIsStarted = false;
+				oInstanceData.bIsStarted = _false_;
 			}
 
 			if ( bAndDestroy )
 			{
-				if ( Utils.isFunction( oInstanceData.oInstance.onDestroy ) )
+				if ( _oUtils.isFunction( oInstanceData.oInstance.onDestroy ) )
 				{
 					oInstanceData.oInstance.onDestroy();
 				}
 				delete _oModulesData[sModuleName];
-				return true;
+				return _true_;
 			}
 
 			return !oInstanceData.bIsStarted;
@@ -512,10 +455,10 @@
 			while ( nToolIndex-- )
 			{
 				sToolName = aToolsNames[nToolIndex];
-				aTools.unshift( Toolbox.request( sToolName ) );
+				aTools.unshift( TinyCore.Toolbox.request( sToolName ) );
 			}
 
-			oInstance = Utils.createModuleObject( oModuleData.fpCreator, aTools );
+			oInstance = _oUtils.createModuleObject( oModuleData.fpCreator, aTools );
 
 			if ( TinyCore.debugMode )
 			{
@@ -529,11 +472,11 @@
 			else
 			{
 				// Catch errors by wrapping all the instance's methods into a try-catch statement.
-				Utils.forIn( oInstance, function ( instanceProp, sPropName )
+				_oUtils.forIn( oInstance, function ( instanceProp, sPropName )
 				{
-					if ( Utils.isFunction( instanceProp ) )
+					if ( _oUtils.isFunction( instanceProp ) )
 					{
-						oInstance[sPropName] = Utils.tryCatchDecorator( oInstance, instanceProp, 'Error in module "'+sModuleName+'" executing method "'+sPropName+'": ' );
+						oInstance[sPropName] = _oUtils.tryCatchDecorator( oInstance, instanceProp, 'Error in module "'+sModuleName+'" executing method "'+sPropName+'": ' );
 					}
 				} );
 			}
@@ -564,7 +507,7 @@
 			var oModuleData = _oModulesData[sModuleName];
 			if ( !oModuleData )
 			{
-				Error.report( 'The module "'+sModuleName+'" is not defined!' );
+				TinyCore.Error.report( 'The module "'+sModuleName+'" is not defined!' );
 			}
 			if ( typeof sInstanceName === 'undefined' )
 			{
@@ -575,7 +518,11 @@
 		}
 	};
 
-	// Define TinyCore a little bit more.
-	TinyCore.Module = _oModule;
+	// Add TinyCore to the environment.
+	oEnv.TinyCore = TinyCore;
 
+	if ( oEnv.define )
+	{
+		oEnv.define( 'TinyCore', TinyCore );
+	}
 } ( this ) );

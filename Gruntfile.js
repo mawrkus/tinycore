@@ -8,17 +8,14 @@ module.exports = function ( grunt )
 			core:
 			{
 				src: [
-						'src/TinyCore.Core.js',
+						'src/Header.js',
 						'src/TinyCore.Utils.js',
 						'src/TinyCore.Toolbox.js',
 						'src/TinyCore.Error.js',
-						'src/TinyCore.Module.js'
+						'src/TinyCore.Module.js',
+						'src/Footer.js'
 					],
-				dest: 'build/TinyCore.js',
-				options:
-				{
-					banner: '/*! TinyCore v<%= pkg.version %> (<%= grunt.template.today("yyyy-mm-dd") %>) | (c) 2013 Marc Mignonsin | <%= pkg.license %> license */\n'
-				}
+				dest: 'build/TinyCore.js'
 			},
 			amd:
 			{
@@ -74,6 +71,9 @@ module.exports = function ( grunt )
 			},
 			core:
 			{
+				options : {
+					footer: '/*! TinyCore v<%= pkg.version %> (<%= grunt.template.today("yyyy-mm-dd") %>) | (c) 2013 Marc Mignonsin | <%= pkg.license %> license */\n'
+				},
 				files:
 				{
 					'build/TinyCore.min.js' : ['build/TinyCore.js']

@@ -7,50 +7,47 @@
 {
 	'use strict';
 
+	var _null_ = null,
+		_true_ = true,
+		_false_ = false,
+		_oObjectProto = Object.prototype,
+		_hasOwnProp = _oObjectProto.hasOwnProperty,
+		_toString = _oObjectProto.toString;
+
 	/**
 	 * The core
 	 * @type {Object}
 	 */
-	var _oTinyCore = {
+	var TinyCore = {
 		/**
 		 * Current version
 		 * @type {String}
 		 */
-		version : '1.0.0',
+		version : '1.0.1',
 		/**
 		 * Debug mode : if true, error in modules methods and topics subscribers will not be caught,
 		 * if false, errors will be caught and logged using the error handler.
 		 * @type {Boolean}
 		 */
-		debugMode : false,
+		debugMode : _false_,
 		/**
 		 * The modules manager.
 		 * @type {Object}
 		 */
-		Module : null,
+		Module : _null_,
 		/**
 		 * The tools factory.
 		 * @type {Object}
 		 */
-		Toolbox : null,
+		Toolbox : _null_,
 		/**
 		 * The error handler.
 		 * @type {Object}
 		 */
-		Error : null,
+		Error : _null_,
 		/**
 		 * Utilities functions.
 		 * @type {Object}
 		 */
-		Utils : null
+		Utils : _null_
 	};
-
-	// Add TinyCore to the environment.
-	oEnv.TinyCore = _oTinyCore;
-
-	if ( oEnv.define )
-	{
-		oEnv.define( 'TinyCore', _oTinyCore );
-	}
-
-} ( this ) );

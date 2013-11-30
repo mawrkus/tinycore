@@ -1,16 +1,4 @@
-/**
- * Utilities for TinyCore.js
- * @author mawrkus (web@sparring-partner.be)
-*/
-;( function ( oEnv )
-{
-	'use strict';
-
-	var TinyCore = oEnv.TinyCore;
-
-	var _oObjectProto = Object.prototype,
-		_hasOwnProp = _oObjectProto.hasOwnProperty,
-		_toString = _oObjectProto.toString;
+/* ---------  Utilities --------- */
 
 	/* ES5 shims, from MDN. */
 
@@ -64,7 +52,7 @@
 	}
 
 	/**
-	 * TinyCore.js utilities functions.
+	 * Utilities functions.
 	 * @type {Object}
 	 */
 	var _oUtils = {
@@ -184,7 +172,7 @@
 				}
 			};
 
-			fpDecoratedFunc.__decorated__ = true;
+			fpDecoratedFunc.__decorated__ = _true_;
 
 			return fpDecoratedFunc;
 		},
@@ -196,11 +184,8 @@
 		 */
 		createModuleObject : function ( fpCreator, aArgs )
 		{
-			return fpCreator.apply( null, aArgs );
+			return fpCreator.apply( _null_, aArgs );
 		}
 	};
 
-	// Define TinyCore a little bit more.
 	TinyCore.Utils = _oUtils;
-
-} ( this ) );

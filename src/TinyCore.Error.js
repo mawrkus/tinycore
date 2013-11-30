@@ -1,18 +1,10 @@
-/**
- * Error handling for TinyCore.js
- * @author mawrkus (web@sparring-partner.be)
-*/
-;( function ( oEnv )
-{
-	'use strict';
-
-	var TinyCore = oEnv.TinyCore;
+/* ---------  Error handling --------- */
 
 	/**
 	 * * The error handler.
 	 * @type  {Object}
 	 */
-	var _oErrorHandler = {
+	TinyCore.Error = {
 		/**
 		 * * Logs an error message.
 		 * @param  {String} sMsg
@@ -36,12 +28,7 @@
 			}
 			else
 			{
-				_oErrorHandler.log( sMsg );
+				this.log( sMsg );
 			}
 		}
 	};
-
-	// Define TinyCore a little bit more.
-	TinyCore.Error = _oErrorHandler;
-
-} ( this ) );
