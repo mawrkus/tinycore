@@ -18,7 +18,7 @@ Main sources of inspiration :
 
 "The secret to building large apps is never build large apps. Break your applications into small pieces. Then, assemble those testable, bite-sized pieces into your big application" - Justin Meyer, author JavaScriptMVC.
 
-Online demo : [A simple todo list application](http://www.sparring-partner.be/tinycore/src/demos/todolist/localfiles/)
+Online demo : [A simple todo list application](http://www.sparring-partner.be/tinycore/src/demos/todolist/localfiles/). More demos in the "src/demos" folder.
 
 ## Features
 
@@ -27,6 +27,7 @@ Online demo : [A simple todo list application](http://www.sparring-partner.be/ti
 - Supports unit testing of the modules, with an extension dedicated to the [Jasmine framework](http://pivotal.github.io/jasmine/)
 - Supports async modules loading using the [Asynchronous Module Definition](https://github.com/amdjs/amdjs-api/wiki/AMD) format and [require.js](http://requirejs.org)
 - Works under IE8+, Safari 5.1, Opera 12, latest Chrome and Firefox
+- MIT-licensed
 
 ## Benefits
 
@@ -329,6 +330,10 @@ Feel free to extend/redefine those methods according to your needs.
 ## Extensions
 
 See the [src/extensions](https://github.com/mawrkus/tinycore/tree/master/src/extensions) folder for the documentation.
+
+## Bugs? Need help? Feedback?
+
+Don't hesitate to e-mail me : web@sparring-partner.be
 
 ## Thanks
 
