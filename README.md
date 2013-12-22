@@ -1,4 +1,3 @@
-
 # TinyCore.js
 
 `Version 1.0.1`
@@ -208,7 +207,7 @@ When starting a module for the first time, a new instance is created internally 
 
 ```js
 var oElevator = TinyCore.Module.instantiate( 'elevator' ),
-	nCurrentFloor = oElevator.getCurrentFloor();
+	nCurrentFloor = oElevator.getFloor();
 
 expect( nCurrentFloor ).toBeNull(); // true
 
