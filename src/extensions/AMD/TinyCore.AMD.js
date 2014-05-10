@@ -85,7 +85,7 @@
 		},
 		/**
 		 * Loads asynchronously modules/scripts.
-		 * @param {Array|String} aResourcesNames
+		 * @param {Array} aResourcesNames
 		 * @param {Function} fpCallback The function to call when all modules are loaded, it receives the array of modules names
 		 */
 		require : function ( aResourcesNames, fpCallback )

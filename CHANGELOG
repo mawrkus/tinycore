@@ -1,3 +1,11 @@
+May 10, 2014 - v1.0.2
+
+* Added bower.json and updated package.json (devDependencies, ...)
+* Added .gitignore
+* Build : renamed Footer.js and Header.js to Outro.js and Intro.js.
+* Grunt : changed banner position with (uglify task).
+* Doc : fixed a typo.
+
 November 30, 2013 - v1.0.1
 
 * Build : reorganized the files, added Footer.js and Header.js to optimize the final build file and minification.

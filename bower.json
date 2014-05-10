@@ -1,0 +1,21 @@
+{
+  "name": "TinyCore.js",
+  "description": "A JavaScript library providing a modular and decoupled architecture that helps you create scalable and easy-to-maintain Web applications.",
+  "version": "1.0.2",
+  "main": "build/TinyCore.js",
+  "license": "MIT",
+  "ignore": [
+    "node_modules"
+  ],
+  "keywords": [
+    "js","architecture","module","scalable","spa"
+  ],
+  "authors": [
+    "Marc Mignonsin"
+  ],
+  "homepage": "https://github.com/mawrkus/tinycore",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mawrkus/TinyCore.git"
+  }
+}
