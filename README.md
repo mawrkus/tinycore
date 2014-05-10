@@ -1,10 +1,10 @@
 # TinyCore.js
 
-`Version 1.0.1`
+`Version 1.0.2`
 
 ## Overview
 
-A tiny JavaScript modular architecture library.
+TinyCore is a lightweight library that provides you a modular JavaScript architecture to create scalable, maintainable and fully tested web applications.
 
 Main sources of inspiration :
 
@@ -295,7 +295,7 @@ TinyCore comes with a set of built-in utilities functions that are used internal
 
 ```js
 TinyCore.Utils.extend( obj1, obj2 /*, ... */ )
-TinyCore.Utils.forEach( obj, callback )
+TinyCore.Utils.forIn( obj, callback )
 TinyCore.Utils.isClass( mixed, sClassName )
 TinyCore.Utils.isArray( mixed )
 TinyCore.Utils.isFunction( mixed )

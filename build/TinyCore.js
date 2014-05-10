@@ -23,7 +23,7 @@
 		 * Current version
 		 * @type {String}
 		 */
-		version : '1.0.1',
+		version : '1.0.2',
 		/**
 		 * Debug mode : if true, error in modules methods and topics subscribers will not be caught,
 		 * if false, errors will be caught and logged using the error handler.
@@ -521,8 +521,13 @@
 	// Add TinyCore to the environment.
 	oEnv.TinyCore = TinyCore;
 
-	if ( oEnv.define )
+	if ( oEnv.define && oEnv.define.amd )
 	{
 		oEnv.define( 'TinyCore', TinyCore );
+	}
+
+	if ( oEnv.module && oEnv.module.exports )
+	{
+		oEnv.module.exports = TinyCore;
 	}
 } ( this ) );
