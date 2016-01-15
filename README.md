@@ -1,6 +1,6 @@
 # TinyCore.js
 
-`Version 1.0.2`
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
 
 ## Overview
 
