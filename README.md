@@ -23,7 +23,7 @@ Online demo : [A simple todo list application](http://www.sparring-partner.be/ti
 
 - Around 3Kb minified, less than 1Kb gzipped
 - Extensible (currently 4 [extensions](https://github.com/mawrkus/tinycore/tree/master/src/extensions) exist)
-- Supports unit testing of the modules, with an extension dedicated to the [Jasmine framework](http://pivotal.github.io/jasmine/)
+- Supports unit testing of the modules, with an extension dedicated to the [Jasmine framework](https://jasmine.github.io/)
 - Supports async modules loading using the [Asynchronous Module Definition](https://github.com/amdjs/amdjs-api/wiki/AMD) format and [require.js](http://requirejs.org)
 - Works under IE8+, Safari 5.1, Opera 12, latest Chrome and Firefox
 - MIT-licensed
